@@ -9,10 +9,15 @@ use App\Models\Payment\SettlementExecution;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable implements JWTSubject
 {
+    use HasRoles;
+
     public $timestamps = false;
+    
+    protected $guard_name = 'api_admin';
 
     protected $fillable = [
         'name',

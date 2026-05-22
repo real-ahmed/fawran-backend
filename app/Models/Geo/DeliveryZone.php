@@ -49,4 +49,15 @@ class DeliveryZone extends Model
     {
         return $this->hasMany(Courier::class);
     }
+
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return \App\Builders\DeliveryZoneBuilder
+     */
+    public function newEloquentBuilder($query): \App\Builders\DeliveryZoneBuilder
+    {
+        return new \App\Builders\DeliveryZoneBuilder($query);
+    }
 }
