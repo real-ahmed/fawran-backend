@@ -114,6 +114,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | :--- | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc | |
 | `user_id` | BIGINT | FK → users.id | |
+| `delivery_zone_id` | BIGINT | FK → delivery_zones.id | Zone applied for |
 | `vehicle_type` | ENUM | `'motorcycle'`, `'bicycle'`, `'car'`| |
 | `plate_number` | VARCHAR(50) | | |
 | `is_online` | BOOLEAN | Default: false | |
@@ -134,6 +135,13 @@ This document outlines the complete database architecture. **Architectural Rule:
 | `criminal_record_file` | VARCHAR | | Path to the uploaded criminal record / background check |
 | `contract_number` | VARCHAR | UNIQUE | System-generated unique identifier for the physical contract |
 
+**`courier_approvals` Table (Zero-Null Extension)**
+| Column | Type | Properties | Description |
+| :--- | :--- | :--- | :--- |
+| `courier_id` | BIGINT | PK, FK → couriers.id | Exists only if approved |
+| `admin_id` | BIGINT | FK → admins.id | The admin who approved |
+| `approved_at` | TIMESTAMP | | |
+
 **`admins` Table**
 | Column | Type | Properties | Description |
 | :--- | :--- | :--- | :--- |
@@ -144,6 +152,12 @@ This document outlines the complete database architecture. **Architectural Rule:
 | `is_active` | BOOLEAN | Default: true | |
 | `created_at` | TIMESTAMP | | |
 
+**`admin_delivery_zones` Table (Pivot)**
+| Column | Type | Properties | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | BIGINT | PK, Auto Inc | |
+| `admin_id` | BIGINT | FK → admins.id | |
+| `delivery_zone_id` | BIGINT | FK → delivery_zones.id | |
 ---
 
 ## 🏪 2. Catalog, Stores & Options

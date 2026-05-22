@@ -3,6 +3,7 @@
 namespace App\Models\Courier;
 
 use App\Enums\VehicleType;
+use App\Models\Geo\DeliveryZone;
 use App\Models\Order\Delivery;
 use App\Models\P2p\P2pAssignment;
 use App\Models\Payment\CourierCashCollection;
@@ -18,6 +19,7 @@ class Courier extends Model
 
     protected $fillable = [
         'user_id',
+        'delivery_zone_id',
         'vehicle_type',
         'plate_number',
         'is_online',
@@ -49,6 +51,16 @@ class Courier extends Model
     public function document(): HasOne
     {
         return $this->hasOne(CourierDocument::class);
+    }
+
+    public function approval(): HasOne
+    {
+        return $this->hasOne(CourierApproval::class);
+    }
+
+    public function deliveryZone(): BelongsTo
+    {
+        return $this->belongsTo(DeliveryZone::class);
     }
 
     public function deliveries(): HasMany

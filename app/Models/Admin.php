@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Courier\CourierApproval;
+use App\Models\Geo\DeliveryZone;
 use App\Models\Payment\PayoutExecution;
 use App\Models\Payment\SettlementExecution;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -44,6 +46,16 @@ class Admin extends Authenticatable implements JWTSubject
     public function payoutExecutions(): HasMany
     {
         return $this->hasMany(PayoutExecution::class);
+    }
+
+    public function deliveryZones(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(DeliveryZone::class, 'admin_delivery_zones');
+    }
+
+    public function courierApprovals(): HasMany
+    {
+        return $this->hasMany(CourierApproval::class);
     }
 
     public function getJWTIdentifier()
