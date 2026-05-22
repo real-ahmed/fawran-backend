@@ -127,6 +127,13 @@ This document outlines the complete database architecture. **Architectural Rule:
 | `longitude` | DECIMAL(11,8) | | |
 | `located_at` | TIMESTAMP | | |
 
+**`courier_documents` Table (Zero-Null Extension)**
+| Column | Type | Properties | Description |
+| :--- | :--- | :--- | :--- |
+| `courier_id` | BIGINT | PK, FK → couriers.id | |
+| `criminal_record_file` | VARCHAR | | Path to the uploaded criminal record / background check |
+| `contract_number` | VARCHAR | UNIQUE | System-generated unique identifier for the physical contract |
+
 **`admins` Table**
 | Column | Type | Properties | Description |
 | :--- | :--- | :--- | :--- |

@@ -46,6 +46,11 @@ class Courier extends Model
         return $this->hasOne(CourierLocation::class);
     }
 
+    public function document(): HasOne
+    {
+        return $this->hasOne(CourierDocument::class);
+    }
+
     public function deliveries(): HasMany
     {
         return $this->hasMany(Delivery::class);
