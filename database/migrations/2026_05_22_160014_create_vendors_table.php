@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
             $table->string('name');
+            $table->string('type')->default('restaurant');
             $table->string('email')->unique();
             $table->string('phone', 20)->unique();
             $table->decimal('latitude', 10, 8);

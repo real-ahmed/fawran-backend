@@ -8,17 +8,19 @@ use App\Models\Media\Media;
 use App\Models\Order\SubOrder;
 use App\Models\Platform\OrderCommission;
 use App\Models\Product\VendorItem;
+use App\Enums\VendorType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-class Store extends Model
+class Vendor extends Model
 {
     public $timestamps = false;
 
     protected $fillable = [
         'name',
+        'type',
         'latitude',
         'longitude',
         'average_rating',
@@ -38,6 +40,7 @@ class Store extends Model
     {
         return [
             'name' => 'array',
+            'type' => VendorType::class,
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
             'average_rating' => 'decimal:2',
