@@ -4,18 +4,18 @@ namespace App\Models\Product;
 
 use App\Models\Media\SavedItem;
 use App\Models\Order\OrderItem;
-use App\Models\Store\Store;
+use App\Models\Vendor\Store;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class StoreItem extends Model
+class VendorItem extends Model
 {
     public $timestamps = false;
 
     protected $fillable = [
-        'store_id',
+        'vendor_id',
         'master_product_id',
         'price',
         'is_available',
@@ -35,7 +35,7 @@ class StoreItem extends Model
 
     public function store(): BelongsTo
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Vendor::class);
     }
 
     public function masterProduct(): BelongsTo
@@ -45,7 +45,7 @@ class StoreItem extends Model
 
     public function inventory(): HasOne
     {
-        return $this->hasOne(StoreItemInventory::class);
+        return $this->hasOne(VendorItemInventory::class);
     }
 
     public function restaurantDishDetail(): HasOne

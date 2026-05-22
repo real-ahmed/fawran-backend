@@ -2,7 +2,7 @@
 
 namespace App\Models\Inventory;
 
-use App\Models\Product\StoreItem;
+use App\Models\Product\VendorItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -33,6 +33,6 @@ class PurchaseItem extends Model
 
     public function storeItem(): BelongsTo
     {
-        return $this->belongsTo(StoreItem::class);
+        return $this->belongsTo(VendorItem::class);
     }
 }

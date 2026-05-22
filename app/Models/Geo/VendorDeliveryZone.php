@@ -2,16 +2,16 @@
 
 namespace App\Models\Geo;
 
-use App\Models\Store\Store;
+use App\Models\Vendor\Store;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class StoreDeliveryZone extends Model
+class VendorDeliveryZone extends Model
 {
     public $timestamps = false;
 
     protected $fillable = [
-        'store_id',
+        'vendor_id',
         'delivery_zone_id',
         'min_order_amount',
         'estimated_delivery_time',
@@ -27,7 +27,7 @@ class StoreDeliveryZone extends Model
 
     public function store(): BelongsTo
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Vendor::class);
     }
 
     public function deliveryZone(): BelongsTo

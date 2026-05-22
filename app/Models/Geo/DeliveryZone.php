@@ -4,7 +4,7 @@ namespace App\Models\Geo;
 
 use App\Models\Admin;
 use App\Models\Courier\Courier;
-use App\Models\Store\StoreDeliveryZone;
+use App\Models\Vendor\VendorDeliveryZone;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -37,7 +37,7 @@ class DeliveryZone extends Model
 
     public function storeDeliveryZones(): HasMany
     {
-        return $this->hasMany(StoreDeliveryZone::class);
+        return $this->hasMany(VendorDeliveryZone::class);
     }
 
     public function admins(): \Illuminate\Database\Eloquent\Relations\BelongsToMany

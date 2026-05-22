@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('store_descriptions', function (Blueprint $table) {
-            $table->foreignId('store_id')->primary()->constrained()->cascadeOnDelete();
+            $table->foreignId('vendor_id')->primary()->constrained()->cascadeOnDelete();
             $table->json('description');
         });
     }

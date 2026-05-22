@@ -11,7 +11,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | Column | Type | Properties | Description |
 | :--- | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc | |
-| `model_type` | VARCHAR(255) | Polymorphic | e.g. `App\Models\Store` |
+| `model_type` | VARCHAR(255) | Polymorphic | e.g. `App\Models\Vendor` |
 | `model_id` | BIGINT | Polymorphic | |
 | `file_path` | VARCHAR(500) | | Full path or CDN URL |
 | `file_type` | ENUM | `'image'`, `'video'`, `'document'` | |
@@ -188,7 +188,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | `name` | JSON | |
 | `is_active` | BOOLEAN | Default: true |
 
-**`stores` Table**
+**`vendors` Table**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
@@ -204,20 +204,20 @@ This document outlines the complete database architecture. **Architectural Rule:
 **`store_descriptions` Table (Zero-Null Extension)**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
-| `store_id` | BIGINT | PK, FK → stores.id |
+| `vendor_id` | BIGINT | PK, FK → vendors.id |
 | `description` | TEXT | |
 
 **`store_custom_commissions` Table (Zero-Null Extension)**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
-| `store_id` | BIGINT | PK, FK → stores.id |
+| `vendor_id` | BIGINT | PK, FK → vendors.id |
 | `commission_percentage`| DECIMAL(5,2) | |
 
 **`store_working_hours` Table**
 | Column | Type | Properties | Description |
 | :--- | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc | |
-| `store_id` | BIGINT | FK → stores.id | |
+| `vendor_id` | BIGINT | FK → vendors.id | |
 | `day_of_week` | TINYINT | | 0 (Sun) to 6 (Sat) |
 | `open_time` | TIME | | |
 | `close_time` | TIME | | |
@@ -227,7 +227,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
 | `user_id` | BIGINT | FK → users.id |
-| `store_id`| BIGINT | FK → stores.id |
+| `vendor_id`| BIGINT | FK → vendors.id |
 | `created_at`| TIMESTAMP | |
 
 **`master_products` Table**
@@ -257,7 +257,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
-| `store_id` | BIGINT | FK → stores.id |
+| `vendor_id` | BIGINT | FK → vendors.id |
 | `master_product_id` | BIGINT | FK → master_products.id |
 | `price` | DECIMAL(10,2) | |
 | `is_available` | BOOLEAN | Default: true |
@@ -329,7 +329,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
-| `store_id` | BIGINT | FK → stores.id |
+| `vendor_id` | BIGINT | FK → vendors.id |
 | `delivery_zone_id` | BIGINT | FK → delivery_zones.id |
 | `min_order_amount` | DECIMAL(10,2) | |
 | `estimated_delivery_time`| INT | |
@@ -465,7 +465,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
 | `order_id` | BIGINT | FK → orders.id |
-| `store_id` | BIGINT | FK → stores.id |
+| `vendor_id` | BIGINT | FK → vendors.id |
 | `sub_total` | DECIMAL(10,2) | |
 | `status` | ENUM | `'pending'`, `'accepted'`, `'preparing'`, `'ready_for_pickup'` |
 | `created_at` | TIMESTAMP | |
@@ -494,7 +494,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | `order_id` | BIGINT | FK → orders.id |
 | `courier_id` | BIGINT | FK → couriers.id |
 | `fee_share` | DECIMAL(10,2) | |
-| `status` | ENUM | `'heading_to_stores'`, `'picking_up'`, `'heading_to_customer'`, `'completed'` |
+| `status` | ENUM | `'heading_to_vendors'`, `'picking_up'`, `'heading_to_customer'`, `'completed'` |
 | `created_at` | TIMESTAMP | |
 
 **`delivery_pickups` Table (Zero-Null Extension)**
@@ -517,7 +517,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
-| `store_id` | BIGINT | FK → stores.id |
+| `vendor_id` | BIGINT | FK → vendors.id |
 | `name` | VARCHAR(255) | |
 | `phone` | VARCHAR(20) | |
 | `created_at` | TIMESTAMP | |
@@ -526,7 +526,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
-| `store_id` | BIGINT | FK → stores.id |
+| `vendor_id` | BIGINT | FK → vendors.id |
 | `supplier_id` | BIGINT | FK → suppliers.id |
 | `total_cost` | DECIMAL(10,2) | |
 | `status` | ENUM | `'pending'`, `'received'` |
@@ -546,7 +546,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
-| `store_id` | BIGINT | FK → stores.id |
+| `vendor_id` | BIGINT | FK → vendors.id |
 | `store_item_id` | BIGINT | FK → store_items.id |
 | `quantity` | DECIMAL(10,3) | |
 | `type` | ENUM | `'sale'`, `'purchase'`, `'return'`, `'adjustment'` |
@@ -705,7 +705,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
 | `order_id` | BIGINT | FK → orders.id |
-| `store_id` | BIGINT | FK → stores.id |
+| `vendor_id` | BIGINT | FK → vendors.id |
 | `store_commission_percentage`| DECIMAL(5,2) | |
 | `store_commission_amount` | DECIMAL(10,2) | |
 | `app_delivery_share` | DECIMAL(10,2) | |

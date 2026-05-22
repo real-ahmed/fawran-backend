@@ -33,7 +33,7 @@ class ProductOption extends Model
 
     public function storeItem(): BelongsTo
     {
-        return $this->belongsTo(StoreItem::class);
+        return $this->belongsTo(VendorItem::class);
     }
 
     public function values(): HasMany

@@ -51,6 +51,6 @@ class MasterProduct extends Model
 
     public function storeItems(): HasMany
     {
-        return $this->hasMany(StoreItem::class);
+        return $this->hasMany(VendorItem::class);
     }
 }

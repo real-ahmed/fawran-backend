@@ -3,7 +3,7 @@
 namespace App\Models\Inventory;
 
 use App\Enums\PurchaseOrderStatus;
-use App\Models\Store\Store;
+use App\Models\Vendor\Store;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +13,7 @@ class PurchaseOrder extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'store_id',
+        'vendor_id',
         'supplier_id',
         'total_cost',
         'status',
@@ -30,7 +30,7 @@ class PurchaseOrder extends Model
 
     public function store(): BelongsTo
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Vendor::class);
     }
 
     public function supplier(): BelongsTo

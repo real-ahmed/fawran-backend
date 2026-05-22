@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models\Store;
+namespace App\Models\Vendor;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class StoreStaff extends Model
+class VendorStaff extends Model
 {
     public $timestamps = false;
 
@@ -14,7 +14,7 @@ class StoreStaff extends Model
 
     protected $fillable = [
         'user_id',
-        'store_id',
+        'vendor_id',
     ];
 
     protected function casts(): array
@@ -31,6 +31,6 @@ class StoreStaff extends Model
 
     public function store(): BelongsTo
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Vendor::class);
     }
 }

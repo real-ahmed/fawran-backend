@@ -2,7 +2,7 @@
 
 namespace App\Models\Media;
 
-use App\Models\Product\StoreItem;
+use App\Models\Product\VendorItem;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,6 +30,6 @@ class SavedItem extends Model
 
     public function storeItem(): BelongsTo
     {
-        return $this->belongsTo(StoreItem::class);
+        return $this->belongsTo(VendorItem::class);
     }
 }

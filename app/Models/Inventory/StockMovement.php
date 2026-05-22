@@ -3,8 +3,8 @@
 namespace App\Models\Inventory;
 
 use App\Enums\StockMovementType;
-use App\Models\Product\StoreItem;
-use App\Models\Store\Store;
+use App\Models\Product\VendorItem;
+use App\Models\Vendor\Store;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -15,7 +15,7 @@ class StockMovement extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'store_id',
+        'vendor_id',
         'store_item_id',
         'quantity',
         'type',
@@ -34,12 +34,12 @@ class StockMovement extends Model
 
     public function store(): BelongsTo
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Vendor::class);
     }
 
     public function storeItem(): BelongsTo
     {
-        return $this->belongsTo(StoreItem::class);
+        return $this->belongsTo(VendorItem::class);
     }
 
     public function reference(): MorphTo

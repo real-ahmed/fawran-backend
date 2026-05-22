@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('phone', 20)->nullable();
             $table->timestamp('created_at')->useCurrent();

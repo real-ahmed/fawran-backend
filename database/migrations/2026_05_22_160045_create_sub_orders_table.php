@@ -11,13 +11,13 @@ return new class extends Migration
         Schema::create('sub_orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->decimal('sub_total', 10, 2);
             $table->string('status');
             $table->timestamp('created_at')->useCurrent();
 
             $table->index('status');
-            $table->unique(['order_id', 'store_id']);
+            $table->unique(['order_id', 'vendor_id']);
         });
     }
 

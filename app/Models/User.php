@@ -11,17 +11,18 @@ use App\Models\Media\Rating;
 use App\Models\Media\SavedItem;
 use App\Models\Payment\PayoutRequest;
 use App\Models\Payment\Wallet;
-use App\Models\Store\StoreStaff;
+use App\Models\Vendor\VendorStaff;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
         'name',
@@ -63,7 +64,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function storeStaff(): HasMany
     {
-        return $this->hasMany(StoreStaff::class);
+        return $this->hasMany(VendorStaff::class);
     }
 
     public function wallet(): HasOne

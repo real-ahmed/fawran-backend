@@ -84,7 +84,7 @@ Invalidates the current JWT token.
 
 ## Delivery Zones
 
-Delivery Zones represent physical areas where stores operate and couriers deliver. They are defined mathematically by Polygons (a series of geographic coordinates).
+Delivery Zones represent physical areas where vendors operate and couriers deliver. They are defined mathematically by Polygons (a series of geographic coordinates).
 
 ### 1. Create a Delivery Zone
 **POST** `/delivery-zones`

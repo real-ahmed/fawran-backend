@@ -3,7 +3,7 @@
 namespace App\Models\Order;
 
 use App\Enums\SubOrderStatus;
-use App\Models\Store\Store;
+use App\Models\Vendor\Store;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +14,7 @@ class SubOrder extends Model
 
     protected $fillable = [
         'order_id',
-        'store_id',
+        'vendor_id',
         'sub_total',
         'status',
     ];
@@ -35,7 +35,7 @@ class SubOrder extends Model
 
     public function store(): BelongsTo
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Vendor::class);
     }
 
     public function items(): HasMany

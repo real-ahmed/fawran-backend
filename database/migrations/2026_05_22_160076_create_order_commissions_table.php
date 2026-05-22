@@ -11,14 +11,14 @@ return new class extends Migration
         Schema::create('order_commissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->decimal('store_commission_percentage', 5, 2);
             $table->decimal('store_commission_amount', 10, 2);
             $table->decimal('app_delivery_share', 10, 2);
             $table->decimal('net_platform_profit', 10, 2);
             $table->timestamp('created_at')->useCurrent();
 
-            $table->unique(['order_id', 'store_id']);
+            $table->unique(['order_id', 'vendor_id']);
         });
     }
 

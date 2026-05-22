@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Admin\DeliveryZone\IndexDeliveryZoneRequest;
-use App\Http\Requests\V1\Admin\DeliveryZone\StoreDeliveryZoneRequest;
+use App\Http\Requests\V1\Admin\DeliveryZone\VendorDeliveryZoneRequest;
 use App\Http\Requests\V1\Admin\DeliveryZone\UpdateDeliveryZoneRequest;
 use App\Http\Resources\V1\DeliveryZoneResource;
 use App\Models\Geo\DeliveryZone;
@@ -30,7 +30,7 @@ class DeliveryZoneController extends Controller
         ]);
     }
 
-    public function store(StoreDeliveryZoneRequest $request)
+    public function store(VendorDeliveryZoneRequest $request)
     {
         $zone = $this->deliveryZoneService->createZone($request->validated());
 

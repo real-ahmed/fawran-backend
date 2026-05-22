@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('store_delivery_zones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->foreignId('delivery_zone_id')->constrained()->cascadeOnDelete();
             $table->decimal('min_order_amount', 10, 2);
             $table->integer('estimated_delivery_time');
 
-            $table->unique(['store_id', 'delivery_zone_id']);
+            $table->unique(['vendor_id', 'delivery_zone_id']);
         });
     }
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models\Store;
+namespace App\Models\Vendor;
 
-use App\Models\Geo\StoreDeliveryZone;
+use App\Models\Geo\VendorDeliveryZone;
 use App\Models\Inventory\Supplier;
 use App\Models\Media\Media;
 use App\Models\Order\SubOrder;
 use App\Models\Platform\OrderCommission;
-use App\Models\Product\StoreItem;
+use App\Models\Product\VendorItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -49,32 +49,32 @@ class Store extends Model
 
     public function description(): HasOne
     {
-        return $this->hasOne(StoreDescription::class);
+        return $this->hasOne(VendorDescription::class);
     }
 
     public function customCommission(): HasOne
     {
-        return $this->hasOne(StoreCustomCommission::class);
+        return $this->hasOne(VendorCustomCommission::class);
     }
 
     public function workingHours(): HasMany
     {
-        return $this->hasMany(StoreWorkingHour::class);
+        return $this->hasMany(VendorWorkingHour::class);
     }
 
     public function staff(): HasMany
     {
-        return $this->hasMany(StoreStaff::class);
+        return $this->hasMany(VendorStaff::class);
     }
 
     public function storeItems(): HasMany
     {
-        return $this->hasMany(StoreItem::class);
+        return $this->hasMany(VendorItem::class);
     }
 
     public function deliveryZones(): HasMany
     {
-        return $this->hasMany(StoreDeliveryZone::class);
+        return $this->hasMany(VendorDeliveryZone::class);
     }
 
     public function subOrders(): HasMany

@@ -10,11 +10,11 @@ return new class extends Migration
     {
         Schema::create('store_staff', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamp('created_at')->useCurrent();
 
-            $table->unique(['store_id', 'user_id']);
+            $table->unique(['vendor_id', 'user_id']);
         });
     }
 

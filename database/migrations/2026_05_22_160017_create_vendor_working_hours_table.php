@@ -10,13 +10,13 @@ return new class extends Migration
     {
         Schema::create('store_working_hours', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('day_of_week');
             $table->time('opening_time');
             $table->time('closing_time');
             $table->boolean('is_closed')->default(false);
 
-            $table->unique(['store_id', 'day_of_week']);
+            $table->unique(['vendor_id', 'day_of_week']);
         });
     }
 

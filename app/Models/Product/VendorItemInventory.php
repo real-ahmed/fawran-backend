@@ -5,7 +5,7 @@ namespace App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class StoreItemInventory extends Model
+class VendorItemInventory extends Model
 {
     public $timestamps = false;
 
@@ -31,6 +31,6 @@ class StoreItemInventory extends Model
 
     public function storeItem(): BelongsTo
     {
-        return $this->belongsTo(StoreItem::class);
+        return $this->belongsTo(VendorItem::class);
     }
 }

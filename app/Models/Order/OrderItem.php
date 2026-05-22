@@ -2,7 +2,7 @@
 
 namespace App\Models\Order;
 
-use App\Models\Product\StoreItem;
+use App\Models\Product\VendorItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -41,7 +41,7 @@ class OrderItem extends Model
 
     public function storeItem(): BelongsTo
     {
-        return $this->belongsTo(StoreItem::class);
+        return $this->belongsTo(VendorItem::class);
     }
 
     public function note(): HasOne

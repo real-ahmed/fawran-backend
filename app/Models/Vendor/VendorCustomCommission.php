@@ -1,30 +1,32 @@
 <?php
 
-namespace App\Models\Store;
+namespace App\Models\Vendor;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class StoreWorkingHour extends Model
+class VendorCustomCommission extends Model
 {
     public $timestamps = false;
 
+    protected $primaryKey = 'vendor_id';
+
+    public $incrementing = false;
+
     protected $fillable = [
-        'store_id',
-        'day_of_week',
-        'open_time',
-        'close_time',
+        'vendor_id',
+        'commission_percentage',
     ];
 
     protected function casts(): array
     {
         return [
-            'day_of_week' => 'integer',
+            'commission_percentage' => 'decimal:2',
         ];
     }
 
     public function store(): BelongsTo
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Vendor::class);
     }
 }

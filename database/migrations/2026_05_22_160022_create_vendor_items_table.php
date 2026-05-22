@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('store_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->foreignId('master_product_id')->constrained()->cascadeOnDelete();
             $table->decimal('price', 10, 2);
             $table->boolean('is_available')->default(true);
 
-            $table->unique(['store_id', 'master_product_id']);
+            $table->unique(['vendor_id', 'master_product_id']);
         });
     }
 

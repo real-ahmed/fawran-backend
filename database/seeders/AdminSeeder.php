@@ -18,13 +18,15 @@ class AdminSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
+        setPermissionsTeamId(0);
+
         // Seed all permissions from Enum
         foreach (AdminPermission::values() as $permission) {
             Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'api_admin']);
         }
 
-        // Create Super Admin Role (permissions are granted implicitly via Gate::before in AppServiceProvider)
-        $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'api_admin']);
+        // Create Super Admin Role
+        $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'api_admin', 'vendor_id' => 0]);
 
         // Create Default Admin and Assign Role
         $admin = \App\Models\Admin::firstOrCreate(
@@ -35,6 +37,7 @@ class AdminSeeder extends Seeder
             ]
         );
 
+        setPermissionsTeamId(0);
         $admin->assignRole($role);
     }
 }
