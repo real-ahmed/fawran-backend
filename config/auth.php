@@ -16,7 +16,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
+        'guard' => env('AUTH_GUARD', 'api'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -42,6 +42,16 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        
+        'api' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
+        ],
+
+        'api_admin' => [
+            'driver' => 'jwt',
+            'provider' => 'admins',
+        ],
     ],
 
     /*
@@ -65,6 +75,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
+        ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
         ],
 
         // 'users' => [

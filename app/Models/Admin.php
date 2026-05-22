@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Models\Payment\PayoutExecution;
 use App\Models\Payment\SettlementExecution;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-class Admin extends Model
+class Admin extends Authenticatable implements JWTSubject
 {
     public $timestamps = false;
 
@@ -43,5 +44,15 @@ class Admin extends Model
     public function payoutExecutions(): HasMany
     {
         return $this->hasMany(PayoutExecution::class);
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
