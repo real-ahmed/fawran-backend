@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Models\Store;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class StoreWorkingHour extends Model
+{
+    public $timestamps = false;
+
+    protected $fillable = [
+        'store_id',
+        'day_of_week',
+        'open_time',
+        'close_time',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'day_of_week' => 'integer',
+        ];
+    }
+
+    public function store(): BelongsTo
+    {
+        return $this->belongsTo(Store::class);
+    }
+}

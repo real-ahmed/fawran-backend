@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Models\Inventory;
+
+use App\Models\Product\StoreItem;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class PurchaseItem extends Model
+{
+    public $timestamps = false;
+
+    protected $fillable = [
+        'purchase_order_id',
+        'store_item_id',
+        'quantity',
+        'cost_price',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'quantity' => 'decimal:3',
+            'cost_price' => 'decimal:2',
+            'created_at' => 'datetime',
+        ];
+    }
+
+    public function purchaseOrder(): BelongsTo
+    {
+        return $this->belongsTo(PurchaseOrder::class);
+    }
+
+    public function storeItem(): BelongsTo
+    {
+        return $this->belongsTo(StoreItem::class);
+    }
+}

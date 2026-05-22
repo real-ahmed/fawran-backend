@@ -2,31 +2,91 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
+use App\Models\Address\UserAddress;
+use App\Models\Auth\LocalAccount;
+use App\Models\Auth\SocialAccount;
+use App\Models\Courier\Courier;
+use App\Models\Media\Favorite;
+use App\Models\Media\Rating;
+use App\Models\Media\SavedItem;
+use App\Models\Payment\PayoutRequest;
+use App\Models\Payment\Wallet;
+use App\Models\Store\StoreStaff;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'is_active',
+    ];
+
+    protected $attributes = [
+        'is_active' => true,
+    ];
+
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    public function localAccount(): HasOne
+    {
+        return $this->hasOne(LocalAccount::class);
+    }
+
+    public function socialAccounts(): HasMany
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
+
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(UserAddress::class);
+    }
+
+    public function courier(): HasOne
+    {
+        return $this->hasOne(Courier::class);
+    }
+
+    public function storeStaff(): HasMany
+    {
+        return $this->hasMany(StoreStaff::class);
+    }
+
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    public function savedItems(): HasMany
+    {
+        return $this->hasMany(SavedItem::class);
+    }
+
+    public function payoutRequests(): HasMany
+    {
+        return $this->hasMany(PayoutRequest::class);
     }
 }
