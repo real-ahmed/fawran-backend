@@ -46,4 +46,14 @@ Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
             Route::put('/{vendor}', 'update')->middleware('can:' . AdminPermission::UPDATE_VENDORS->value);
             Route::delete('/{vendor}', 'destroy')->middleware('can:' . AdminPermission::DELETE_VENDORS->value);
         });
+    // Admins Management
+    Route::controller(\App\Http\Controllers\Api\V1\Admin\AdminUserController::class)
+        ->prefix('admins')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:' . AdminPermission::VIEW_ADMINS->value);
+            Route::post('/', 'store')->middleware('can:' . AdminPermission::CREATE_ADMINS->value);
+            Route::get('/{adminUser}', 'show')->middleware('can:' . AdminPermission::VIEW_ADMINS->value);
+            Route::put('/{adminUser}', 'update')->middleware('can:' . AdminPermission::UPDATE_ADMINS->value);
+            Route::delete('/{adminUser}', 'destroy')->middleware('can:' . AdminPermission::DELETE_ADMINS->value);
+        });
 });

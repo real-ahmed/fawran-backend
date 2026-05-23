@@ -9,6 +9,8 @@ use App\Http\Requests\V1\Admin\Vendor\UpdateVendorRequest;
 use App\Http\Resources\V1\VendorResource;
 use Illuminate\Http\Request;
 
+use App\Services\Admin\VendorService;
+
 /**
  * @group Admin - Vendors Management
  *
@@ -16,6 +18,10 @@ use Illuminate\Http\Request;
  */
 class VendorController extends Controller
 {
+    public function __construct(protected VendorService $vendorService)
+    {
+    }
+
     /**
      * List Vendors
      *
@@ -26,19 +32,7 @@ class VendorController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Vendor::query();
-
-        if ($request->has('type')) {
-            $query->where('type', $request->query('type'));
-        }
-
-        if ($request->has('is_active')) {
-            $query->where('is_active', $request->query('is_active'));
-        }
-
-        $vendors = $query->latest()->paginate($request->query('per_page', 15));
-
-        return VendorResource::collection($vendors);
+        return VendorResource::collection($this->vendorService->listVendors($request));
     }
 
     /**
@@ -48,7 +42,7 @@ class VendorController extends Controller
      */
     public function store(StoreVendorRequest $request)
     {
-        $vendor = Vendor::create($request->validated());
+        $vendor = $this->vendorService->createVendor($request->validated());
 
         return $this->successResponse(
             new VendorResource($vendor),
@@ -74,7 +68,7 @@ class VendorController extends Controller
      */
     public function update(UpdateVendorRequest $request, Vendor $vendor)
     {
-        $vendor->update($request->validated());
+        $vendor = $this->vendorService->updateVendor($vendor, $request->validated());
 
         return $this->successResponse(
             new VendorResource($vendor),
@@ -89,7 +83,7 @@ class VendorController extends Controller
      */
     public function destroy(Vendor $vendor)
     {
-        $vendor->delete();
+        $this->vendorService->deleteVendor($vendor);
 
         return $this->successResponse(null, __('messages.deleted_successfully'));
     }
