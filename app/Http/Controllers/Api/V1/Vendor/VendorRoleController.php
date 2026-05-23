@@ -11,6 +11,11 @@ use App\Services\Auth\VendorRoleService;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 
+/**
+ * @group Vendor - Roles & Permissions
+ *
+ * APIs for managing store-level roles and permissions for vendor staff.
+ */
 class VendorRoleController extends Controller
 {
     protected VendorRoleService $vendorRoleService;
@@ -35,7 +40,7 @@ class VendorRoleController extends Controller
 
         return VendorRoleResource::collection($roles)->additional([
             'success' => true,
-            'message' => 'Vendor roles retrieved successfully',
+            'message' => __('messages.vendor_roles_retrieved_successfully'),
         ]);
     }
 
@@ -44,7 +49,7 @@ class VendorRoleController extends Controller
         $vendorId = $this->getVendorId($request);
         $role = $this->vendorRoleService->createRole($vendorId, $request->validated());
 
-        return $this->successResponse(new VendorRoleResource($role), 'Vendor role created successfully', 201);
+        return $this->successResponse(new VendorRoleResource($role), __('messages.vendor_role_created_successfully'), 201);
     }
 
     public function show(Request $request, $id)
@@ -52,7 +57,7 @@ class VendorRoleController extends Controller
         $vendorId = $this->getVendorId($request);
         $role = $this->vendorRoleService->getRoleById($vendorId, $id);
 
-        return $this->successResponse(new VendorRoleResource($role), 'Vendor role retrieved successfully');
+        return $this->successResponse(new VendorRoleResource($role), __('messages.vendor_role_retrieved_successfully'));
     }
 
     public function update(UpdateVendorRoleRequest $request, Role $role)
@@ -60,7 +65,7 @@ class VendorRoleController extends Controller
         $vendorId = $this->getVendorId($request);
         $updatedRole = $this->vendorRoleService->updateRole($vendorId, $role, $request->validated());
 
-        return $this->successResponse(new VendorRoleResource($updatedRole), 'Vendor role updated successfully');
+        return $this->successResponse(new VendorRoleResource($updatedRole), __('messages.vendor_role_updated_successfully'));
     }
 
     public function destroy(Request $request, Role $role)
@@ -68,13 +73,13 @@ class VendorRoleController extends Controller
         $vendorId = $this->getVendorId($request);
         $this->vendorRoleService->deleteRole($vendorId, $role);
 
-        return $this->successResponse(null, 'Vendor role deleted successfully');
+        return $this->successResponse(null, __('messages.vendor_role_deleted_successfully'));
     }
 
     public function permissions()
     {
         $permissions = $this->vendorRoleService->getAllPermissions();
 
-        return $this->successResponse($permissions, 'Vendor permissions retrieved successfully');
+        return $this->successResponse($permissions, __('messages.vendor_permissions_retrieved_successfully'));
     }
 }

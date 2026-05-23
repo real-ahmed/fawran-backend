@@ -6,6 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @group Admin - Authentication
+ *
+ * APIs for Super Admin authentication.
+ */
 class AdminAuthController extends Controller
 {
     public function login(Request $request)

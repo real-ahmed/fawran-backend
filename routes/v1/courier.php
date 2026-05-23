@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\UserAuthController;
 
-Route::post('courier/login', [UserAuthController::class, 'login']);
+Route::post('courier/login', [UserAuthController::class, 'login'])->middleware('throttle:auth');
 
 Route::middleware('auth:api')->prefix('courier')->group(function () {
     Route::post('logout', [UserAuthController::class, 'logout']);

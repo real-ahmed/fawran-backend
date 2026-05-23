@@ -12,6 +12,7 @@ use App\Models\Media\SavedItem;
 use App\Models\Payment\PayoutRequest;
 use App\Models\Payment\Wallet;
 use App\Models\Vendor\VendorStaff;
+use App\Traits\HasSettings;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -22,7 +23,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, HasSettings;
 
     protected $fillable = [
         'name',

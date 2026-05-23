@@ -4,12 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Admin\AdminAuthController;
 use App\Enums\AdminPermission;
 
-Route::post('admin/login', [AdminAuthController::class, 'login']);
+Route::post('admin/login', [AdminAuthController::class, 'login'])->middleware('throttle:auth');
 
 Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
     Route::post('logout', [AdminAuthController::class, 'logout']);
     Route::post('refresh', [AdminAuthController::class, 'refresh']);
     Route::get('me', [AdminAuthController::class, 'me']);
+    Route::put('profile/settings', [\App\Http\Controllers\Api\V1\SettingsController::class, 'update']);
 
     Route::get('test', function () {
         return response()->json(['message' => 'Admin API works!']);

@@ -23,7 +23,7 @@ class UpdateVendorRoleRequest extends FormRequest
     public function rules(): array
     {
         $vendorId = $this->header('X-Store-ID') ?? $this->query('vendor_id');
-        $roleId = $this->route('role')->id;
+        $roleId = $this->route('role')?->id ?? null;
         
         return [
             'name' => [

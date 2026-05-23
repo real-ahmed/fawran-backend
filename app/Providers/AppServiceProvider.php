@@ -24,5 +24,17 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
             return $user->hasRole('Super Admin') ? true : null;
         });
+
+        // Global API rate limiting
+        \Illuminate\Support\Facades\RateLimiter::for('api', function (\Illuminate\Http\Request $request) {
+            $limit = config('api.rate_limits.api', 100);
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute($limit)->by($request->user()?->id ?: $request->ip());
+        });
+
+        // Strict rate limiting for Authentication endpoints
+        \Illuminate\Support\Facades\RateLimiter::for('auth', function (\Illuminate\Http\Request $request) {
+            $limit = config('api.rate_limits.auth', 5);
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute($limit)->by($request->ip());
+        });
     }
 }

@@ -11,6 +11,11 @@ use App\Models\Geo\DeliveryZone;
 use App\Services\Geo\DeliveryZoneService;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @group Admin - Delivery Zones
+ *
+ * APIs for managing global delivery zones and their associated geographic data.
+ */
 class DeliveryZoneController extends Controller
 {
     protected DeliveryZoneService $deliveryZoneService;
@@ -26,7 +31,7 @@ class DeliveryZoneController extends Controller
         
         return DeliveryZoneResource::collection($zones)->additional([
             'success' => true,
-            'message' => 'Delivery zones retrieved successfully',
+            'message' => __('messages.delivery_zones_retrieved_successfully'),
         ]);
     }
 
@@ -34,27 +39,27 @@ class DeliveryZoneController extends Controller
     {
         $zone = $this->deliveryZoneService->createZone($request->validated());
 
-        return $this->successResponse(new DeliveryZoneResource($zone), 'Delivery zone created successfully', 201);
+        return $this->successResponse(new DeliveryZoneResource($zone), __('messages.delivery_zone_created_successfully'), 201);
     }
 
     public function show($id)
     {
         $zone = $this->deliveryZoneService->getZoneById($id);
 
-        return $this->successResponse(new DeliveryZoneResource($zone), 'Delivery zone retrieved successfully');
+        return $this->successResponse(new DeliveryZoneResource($zone), __('messages.delivery_zone_retrieved_successfully'));
     }
 
     public function update(UpdateDeliveryZoneRequest $request, DeliveryZone $deliveryZone)
     {
         $zone = $this->deliveryZoneService->updateZone($deliveryZone, $request->validated());
 
-        return $this->successResponse(new DeliveryZoneResource($zone), 'Delivery zone updated successfully');
+        return $this->successResponse(new DeliveryZoneResource($zone), __('messages.delivery_zone_updated_successfully'));
     }
 
     public function destroy(DeliveryZone $deliveryZone)
     {
         $deliveryZone->delete();
 
-        return $this->successResponse(null, 'Delivery zone deleted successfully');
+        return $this->successResponse(null, __('messages.delivery_zone_deleted_successfully'));
     }
 }

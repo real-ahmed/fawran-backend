@@ -10,6 +10,11 @@ use App\Http\Resources\V1\RoleResource;
 use App\Services\Auth\RoleService;
 use Spatie\Permission\Models\Role;
 
+/**
+ * @group Admin - Roles & Permissions
+ *
+ * APIs for managing administrative roles and system permissions.
+ */
 class RoleController extends Controller
 {
     protected RoleService $roleService;
@@ -25,7 +30,7 @@ class RoleController extends Controller
 
         return RoleResource::collection($roles)->additional([
             'success' => true,
-            'message' => 'Roles retrieved successfully',
+            'message' => __('messages.roles_retrieved_successfully'),
         ]);
     }
 
@@ -33,34 +38,34 @@ class RoleController extends Controller
     {
         $role = $this->roleService->createRole($request->validated());
 
-        return $this->successResponse(new RoleResource($role), 'Role created successfully', 201);
+        return $this->successResponse(new RoleResource($role), __('messages.role_created_successfully'), 201);
     }
 
     public function show($id)
     {
         $role = $this->roleService->getRoleById($id);
 
-        return $this->successResponse(new RoleResource($role), 'Role retrieved successfully');
+        return $this->successResponse(new RoleResource($role), __('messages.role_retrieved_successfully'));
     }
 
     public function update(UpdateRoleRequest $request, Role $role)
     {
         $role = $this->roleService->updateRole($role, $request->validated());
 
-        return $this->successResponse(new RoleResource($role), 'Role updated successfully');
+        return $this->successResponse(new RoleResource($role), __('messages.role_updated_successfully'));
     }
 
     public function destroy(Role $role)
     {
         $this->roleService->deleteRole($role);
 
-        return $this->successResponse(null, 'Role deleted successfully');
+        return $this->successResponse(null, __('messages.role_deleted_successfully'));
     }
 
     public function permissions()
     {
         $permissions = $this->roleService->getAllPermissions();
 
-        return $this->successResponse($permissions, 'Permissions retrieved successfully');
+        return $this->successResponse($permissions, __('messages.permissions_retrieved_successfully'));
     }
 }

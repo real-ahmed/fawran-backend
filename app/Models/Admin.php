@@ -8,12 +8,15 @@ use App\Models\Payment\PayoutExecution;
 use App\Models\Payment\SettlementExecution;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\HasSettings;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Admin extends Authenticatable implements JWTSubject
 {
-    use HasRoles;
+    use HasRoles, HasSettings, HasFactory;
 
     public $timestamps = false;
     

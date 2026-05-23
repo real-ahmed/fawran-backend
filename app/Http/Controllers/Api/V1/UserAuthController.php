@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * @group Shared - Customer / Vendor / Courier Authentication
+ *
+ * APIs for authenticating standard users (Customers, Vendors, Couriers).
+ */
 class UserAuthController extends Controller
 {
     public function login(Request $request)
