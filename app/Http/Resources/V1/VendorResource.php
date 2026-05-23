@@ -19,6 +19,7 @@ class VendorResource extends JsonResource
             'owner_id' => $this->owner_id,
             'name' => $this->name, // JSON array of translations
             'type' => $this->type?->value, // Enum value
+            'status' => $this->status?->value, // Enum value
             'email' => $this->email,
             'phone' => $this->phone,
             'formatted_address' => $this->formatted_address,

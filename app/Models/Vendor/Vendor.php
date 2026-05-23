@@ -28,10 +28,12 @@ class Vendor extends Model
         'longitude',
         'formatted_address',
         'is_active',
+        'status',
     ];
 
     protected $attributes = [
         'is_active' => true,
+        'status' => \App\Enums\VendorStatus::OFFLINE->value,
     ];
 
     protected function casts(): array
@@ -39,6 +41,7 @@ class Vendor extends Model
         return [
             'name' => 'array',
             'type' => VendorType::class,
+            'status' => \App\Enums\VendorStatus::class,
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
             'is_active' => 'boolean',

@@ -36,6 +36,7 @@ class UpdateVendorRequest extends FormRequest
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'is_active' => ['nullable', 'boolean'],
+            'status' => ['nullable', \Illuminate\Validation\Rule::enum(\App\Enums\VendorStatus::class)],
         ];
     }
 }
