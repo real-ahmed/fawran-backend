@@ -16,24 +16,22 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Vendor extends Model
 {
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
+        'owner_id',
         'name',
         'type',
+        'email',
+        'phone',
         'latitude',
         'longitude',
-        'average_rating',
-        'total_reviews',
+        'formatted_address',
         'is_active',
-        'is_open',
     ];
 
     protected $attributes = [
-        'average_rating' => 0.00,
-        'total_reviews' => 0,
         'is_active' => true,
-        'is_open' => false,
     ];
 
     protected function casts(): array
@@ -43,9 +41,7 @@ class Vendor extends Model
             'type' => VendorType::class,
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
-            'average_rating' => 'decimal:2',
             'is_active' => 'boolean',
-            'is_open' => 'boolean',
             'created_at' => 'datetime',
         ];
     }

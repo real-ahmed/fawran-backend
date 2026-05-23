@@ -12,9 +12,6 @@ Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
     Route::get('me', [AdminAuthController::class, 'me']);
     Route::put('profile/settings', [\App\Http\Controllers\Api\V1\SettingsController::class, 'update']);
 
-    Route::get('test', function () {
-        return response()->json(['message' => 'Admin API works!']);
-    });
 
     // Delivery Zones
     Route::controller(\App\Http\Controllers\Api\V1\Admin\DeliveryZoneController::class)
@@ -37,5 +34,16 @@ Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
             Route::get('/{role}', 'show')->middleware('can:' . AdminPermission::VIEW_ROLES->value);
             Route::put('/{role}', 'update')->middleware('can:' . AdminPermission::UPDATE_ROLES->value);
             Route::delete('/{role}', 'destroy')->middleware('can:' . AdminPermission::DELETE_ROLES->value);
+        });
+
+    // Vendors Management
+    Route::controller(\App\Http\Controllers\Api\V1\Admin\VendorController::class)
+        ->prefix('vendors')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:' . AdminPermission::VIEW_VENDORS->value);
+            Route::post('/', 'store')->middleware('can:' . AdminPermission::CREATE_VENDORS->value);
+            Route::get('/{vendor}', 'show')->middleware('can:' . AdminPermission::VIEW_VENDORS->value);
+            Route::put('/{vendor}', 'update')->middleware('can:' . AdminPermission::UPDATE_VENDORS->value);
+            Route::delete('/{vendor}', 'destroy')->middleware('can:' . AdminPermission::DELETE_VENDORS->value);
         });
 });

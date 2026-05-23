@@ -17,7 +17,7 @@ class SetVendorTeamId
     {
         // Get the store ID from a header (e.g., X-Store-ID) or query parameter.
         // In a real application, you might validate that the user actually belongs to this store.
-        $vendorId = $request->header('X-Store-ID') ?? $request->query('vendor_id');
+        $vendorId = $request->header('X-VENDOR-ID') ?? $request->query('vendor_id');
 
         if ($vendorId) {
             setPermissionsTeamId($vendorId);

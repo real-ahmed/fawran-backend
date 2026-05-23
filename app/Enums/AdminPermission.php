@@ -14,6 +14,11 @@ enum AdminPermission: string
     case UPDATE_ROLES = 'update roles';
     case DELETE_ROLES = 'delete roles';
 
+    case VIEW_VENDORS = 'view vendors';
+    case CREATE_VENDORS = 'create vendors';
+    case UPDATE_VENDORS = 'update vendors';
+    case DELETE_VENDORS = 'delete vendors';
+
     /**
      * Get all permission values.
      */
