@@ -29,7 +29,7 @@ class VendorStaff extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function store(): BelongsTo
+    public function vendor(): BelongsTo
     {
         return $this->belongsTo(Vendor::class);
     }

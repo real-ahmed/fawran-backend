@@ -47,7 +47,14 @@ class UserAuthController extends Controller
 
     public function me()
     {
-        return $this->successResponse(Auth::guard('api')->user(), 'Profile retrieved successfully');
+        $user = Auth::guard('api')->user();
+        $user->load(['vendorStaff.vendor', 'addresses']);
+        
+        // Let's also attach owned vendors if they are an owner
+        $ownedVendors = \App\Models\Vendor\Vendor::where('owner_id', $user->id)->get();
+        $user->setAttribute('owned_vendors', $ownedVendors);
+
+        return $this->successResponse($user, 'Profile retrieved successfully');
     }
 
     public function logout()
@@ -64,10 +71,18 @@ class UserAuthController extends Controller
 
     protected function respondWithToken($token)
     {
+        $user = Auth::guard('api')->user();
+        if ($user) {
+            $user->load(['vendorStaff.vendor', 'addresses']);
+            $ownedVendors = \App\Models\Vendor\Vendor::where('owner_id', $user->id)->get();
+            $user->setAttribute('owned_vendors', $ownedVendors);
+        }
+
         return $this->successResponse([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60
+            'expires_in' => config('jwt.ttl') * 60,
+            'user' => $user
         ], 'Token generated successfully');
     }
 }

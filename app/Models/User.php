@@ -63,7 +63,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Courier::class);
     }
 
-    public function storeStaff(): HasMany
+    public function vendorStaff(): HasMany
     {
         return $this->hasMany(VendorStaff::class);
     }
