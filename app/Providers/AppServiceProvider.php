@@ -11,7 +11,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            \App\Services\Sms\SmsGatewayContract::class,
+            function ($app) {
+                // Return LogSmsGateway in local/testing, else use real provider
+                if ($app->environment('local', 'testing')) {
+                    return new \App\Services\Sms\LogSmsGateway();
+                }
+                
+                return new \App\Services\Sms\SmsMisrGateway();
+            }
+        );
     }
 
     /**

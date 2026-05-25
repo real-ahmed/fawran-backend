@@ -102,4 +102,21 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    /**
+     * Route notifications for the FCM channel.
+     */
+    public function routeNotificationForFcm($notification): ?string
+    {
+        // Assuming there will be a user_devices table or an fcm_token column in the future
+        return $this->fcm_token ?? null;
+    }
+
+    /**
+     * Route notifications for the SMS channel.
+     */
+    public function routeNotificationForSms($notification): ?string
+    {
+        return $this->phone;
+    }
 }
