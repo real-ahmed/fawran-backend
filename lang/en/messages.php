@@ -20,4 +20,10 @@ return [
     'vendor_role_updated_successfully' => 'Vendor role updated successfully',
     'vendor_role_deleted_successfully' => 'Vendor role deleted successfully',
     'vendor_permissions_retrieved_successfully' => 'Vendor permissions retrieved successfully',
+    
+    // Catalog Approvals
+    'Brand' => 'Brand',
+    'Category' => 'Category',
+    'catalog_item_approved_title' => ':type Approved',
+    'catalog_item_approved_body' => 'Your proposed :type \':name\' has been approved.',
 ];

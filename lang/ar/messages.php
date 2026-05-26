@@ -20,4 +20,10 @@ return [
     'vendor_role_updated_successfully' => 'تم تحديث دور المتجر بنجاح',
     'vendor_role_deleted_successfully' => 'تم حذف دور المتجر بنجاح',
     'vendor_permissions_retrieved_successfully' => 'تم استرجاع صلاحيات المتجر بنجاح',
+    
+    // Catalog Approvals
+    'Brand' => 'العلامة التجارية',
+    'Category' => 'الفئة',
+    'catalog_item_approved_title' => 'تمت الموافقة على :type',
+    'catalog_item_approved_body' => 'تمت الموافقة على :type \':name\' المقترحة.',
 ];

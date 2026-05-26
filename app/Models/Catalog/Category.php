@@ -54,4 +54,9 @@ class Category extends Model
     {
         return $this->hasMany(MasterProduct::class);
     }
+
+    public function vendorSubmission(): HasOne
+    {
+        return $this->hasOne(VendorCategorySubmission::class, 'category_id');
+    }
 }

@@ -98,4 +98,14 @@ class Vendor extends Model
     {
         return $this->morphMany(Media::class, 'model');
     }
+
+    public function categorySubmissions(): HasMany
+    {
+        return $this->hasMany(\App\Models\Catalog\VendorCategorySubmission::class);
+    }
+
+    public function brandSubmissions(): HasMany
+    {
+        return $this->hasMany(\App\Models\Catalog\VendorBrandSubmission::class);
+    }
 }

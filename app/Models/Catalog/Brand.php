@@ -31,4 +31,9 @@ class Brand extends Model
     {
         return $this->hasMany(RetailProductDetail::class);
     }
+
+    public function vendorSubmission(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(VendorBrandSubmission::class, 'brand_id');
+    }
 }

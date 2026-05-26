@@ -28,11 +28,13 @@ enum AdminPermission: string
     case CREATE_CATEGORIES = 'create categories';
     case UPDATE_CATEGORIES = 'update categories';
     case DELETE_CATEGORIES = 'delete categories';
+    case APPROVE_CATEGORIES = 'approve categories';
 
     case VIEW_BRANDS = 'view brands';
     case CREATE_BRANDS = 'create brands';
     case UPDATE_BRANDS = 'update brands';
     case DELETE_BRANDS = 'delete brands';
+    case APPROVE_BRANDS = 'approve brands';
 
     /**
      * Get all permission values.

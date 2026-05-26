@@ -87,4 +87,55 @@ class CategoryService
             $category->delete();
         });
     }
+
+    public function proposeCategory(array $data, \App\Models\Vendor\Vendor $vendor): Category
+    {
+        return DB::transaction(function () use ($data, $vendor) {
+            $category = Category::create([
+                'name' => $data['name'],
+                'is_active' => false, // Force inactive
+            ]);
+
+            if (isset($data['parent_category_id'])) {
+                $category->hierarchy()->create([
+                    'parent_category_id' => $data['parent_category_id'],
+                ]);
+            }
+
+            if (!empty($data['icon_class'])) {
+                $category->icon()->create([
+                    'icon_class' => $data['icon_class'],
+                ]);
+            }
+
+            $category->vendorSubmission()->create([
+                'vendor_id' => $vendor->id,
+                'status' => 'pending',
+            ]);
+
+            return $category->load(['hierarchy', 'icon']);
+        });
+    }
+
+    public function approveCategory(Category $category): void
+    {
+        $category->update(['is_active' => true]);
+
+        if ($submission = $category->vendorSubmission) {
+            $vendor = $submission->vendor;
+            if ($vendor && $vendor->owner) {
+                // Determine name string based on locales, defaulting to 'en'
+                $categoryName = is_array($category->name) ? ($category->name['en'] ?? current($category->name)) : 'Unknown';
+                $vendor->owner->notify(new \App\Notifications\CatalogItemApproved('Category', $categoryName));
+            }
+            $submission->delete();
+        }
+    }
+
+    public function rejectCategory(Category $category): void
+    {
+        if ($submission = $category->vendorSubmission) {
+            $submission->update(['status' => 'rejected']);
+        }
+    }
 }

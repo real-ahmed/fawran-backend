@@ -35,4 +35,39 @@ class BrandService
     {
         $brand->delete();
     }
+
+    public function proposeBrand(array $data, \App\Models\Vendor\Vendor $vendor): Brand
+    {
+        $data['is_active'] = false; // Force inactive until approved
+        $brand = Brand::create($data);
+
+        $brand->vendorSubmission()->create([
+            'vendor_id' => $vendor->id,
+            'status' => 'pending',
+        ]);
+
+        return $brand;
+    }
+
+    public function approveBrand(Brand $brand): void
+    {
+        $brand->update(['is_active' => true]);
+
+        if ($submission = $brand->vendorSubmission) {
+            $vendor = $submission->vendor;
+            if ($vendor && $vendor->owner) {
+                // Determine name string based on locales, defaulting to 'en'
+                $brandName = is_array($brand->name) ? ($brand->name['en'] ?? current($brand->name)) : 'Unknown';
+                $vendor->owner->notify(new \App\Notifications\CatalogItemApproved('Brand', $brandName));
+            }
+            $submission->delete();
+        }
+    }
+
+    public function rejectBrand(Brand $brand): void
+    {
+        if ($submission = $brand->vendorSubmission) {
+            $submission->update(['status' => 'rejected']);
+        }
+    }
 }

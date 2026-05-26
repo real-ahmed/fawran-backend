@@ -21,6 +21,12 @@ enum VendorPermission: string
     case MANAGE_STAFF = 'manage store staff';
     case MANAGE_ROLES = 'manage store roles';
 
+    // Catalog
+    case VIEW_CATEGORIES = 'view store categories';
+    case PROPOSE_CATEGORIES = 'propose store categories';
+    case VIEW_BRANDS = 'view store brands';
+    case PROPOSE_BRANDS = 'propose store brands';
+
     /**
      * Get all permission values.
      */
