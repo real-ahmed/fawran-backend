@@ -1,19 +1,19 @@
-name: 'Shared - Profile Settings'
+name: 'Admin - Authentication'
 description: |-
 
-  APIs for managing cross-platform user settings (Admin, Customer, Vendor, Courier).
+  APIs for Super Admin authentication.
 endpoints:
   -
     custom: []
     httpMethods:
-      - PUT
-    uri: api/v1/admin/profile/settings
+      - POST
+    uri: api/v1/admin/login
     metadata:
       custom: []
-      groupName: 'Shared - Profile Settings'
+      groupName: 'Admin - Authentication'
       groupDescription: |-
 
-        APIs for managing cross-platform user settings (Admin, Customer, Vendor, Courier).
+        APIs for Super Admin authentication.
       subgroup: ''
       subgroupDescription: ''
       title: ''
@@ -29,45 +29,31 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      settings:
+      email:
         custom: []
-        name: settings
-        description: ''
+        name: email
+        description: 'Must be a valid email address.'
         required: true
-        example:
-          - []
-        type: 'object[]'
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      'settings[].key':
-        custom: []
-        name: 'settings[].key'
-        description: ''
-        required: true
-        example: architecto
+        example: gbailey@example.net
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      'settings[].value':
+      password:
         custom: []
-        name: 'settings[].value'
+        name: password
         description: ''
-        required: false
-        example: architecto
+        required: true
+        example: '|]|{+-'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
-      settings:
-        -
-          key: architecto
-          value: architecto
+      email: gbailey@example.net
+      password: '|]|{+-'
     fileParameters: []
     responses: []
     responseFields: []
@@ -81,14 +67,14 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - PUT
-    uri: api/v1/customer/profile/settings
+      - POST
+    uri: api/v1/admin/forgot-password
     metadata:
       custom: []
-      groupName: 'Shared - Profile Settings'
+      groupName: 'Admin - Authentication'
       groupDescription: |-
 
-        APIs for managing cross-platform user settings (Admin, Customer, Vendor, Courier).
+        APIs for Super Admin authentication.
       subgroup: ''
       subgroupDescription: ''
       title: ''
@@ -104,45 +90,19 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      settings:
+      email:
         custom: []
-        name: settings
-        description: ''
+        name: email
+        description: 'Must be a valid email address.'
         required: true
-        example:
-          - []
-        type: 'object[]'
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      'settings[].key':
-        custom: []
-        name: 'settings[].key'
-        description: ''
-        required: true
-        example: architecto
+        example: gbailey@example.net
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
-        deprecated: false
-      'settings[].value':
-        custom: []
-        name: 'settings[].value'
-        description: ''
-        required: false
-        example: architecto
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
         deprecated: false
     cleanBodyParameters:
-      settings:
-        -
-          key: architecto
-          value: architecto
+      email: gbailey@example.net
     fileParameters: []
     responses: []
     responseFields: []
@@ -156,14 +116,14 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - PUT
-    uri: api/v1/vendor/profile/settings
+      - POST
+    uri: api/v1/admin/verify-reset-otp
     metadata:
       custom: []
-      groupName: 'Shared - Profile Settings'
+      groupName: 'Admin - Authentication'
       groupDescription: |-
 
-        APIs for managing cross-platform user settings (Admin, Customer, Vendor, Courier).
+        APIs for Super Admin authentication.
       subgroup: ''
       subgroupDescription: ''
       title: ''
@@ -179,21 +139,20 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      settings:
+      email:
         custom: []
-        name: settings
-        description: ''
+        name: email
+        description: 'Must be a valid email address.'
         required: true
-        example:
-          - []
-        type: 'object[]'
+        example: gbailey@example.net
+        type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      'settings[].key':
+      otp:
         custom: []
-        name: 'settings[].key'
+        name: otp
         description: ''
         required: true
         example: architecto
@@ -201,25 +160,205 @@ endpoints:
         enumValues: []
         exampleWasSpecified: false
         nullable: false
-        deprecated: false
-      'settings[].value':
-        custom: []
-        name: 'settings[].value'
-        description: ''
-        required: false
-        example: architecto
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
         deprecated: false
     cleanBodyParameters:
-      settings:
-        -
-          key: architecto
-          value: architecto
+      email: gbailey@example.net
+      otp: architecto
     fileParameters: []
     responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/reset-password
+    metadata:
+      custom: []
+      groupName: 'Admin - Authentication'
+      groupDescription: |-
+
+        APIs for Super Admin authentication.
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      email:
+        custom: []
+        name: email
+        description: 'Must be a valid email address.'
+        required: true
+        example: gbailey@example.net
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      otp:
+        custom: []
+        name: otp
+        description: ''
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: 'Must be at least 8 characters.'
+        required: true
+        example: ']|{+-0pBNvYg'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      email: gbailey@example.net
+      otp: architecto
+      password: ']|{+-0pBNvYg'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/logout
+    metadata:
+      custom: []
+      groupName: 'Admin - Authentication'
+      groupDescription: |-
+
+        APIs for Super Admin authentication.
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/refresh
+    metadata:
+      custom: []
+      groupName: 'Admin - Authentication'
+      groupDescription: |-
+
+        APIs for Super Admin authentication.
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/admin/me
+    metadata:
+      custom: []
+      groupName: 'Admin - Authentication'
+      groupDescription: |-
+
+        APIs for Super Admin authentication.
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
     responseFields: []
     auth:
       - headers

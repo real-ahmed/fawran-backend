@@ -1,23 +1,23 @@
-name: 'Admin - Categories'
+name: 'Admin - Vendors Management'
 description: |-
 
-  APIs for managing the catalog category tree, including hierarchy and icons.
+  APIs for managing store vendors (Restaurants, Pharmacies, Groceries).
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: api/v1/admin/categories
+    uri: api/v1/admin/vendors
     metadata:
       custom: []
-      groupName: 'Admin - Categories'
+      groupName: 'Admin - Vendors Management'
       groupDescription: |-
 
-        APIs for managing the catalog category tree, including hierarchy and icons.
+        APIs for managing store vendors (Restaurants, Pharmacies, Groceries).
       subgroup: ''
       subgroupDescription: ''
-      title: 'List Categories'
-      description: 'Get a paginated list of all categories with their hierarchy and icon details.'
+      title: 'List Vendors'
+      description: 'Get a paginated list of all vendors with optional filters.'
       authenticated: true
       deprecated: false
     headers:
@@ -26,8 +26,32 @@ endpoints:
       Accept: application/json
     urlParameters: []
     cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
+    queryParameters:
+      type:
+        custom: []
+        name: type
+        description: 'Filter by vendor type (restaurant, grocery, pharmacy).'
+        required: false
+        example: restaurant
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      is_active:
+        custom: []
+        name: is_active
+        description: 'Filter by active status (1 or 0).'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      type: restaurant
+      is_active: true
     bodyParameters:
       search:
         custom: []
@@ -40,23 +64,20 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      approval_status:
+      is_active:
         custom: []
-        name: approval_status
+        name: is_active
         description: ''
         required: false
-        example: approved
-        type: string
-        enumValues:
-          - pending
-          - approved
-          - rejected
+        example: true
+        type: boolean
+        enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
       search: b
-      approval_status: approved
+      is_active: true
     fileParameters: []
     responses:
       -
@@ -80,17 +101,17 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/v1/admin/categories
+    uri: api/v1/admin/vendors
     metadata:
       custom: []
-      groupName: 'Admin - Categories'
+      groupName: 'Admin - Vendors Management'
       groupDescription: |-
 
-        APIs for managing the catalog category tree, including hierarchy and icons.
+        APIs for managing store vendors (Restaurants, Pharmacies, Groceries).
       subgroup: ''
       subgroupDescription: ''
-      title: 'Create Category'
-      description: 'Store a newly created category, including its parent relation and icon.'
+      title: 'Create Vendor'
+      description: 'Create a new vendor in the system.'
       authenticated: true
       deprecated: false
     headers:
@@ -102,14 +123,115 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
+      owner_id:
+        custom: []
+        name: owner_id
+        description: 'The <code>id</code> of an existing record in the users table.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       name:
         custom: []
         name: name
+        description: ''
+        required: true
+        example: []
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      name.en:
+        custom: []
+        name: name.en
         description: 'Must not be greater than 255 characters.'
         required: true
-        example:
-          - b
-        type: 'string[]'
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      name.ar:
+        custom: []
+        name: name.ar
+        description: 'Must not be greater than 255 characters.'
+        required: true
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Must be a valid email address.'
+        required: true
+        example: ashly64@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      phone:
+        custom: []
+        name: phone
+        description: 'Must not be greater than 20 characters.'
+        required: true
+        example: vdljnikhwaykcmyu
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      formatted_address:
+        custom: []
+        name: formatted_address
+        description: 'Must not be greater than 1000 characters.'
+        required: true
+        example: w
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      type:
+        custom: []
+        name: type
+        description: ''
+        required: true
+        example: restaurant
+        type: string
+        enumValues:
+          - restaurant
+          - grocery
+          - pharmacy
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      latitude:
+        custom: []
+        name: latitude
+        description: 'Must be between -90 and 90.'
+        required: true
+        example: -89
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      longitude:
+        custom: []
+        name: longitude
+        description: 'Must be between -180 and 180.'
+        required: true
+        example: -180
+        type: number
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -119,40 +241,39 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      parent_category_id:
-        custom: []
-        name: parent_category_id
-        description: 'The <code>id</code> of an existing record in the categories table.'
-        required: false
-        example: 16
-        type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: true
         deprecated: false
-      icon_class:
+      status:
         custom: []
-        name: icon_class
-        description: 'Must not be greater than 255 characters.'
+        name: status
+        description: ''
         required: false
-        example: 'n'
+        example: busy
         type: string
-        enumValues: []
+        enumValues:
+          - online
+          - busy
+          - offline
         exampleWasSpecified: false
         nullable: true
         deprecated: false
     cleanBodyParameters:
+      owner_id: architecto
       name:
-        - b
-      is_active: false
-      parent_category_id: 16
-      icon_class: 'n'
+        en: b
+        ar: 'n'
+      email: ashly64@example.com
+      phone: vdljnikhwaykcmyu
+      formatted_address: w
+      type: restaurant
+      latitude: -89
+      longitude: -180
+      is_active: true
+      status: busy
     fileParameters: []
     responses: []
     responseFields: []
@@ -167,17 +288,17 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: 'api/v1/admin/categories/{category_id}'
+    uri: 'api/v1/admin/vendors/{vendor_id}'
     metadata:
       custom: []
-      groupName: 'Admin - Categories'
+      groupName: 'Admin - Vendors Management'
       groupDescription: |-
 
-        APIs for managing the catalog category tree, including hierarchy and icons.
+        APIs for managing store vendors (Restaurants, Pharmacies, Groceries).
       subgroup: ''
       subgroupDescription: ''
-      title: 'Get Category Details'
-      description: 'Retrieve a specific category by ID with its parent ID and icon class.'
+      title: 'Get Vendor'
+      description: 'Retrieve details of a specific vendor.'
       authenticated: true
       deprecated: false
     headers:
@@ -185,10 +306,10 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      category_id:
+      vendor_id:
         custom: []
-        name: category_id
-        description: 'The ID of the category.'
+        name: vendor_id
+        description: 'The ID of the vendor.'
         required: true
         example: 16
         type: integer
@@ -197,7 +318,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      category_id: 16
+      vendor_id: 16
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -225,17 +346,17 @@ endpoints:
     custom: []
     httpMethods:
       - PUT
-    uri: 'api/v1/admin/categories/{category_id}'
+    uri: 'api/v1/admin/vendors/{vendor_id}'
     metadata:
       custom: []
-      groupName: 'Admin - Categories'
+      groupName: 'Admin - Vendors Management'
       groupDescription: |-
 
-        APIs for managing the catalog category tree, including hierarchy and icons.
+        APIs for managing store vendors (Restaurants, Pharmacies, Groceries).
       subgroup: ''
       subgroupDescription: ''
-      title: 'Update Category'
-      description: "Modify a category's details, parent assignment, or icon."
+      title: 'Update Vendor'
+      description: "Update an existing vendor's details or status."
       authenticated: true
       deprecated: false
     headers:
@@ -243,10 +364,10 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      category_id:
+      vendor_id:
         custom: []
-        name: category_id
-        description: 'The ID of the category.'
+        name: vendor_id
+        description: 'The ID of the vendor.'
         required: true
         example: 16
         type: integer
@@ -255,47 +376,46 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      category_id: 16
+      vendor_id: 16
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      name:
+      owner_id:
         custom: []
-        name: name
-        description: 'This field is required when <code>name</code> is present. Must not be greater than 255 characters.'
+        name: owner_id
+        description: 'The <code>id</code> of an existing record in the users table.'
         required: false
-        example:
-          - b
-        type: 'string[]'
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      is_active:
-        custom: []
-        name: is_active
-        description: ''
-        required: false
-        example: false
-        type: boolean
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      parent_category_id:
-        custom: []
-        name: parent_category_id
-        description: 'The <code>id</code> of an existing record in the categories table.'
-        required: false
-        example: 16
-        type: integer
+        example: null
+        type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: true
         deprecated: false
-      icon_class:
+      name:
         custom: []
-        name: icon_class
+        name: name
+        description: ''
+        required: false
+        example: null
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      name.en:
+        custom: []
+        name: name.en
+        description: 'Must not be greater than 255 characters.'
+        required: false
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      name.ar:
+        custom: []
+        name: name.ar
         description: 'Must not be greater than 255 characters.'
         required: false
         example: 'n'
@@ -304,12 +424,112 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Must be a valid email address.'
+        required: false
+        example: ashly64@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      phone:
+        custom: []
+        name: phone
+        description: 'Must not be greater than 20 characters.'
+        required: false
+        example: vdljnikhwaykcmyu
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      formatted_address:
+        custom: []
+        name: formatted_address
+        description: 'Must not be greater than 1000 characters.'
+        required: false
+        example: w
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      type:
+        custom: []
+        name: type
+        description: ''
+        required: false
+        example: grocery
+        type: string
+        enumValues:
+          - restaurant
+          - grocery
+          - pharmacy
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      latitude:
+        custom: []
+        name: latitude
+        description: 'Must be between -90 and 90.'
+        required: false
+        example: -89
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      longitude:
+        custom: []
+        name: longitude
+        description: 'Must be between -180 and 180.'
+        required: false
+        example: -180
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      is_active:
+        custom: []
+        name: is_active
+        description: ''
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      status:
+        custom: []
+        name: status
+        description: ''
+        required: false
+        example: online
+        type: string
+        enumValues:
+          - online
+          - busy
+          - offline
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
     cleanBodyParameters:
       name:
-        - b
-      is_active: false
-      parent_category_id: 16
-      icon_class: 'n'
+        en: b
+        ar: 'n'
+      email: ashly64@example.com
+      phone: vdljnikhwaykcmyu
+      formatted_address: w
+      type: grocery
+      latitude: -89
+      longitude: -180
+      is_active: true
+      status: online
     fileParameters: []
     responses: []
     responseFields: []
@@ -324,17 +544,17 @@ endpoints:
     custom: []
     httpMethods:
       - DELETE
-    uri: 'api/v1/admin/categories/{category_id}'
+    uri: 'api/v1/admin/vendors/{vendor_id}'
     metadata:
       custom: []
-      groupName: 'Admin - Categories'
+      groupName: 'Admin - Vendors Management'
       groupDescription: |-
 
-        APIs for managing the catalog category tree, including hierarchy and icons.
+        APIs for managing store vendors (Restaurants, Pharmacies, Groceries).
       subgroup: ''
       subgroupDescription: ''
-      title: 'Delete Category'
-      description: 'Remove the specified category and its extension relations (hierarchy, icons).'
+      title: 'Delete Vendor'
+      description: 'Remove a vendor from the system.'
       authenticated: true
       deprecated: false
     headers:
@@ -342,10 +562,10 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      category_id:
+      vendor_id:
         custom: []
-        name: category_id
-        description: 'The ID of the category.'
+        name: vendor_id
+        description: 'The ID of the vendor.'
         required: true
         example: 16
         type: integer
@@ -354,105 +574,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      category_id: 16
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - PUT
-    uri: 'api/v1/admin/categories/{category_id}/approve'
-    metadata:
-      custom: []
-      groupName: 'Admin - Categories'
-      groupDescription: |-
-
-        APIs for managing the catalog category tree, including hierarchy and icons.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Approve Category'
-      description: 'Approve a vendor-submitted category and notify the vendor.'
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      category_id:
-        custom: []
-        name: category_id
-        description: 'The ID of the category.'
-        required: true
-        example: 16
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      category_id: 16
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - PUT
-    uri: 'api/v1/admin/categories/{category_id}/reject'
-    metadata:
-      custom: []
-      groupName: 'Admin - Categories'
-      groupDescription: |-
-
-        APIs for managing the catalog category tree, including hierarchy and icons.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Reject Category'
-      description: 'Reject a vendor-submitted category.'
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      category_id:
-        custom: []
-        name: category_id
-        description: 'The ID of the category.'
-        required: true
-        example: 16
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      category_id: 16
+      vendor_id: 16
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
