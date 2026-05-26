@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Broadcasting\FcmChannel;
 use App\Broadcasting\SmsChannel;
+use App\Notifications\Concerns\QueuesNotificationDelivery;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -13,6 +14,7 @@ use Illuminate\Notifications\Notification;
 class TestNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+    use QueuesNotificationDelivery;
 
     public function __construct(public string $messageTitle, public string $messageBody) {}
 
@@ -62,7 +64,7 @@ class TestNotification extends Notification implements ShouldQueue
             'title' => $this->messageTitle,
             'body' => $this->messageBody,
             'type' => 'system_alert',
-        ]);
+        ])->onQueue('notifications');
     }
 
     /**

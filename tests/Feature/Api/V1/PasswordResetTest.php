@@ -6,9 +6,10 @@ use App\Models\Auth\LocalAccount;
 use App\Models\User;
 use App\Notifications\Auth\SendPasswordResetOtp;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
@@ -17,7 +18,7 @@ class PasswordResetTest extends TestCase
 
     public function test_can_request_password_reset_otp()
     {
-        Notification::fake();
+        Queue::fake();
 
         $user = User::factory()->create(['email' => 'test@fawran.test']);
 
@@ -27,9 +28,13 @@ class PasswordResetTest extends TestCase
 
         $response->assertStatus(200);
 
-        Notification::assertSentTo(
-            $user,
-            SendPasswordResetOtp::class
+        Queue::assertPushedOn(
+            'notifications',
+            SendQueuedNotifications::class,
+            fn (SendQueuedNotifications $job): bool => $job->notification instanceof SendPasswordResetOtp
+                && $job->channels === ['mail']
+                && $job->notifiables->first() instanceof User
+                && $job->notifiables->first()->is($user)
         );
 
         $this->assertDatabaseHas('password_reset_tokens', [

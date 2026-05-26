@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Broadcasting\FcmChannel;
+use App\Notifications\Concerns\QueuesNotificationDelivery;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -11,6 +12,7 @@ use Illuminate\Notifications\Notification;
 class CatalogItemApproved extends Notification implements ShouldQueue
 {
     use Queueable;
+    use QueuesNotificationDelivery;
 
     public function __construct(
         public string $itemType, // 'Brand' or 'Category'
@@ -43,7 +45,7 @@ class CatalogItemApproved extends Notification implements ShouldQueue
                 'name' => $this->itemName,
             ]),
             'type' => 'catalog_approval',
-        ]);
+        ])->onQueue('notifications');
     }
 
     public function toFcm(object $notifiable): array

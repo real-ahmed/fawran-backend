@@ -126,14 +126,16 @@ php artisan view:cache
 
 ## 9. Configuring Queues (Supervisor)
 
-Fawran will likely rely on background jobs for order assignments, push notifications, and geofencing calculations. Install Supervisor to keep the queue worker running permanently.
+Fawran relies on background jobs for notifications, order assignments, push notifications, and geofencing calculations. Install Supervisor to keep the queue worker running permanently.
+
+Notification delivery is queued through Laravel notifications. Current notification classes use `App\Notifications\Concerns\QueuesNotificationDelivery`, which sends `mail`, `database`, `broadcast`, SMS, and FCM notification jobs to the dedicated `notifications` queue. Keep `notifications` before `default` in the worker queue list so user-facing notifications are processed first.
 
 1. Create a configuration file: `sudo nano /etc/supervisor/conf.d/fawran-worker.conf`
 2. Add the following configuration:
    ```ini
    [program:fawran-worker]
    process_name=%(program_name)s_%(process_num)02d
-   command=php /var/www/fawran/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+   command=php /var/www/fawran/artisan queue:work --queue=notifications,default --sleep=3 --tries=3 --max-time=3600
    autostart=true
    autorestart=true
    stopasgroup=true
@@ -150,6 +152,17 @@ Fawran will likely rely on background jobs for order assignments, push notificat
    sudo supervisorctl update
    sudo supervisorctl start fawran-worker:*
    ```
+
+Useful queue commands:
+
+```bash
+# Process notification jobs locally during development
+php artisan queue:work --queue=notifications,default
+
+# Pause and resume notification jobs on the database queue connection
+php artisan queue:pause database:notifications
+php artisan queue:continue database:notifications
+```
 
 ---
 

@@ -6,7 +6,8 @@ use App\Enums\AdminPermission;
 use App\Models\Admin;
 use App\Notifications\Admin\AdminCredentialsGenerated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Support\Facades\Queue;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -48,7 +49,7 @@ class AdminUserTest extends TestCase
 
     public function test_can_create_admin()
     {
-        Notification::fake();
+        Queue::fake();
         setPermissionsTeamId(0);
         $this->superAdmin->givePermissionTo(AdminPermission::CREATE_ADMINS->value);
 
@@ -71,9 +72,13 @@ class AdminUserTest extends TestCase
         ]);
 
         $createdAdmin = Admin::where('email', 'manager@fawran.test')->first();
-        Notification::assertSentTo(
-            $createdAdmin,
-            AdminCredentialsGenerated::class
+        Queue::assertPushedOn(
+            'notifications',
+            SendQueuedNotifications::class,
+            fn (SendQueuedNotifications $job): bool => $job->notification instanceof AdminCredentialsGenerated
+                && $job->channels === ['mail']
+                && $job->notifiables->first() instanceof Admin
+                && $job->notifiables->first()->is($createdAdmin)
         );
     }
 

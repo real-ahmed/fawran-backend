@@ -2,8 +2,10 @@
 
 namespace App\Notifications\Auth;
 
+use App\Broadcasting\SmsChannel;
 use App\Models\Platform\SystemSetting;
 use App\Models\User;
+use App\Notifications\Concerns\QueuesNotificationDelivery;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -12,6 +14,7 @@ use Illuminate\Notifications\Notification;
 class SendPasswordResetOtp extends Notification implements ShouldQueue
 {
     use Queueable;
+    use QueuesNotificationDelivery;
 
     /**
      * Create a new notification instance.
@@ -32,7 +35,7 @@ class SendPasswordResetOtp extends Notification implements ShouldQueue
 
         // If it's a User model and has a phone number, send SMS too
         if ($notifiable instanceof User && ! empty($notifiable->phone)) {
-            $channels[] = 'sms';
+            $channels[] = SmsChannel::class;
         }
 
         return $channels;

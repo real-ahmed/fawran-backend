@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Broadcasting\FcmChannel;
+use App\Notifications\Concerns\QueuesNotificationDelivery;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -11,6 +12,7 @@ use Illuminate\Notifications\Notification;
 class CourierApproved extends Notification implements ShouldQueue
 {
     use Queueable;
+    use QueuesNotificationDelivery;
 
     public function __construct(public string $courierName) {}
 
@@ -34,7 +36,7 @@ class CourierApproved extends Notification implements ShouldQueue
             'title' => __('messages.courier_approved_title'),
             'body' => __('messages.courier_approved_body', ['name' => $this->courierName]),
             'type' => 'courier_approval',
-        ]);
+        ])->onQueue('notifications');
     }
 
     public function toFcm(object $notifiable): array
