@@ -18,7 +18,6 @@ return new class extends Migration
             ['key' => 'app_icon', 'value' => '/icon.png', 'group' => 'general'],
             ['key' => 'favicon', 'value' => '/favicon.ico', 'group' => 'general'],
             ['key' => 'currency', 'value' => 'EGP', 'group' => 'general'],
-            ['key' => 'currency_symbol', 'value' => 'ج.م', 'group' => 'general'],
             ['key' => 'support_phone', 'value' => '+201000000000', 'group' => 'general'],
             ['key' => 'timezone', 'value' => 'Africa/Cairo', 'group' => 'general'],
 
