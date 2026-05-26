@@ -52,7 +52,7 @@ class CustomerController extends Controller
      */
     public function toggleStatus(ToggleCustomerStatusRequest $request, User $user)
     {
-        $user = $this->customerService->toggleCustomerStatus($user, $request->validated('is_active'));
+        $user = $this->customerService->toggleStatus($user, $request->validated('is_active'));
 
         return $this->successResponse(
             new CustomerResource($user),
