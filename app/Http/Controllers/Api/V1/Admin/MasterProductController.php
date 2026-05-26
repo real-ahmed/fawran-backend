@@ -95,4 +95,32 @@ class MasterProductController extends Controller
 
         return $this->successResponse(null, __('messages.deleted_successfully'));
     }
+
+    /**
+     * Approve Master Product
+     *
+     * Approve a vendor-submitted master product and notify the vendor.
+     */
+    public function approve(MasterProduct $masterProduct)
+    {
+        $this->masterProductService->approveProduct($masterProduct);
+
+        return $this->successResponse(null, __('messages.master_product_approved_successfully'));
+    }
+
+    /**
+     * Reject Master Product
+     *
+     * Reject a vendor-submitted master product.
+     *
+     * @bodyParam reason string optional Reason for rejection. Example: Incomplete description
+     */
+    public function reject(Request $request, MasterProduct $masterProduct)
+    {
+        $request->validate(['reason' => 'sometimes|string|max:255']);
+
+        $this->masterProductService->rejectProduct($masterProduct, $request->reason);
+
+        return $this->successResponse(null, __('messages.master_product_rejected_successfully'));
+    }
 }

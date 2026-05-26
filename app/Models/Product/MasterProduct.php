@@ -53,4 +53,9 @@ class MasterProduct extends Model
     {
         return $this->hasMany(VendorItem::class);
     }
+
+    public function vendorSubmission(): HasOne
+    {
+        return $this->hasOne(VendorMasterProductSubmission::class, 'master_product_id');
+    }
 }

@@ -129,15 +129,17 @@ Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
             Route::get('/{courier}/location', 'location')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);
         });
 
-    // Master Products
+    // Master Products Management
     Route::controller(MasterProductController::class)
         ->prefix('master-products')
         ->group(function () {
-            Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_MASTER_PRODUCTS->value);
-            Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_MASTER_PRODUCTS->value);
-            Route::get('/{masterProduct}', 'show')->middleware('can:'.AdminPermission::VIEW_MASTER_PRODUCTS->value);
-            Route::put('/{masterProduct}', 'update')->middleware('can:'.AdminPermission::UPDATE_MASTER_PRODUCTS->value);
-            Route::delete('/{masterProduct}', 'destroy')->middleware('can:'.AdminPermission::DELETE_MASTER_PRODUCTS->value);
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_CATALOG->value);
+            Route::post('/', 'store')->middleware('can:'.AdminPermission::MANAGE_CATALOG->value);
+            Route::get('/{masterProduct}', 'show')->middleware('can:'.AdminPermission::VIEW_CATALOG->value);
+            Route::put('/{masterProduct}', 'update')->middleware('can:'.AdminPermission::MANAGE_CATALOG->value);
+            Route::delete('/{masterProduct}', 'destroy')->middleware('can:'.AdminPermission::MANAGE_CATALOG->value);
+            Route::put('/{masterProduct}/approve', 'approve')->middleware('can:'.AdminPermission::APPROVE_CATEGORIES->value);
+            Route::put('/{masterProduct}/reject', 'reject')->middleware('can:'.AdminPermission::APPROVE_CATEGORIES->value);
         });
 
     // Orders Management

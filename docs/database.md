@@ -186,9 +186,21 @@ This document outlines the complete database architecture. **Architectural Rule:
 | :--- | :--- | :--- |
 | `category_id` | BIGINT | PK, FK → categories.id |
 | `vendor_id` | BIGINT | FK → vendors.id |
-| `status` | ENUM | `'pending'`, `'rejected'` |
-| `created_at` | TIMESTAMP | |
-| `updated_at` | TIMESTAMP | |
+| status | enum | Pending, Approved, Rejected |
+| reason | varchar | Nullable, rejection reason |
+| created_at/updated_at | timestamp | Standard timestamps |
+
+**`vendor_master_product_submissions` Table (Zero-Null Extension)**
+Manages vendor proposals for new global master products.
+
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| id | bigInt | Primary Key |
+| master_product_id | bigInt | Foreign Key to master_products |
+| vendor_id | bigInt | Foreign Key to vendors |
+| status | enum | Pending, Approved, Rejected |
+| reason | varchar | Nullable, rejection reason |
+| created_at/updated_at | timestamp | Standard timestamps |
 
 **`brands` Table**
 | Column | Type | Properties |

@@ -18,6 +18,7 @@ class IndexMasterProductRequest extends FormRequest
             'category_id' => 'sometimes|integer|exists:categories,id',
             'brand_id' => 'sometimes|integer|exists:brands,id',
             'is_active' => 'sometimes|boolean',
+            'approval_status' => 'sometimes|string|in:pending,approved,rejected',
         ];
     }
 }
