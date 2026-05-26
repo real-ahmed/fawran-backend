@@ -205,7 +205,7 @@ endpoints:
         name: type
         description: ''
         required: true
-        example: restaurant
+        example: pharmacy
         type: string
         enumValues:
           - restaurant
@@ -241,7 +241,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -252,7 +252,7 @@ endpoints:
         name: status
         description: ''
         required: false
-        example: busy
+        example: offline
         type: string
         enumValues:
           - online
@@ -269,11 +269,11 @@ endpoints:
       email: ashly64@example.com
       phone: vdljnikhwaykcmyu
       formatted_address: w
-      type: restaurant
+      type: pharmacy
       latitude: -89
       longitude: -180
-      is_active: true
-      status: busy
+      is_active: false
+      status: offline
     fileParameters: []
     responses: []
     responseFields: []
@@ -462,7 +462,7 @@ endpoints:
         name: type
         description: ''
         required: false
-        example: grocery
+        example: pharmacy
         type: string
         enumValues:
           - restaurant
@@ -498,7 +498,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -525,10 +525,10 @@ endpoints:
       email: ashly64@example.com
       phone: vdljnikhwaykcmyu
       formatted_address: w
-      type: grocery
+      type: pharmacy
       latitude: -89
       longitude: -180
-      is_active: true
+      is_active: false
       status: online
     fileParameters: []
     responses: []

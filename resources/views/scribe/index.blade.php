@@ -437,6 +437,9 @@
                                                     <li class="tocify-item level-2" data-unique="public-application-configuration-GETapi-v1-public-app-config">
                                 <a href="#public-application-configuration-GETapi-v1-public-app-config">Get App Config</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="public-application-configuration-GETapi-v1-public-admin-permissions">
+                                <a href="#public-application-configuration-GETapi-v1-public-admin-permissions">Get All Permissions</a>
+                            </li>
                                                                         </ul>
                             </ul>
                     <ul id="tocify-header-shared-customer-vendor-courier-authentication" class="tocify-header">
@@ -2768,7 +2771,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --data "{
     \"search\": \"b\",
-    \"approval_status\": \"pending\"
+    \"approval_status\": \"approved\"
 }"
 </code></pre></div>
 
@@ -2786,7 +2789,7 @@ const headers = {
 
 let body = {
     "search": "b",
-    "approval_status": "pending"
+    "approval_status": "approved"
 };
 
 fetch(url, {
@@ -2918,10 +2921,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="approval_status"                data-endpoint="GETapi-v1-admin-categories"
-               value="pending"
+               value="approved"
                data-component="body">
     <br>
-<p>Example: <code>pending</code></p>
+<p>Example: <code>approved</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>pending</code></li> <li><code>approved</code></li> <li><code>rejected</code></li></ul>
         </div>
@@ -2949,7 +2952,7 @@ Must be one of:
     \"name\": [
         \"b\"
     ],
-    \"is_active\": false,
+    \"is_active\": true,
     \"parent_category_id\": 16,
     \"icon_class\": \"n\"
 }"
@@ -2971,7 +2974,7 @@ let body = {
     "name": [
         "b"
     ],
-    "is_active": false,
+    "is_active": true,
     "parent_category_id": 16,
     "icon_class": "n"
 };
@@ -3104,7 +3107,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Example: <code>true</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>parent_category_id</code></b>&nbsp;&nbsp;
@@ -5549,7 +5552,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --data "{
     \"search\": \"b\",
-    \"is_active\": false,
+    \"is_active\": true,
     \"per_page\": 22
 }"
 </code></pre></div>
@@ -5568,7 +5571,7 @@ const headers = {
 
 let body = {
     "search": "b",
-    "is_active": false,
+    "is_active": true,
     "per_page": 22
 };
 
@@ -5714,7 +5717,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Example: <code>true</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
@@ -6157,7 +6160,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         \"en\": \"b\",
         \"ar\": \"n\"
     },
-    \"is_active\": true,
+    \"is_active\": false,
     \"coordinates\": [
         {
             \"lat\": -90,
@@ -6184,7 +6187,7 @@ let body = {
         "en": "b",
         "ar": "n"
     },
-    "is_active": true,
+    "is_active": false,
     "coordinates": [
         {
             "lat": -90,
@@ -6356,7 +6359,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
         <details>
@@ -6704,8 +6707,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"is_active\": true,
-    \"intensity\": \"medium\"
+    \"is_active\": false,
+    \"intensity\": \"high\"
 }"
 </code></pre></div>
 
@@ -6729,8 +6732,8 @@ const headers = {
 };
 
 let body = {
-    "is_active": true,
-    "intensity": "medium"
+    "is_active": false,
+    "intensity": "high"
 };
 
 fetch(url, {
@@ -6898,7 +6901,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>intensity</code></b>&nbsp;&nbsp;
@@ -6907,10 +6910,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="intensity"                data-endpoint="GETapi-v1-admin-hot-zones"
-               value="medium"
+               value="high"
                data-component="body">
     <br>
-<p>Example: <code>medium</code></p>
+<p>Example: <code>high</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>low</code></li> <li><code>medium</code></li> <li><code>high</code></li></ul>
         </div>
@@ -6939,8 +6942,8 @@ Must be one of:
     \"center_longitude\": \"31.2357\",
     \"radius_meters\": 5000,
     \"intensity\": \"high\",
-    \"is_active\": true,
-    \"starts_at\": \"2026-05-26T13:22:54\",
+    \"is_active\": false,
+    \"starts_at\": \"2026-05-26T15:17:13\",
     \"name\": {
         \"en\": \"Downtown Cairo\"
     }
@@ -6964,8 +6967,8 @@ let body = {
     "center_longitude": "31.2357",
     "radius_meters": 5000,
     "intensity": "high",
-    "is_active": true,
-    "starts_at": "2026-05-26T13:22:54",
+    "is_active": false,
+    "starts_at": "2026-05-26T15:17:13",
     "name": {
         "en": "Downtown Cairo"
     }
@@ -7133,7 +7136,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>starts_at</code></b>&nbsp;&nbsp;
@@ -7142,10 +7145,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="starts_at"                data-endpoint="POSTapi-v1-admin-hot-zones"
-               value="2026-05-26T13:22:54"
+               value="2026-05-26T15:17:13"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-05-26T13:22:54</code></p>
+<p>Must be a valid date. Example: <code>2026-05-26T15:17:13</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
@@ -7338,9 +7341,9 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"center_latitude\": -89,
     \"center_longitude\": -179,
     \"radius_meters\": 90,
-    \"intensity\": \"medium\",
+    \"intensity\": \"low\",
     \"is_active\": true,
-    \"starts_at\": \"2026-05-26T13:22:54\"
+    \"starts_at\": \"2026-05-26T15:17:13\"
 }"
 </code></pre></div>
 
@@ -7360,9 +7363,9 @@ let body = {
     "center_latitude": -89,
     "center_longitude": -179,
     "radius_meters": 90,
-    "intensity": "medium",
+    "intensity": "low",
     "is_active": true,
-    "starts_at": "2026-05-26T13:22:54"
+    "starts_at": "2026-05-26T15:17:13"
 };
 
 fetch(url, {
@@ -7515,10 +7518,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="intensity"                data-endpoint="PUTapi-v1-admin-hot-zones--hotZone_id-"
-               value="medium"
+               value="low"
                data-component="body">
     <br>
-<p>Example: <code>medium</code></p>
+<p>Example: <code>low</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>low</code></li> <li><code>medium</code></li> <li><code>high</code></li></ul>
         </div>
@@ -7551,10 +7554,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="starts_at"                data-endpoint="PUTapi-v1-admin-hot-zones--hotZone_id-"
-               value="2026-05-26T13:22:54"
+               value="2026-05-26T15:17:13"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-05-26T13:22:54</code></p>
+<p>Must be a valid date. Example: <code>2026-05-26T15:17:13</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
@@ -9295,9 +9298,9 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"status\": \"cancelled\",
-    \"order_type\": \"in_store\",
-    \"date_from\": \"2026-05-26T13:22:54\",
+    \"status\": \"out_for_delivery\",
+    \"order_type\": \"delivery\",
+    \"date_from\": \"2026-05-26T15:17:13\",
     \"date_to\": \"2052-06-18\",
     \"customer_id\": 16,
     \"vendor_id\": 16
@@ -9328,9 +9331,9 @@ const headers = {
 };
 
 let body = {
-    "status": "cancelled",
-    "order_type": "in_store",
-    "date_from": "2026-05-26T13:22:54",
+    "status": "out_for_delivery",
+    "order_type": "delivery",
+    "date_from": "2026-05-26T15:17:13",
     "date_to": "2052-06-18",
     "customer_id": 16,
     "vendor_id": 16
@@ -9526,10 +9529,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="GETapi-v1-admin-orders"
-               value="cancelled"
+               value="out_for_delivery"
                data-component="body">
     <br>
-<p>Example: <code>cancelled</code></p>
+<p>Example: <code>out_for_delivery</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>pending</code></li> <li><code>processing</code></li> <li><code>out_for_delivery</code></li> <li><code>delivered</code></li> <li><code>cancelled</code></li></ul>
         </div>
@@ -9540,10 +9543,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="order_type"                data-endpoint="GETapi-v1-admin-orders"
-               value="in_store"
+               value="delivery"
                data-component="body">
     <br>
-<p>Example: <code>in_store</code></p>
+<p>Example: <code>delivery</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>delivery</code></li> <li><code>pickup</code></li> <li><code>in_store</code></li></ul>
         </div>
@@ -9554,10 +9557,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="date_from"                data-endpoint="GETapi-v1-admin-orders"
-               value="2026-05-26T13:22:54"
+               value="2026-05-26T15:17:13"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-05-26T13:22:54</code></p>
+<p>Must be a valid date. Example: <code>2026-05-26T15:17:13</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>date_to</code></b>&nbsp;&nbsp;
@@ -9914,7 +9917,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"status\": \"rejected\"
+    \"status\": \"transferred\"
 }"
 </code></pre></div>
 
@@ -9937,7 +9940,7 @@ const headers = {
 };
 
 let body = {
-    "status": "rejected"
+    "status": "transferred"
 };
 
 fetch(url, {
@@ -10070,10 +10073,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="GETapi-v1-admin-payout-requests"
-               value="rejected"
+               value="transferred"
                data-component="body">
     <br>
-<p>Example: <code>rejected</code></p>
+<p>Example: <code>transferred</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>pending</code></li> <li><code>transferred</code></li> <li><code>rejected</code></li></ul>
         </div>
@@ -10380,7 +10383,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"status\": \"rejected\"
+    \"status\": \"processed\"
 }"
 </code></pre></div>
 
@@ -10403,7 +10406,7 @@ const headers = {
 };
 
 let body = {
-    "status": "rejected"
+    "status": "processed"
 };
 
 fetch(url, {
@@ -10536,10 +10539,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="GETapi-v1-admin-refund-requests"
-               value="rejected"
+               value="processed"
                data-component="body">
     <br>
-<p>Example: <code>rejected</code></p>
+<p>Example: <code>processed</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>pending</code></li> <li><code>approved</code></li> <li><code>rejected</code></li> <li><code>processed</code></li></ul>
         </div>
@@ -11862,7 +11865,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --data "{
     \"settlement_type\": \"store\",
-    \"status\": \"disputed\"
+    \"status\": \"completed\"
 }"
 </code></pre></div>
 
@@ -11887,7 +11890,7 @@ const headers = {
 
 let body = {
     "settlement_type": "store",
-    "status": "disputed"
+    "status": "completed"
 };
 
 fetch(url, {
@@ -12046,10 +12049,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="GETapi-v1-admin-settlements"
-               value="disputed"
+               value="completed"
                data-component="body">
     <br>
-<p>Example: <code>disputed</code></p>
+<p>Example: <code>completed</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>pending</code></li> <li><code>completed</code></li> <li><code>disputed</code></li></ul>
         </div>
@@ -12596,7 +12599,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --data "{
     \"name\": \"b\",
     \"email\": \"zbailey@example.net\",
-    \"is_active\": true,
+    \"is_active\": false,
     \"roles\": [
         \"architecto\"
     ]
@@ -12618,7 +12621,7 @@ const headers = {
 let body = {
     "name": "b",
     "email": "zbailey@example.net",
-    "is_active": true,
+    "is_active": false,
     "roles": [
         "architecto"
     ]
@@ -12762,7 +12765,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>roles</code></b>&nbsp;&nbsp;
@@ -12957,7 +12960,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"name\": \"b\",
     \"email\": \"zbailey@example.net\",
     \"password\": \"-0pBNvYgxw\",
-    \"is_active\": false,
+    \"is_active\": true,
     \"roles\": [
         \"architecto\"
     ]
@@ -12980,7 +12983,7 @@ let body = {
     "name": "b",
     "email": "zbailey@example.net",
     "password": "-0pBNvYgxw",
-    "is_active": false,
+    "is_active": true,
     "roles": [
         "architecto"
     ]
@@ -13149,7 +13152,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Example: <code>true</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>roles</code></b>&nbsp;&nbsp;
@@ -13969,11 +13972,11 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"email\": \"ashly64@example.com\",
     \"phone\": \"vdljnikhwaykcmyu\",
     \"formatted_address\": \"w\",
-    \"type\": \"restaurant\",
+    \"type\": \"pharmacy\",
     \"latitude\": -89,
     \"longitude\": -180,
-    \"is_active\": true,
-    \"status\": \"busy\"
+    \"is_active\": false,
+    \"status\": \"offline\"
 }"
 </code></pre></div>
 
@@ -13998,11 +14001,11 @@ let body = {
     "email": "ashly64@example.com",
     "phone": "vdljnikhwaykcmyu",
     "formatted_address": "w",
-    "type": "restaurant",
+    "type": "pharmacy",
     "latitude": -89,
     "longitude": -180,
-    "is_active": true,
-    "status": "busy"
+    "is_active": false,
+    "status": "offline"
 };
 
 fetch(url, {
@@ -14190,10 +14193,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="type"                data-endpoint="POSTapi-v1-admin-vendors"
-               value="restaurant"
+               value="pharmacy"
                data-component="body">
     <br>
-<p>Example: <code>restaurant</code></p>
+<p>Example: <code>pharmacy</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>restaurant</code></li> <li><code>grocery</code></li> <li><code>pharmacy</code></li></ul>
         </div>
@@ -14241,7 +14244,7 @@ Must be one of:
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
@@ -14250,10 +14253,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="POSTapi-v1-admin-vendors"
-               value="busy"
+               value="offline"
                data-component="body">
     <br>
-<p>Example: <code>busy</code></p>
+<p>Example: <code>offline</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>online</code></li> <li><code>busy</code></li> <li><code>offline</code></li></ul>
         </div>
@@ -14440,10 +14443,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"email\": \"ashly64@example.com\",
     \"phone\": \"vdljnikhwaykcmyu\",
     \"formatted_address\": \"w\",
-    \"type\": \"grocery\",
+    \"type\": \"pharmacy\",
     \"latitude\": -89,
     \"longitude\": -180,
-    \"is_active\": true,
+    \"is_active\": false,
     \"status\": \"online\"
 }"
 </code></pre></div>
@@ -14468,10 +14471,10 @@ let body = {
     "email": "ashly64@example.com",
     "phone": "vdljnikhwaykcmyu",
     "formatted_address": "w",
-    "type": "grocery",
+    "type": "pharmacy",
     "latitude": -89,
     "longitude": -180,
-    "is_active": true,
+    "is_active": false,
     "status": "online"
 };
 
@@ -14673,10 +14676,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="type"                data-endpoint="PUTapi-v1-admin-vendors--vendor_id-"
-               value="grocery"
+               value="pharmacy"
                data-component="body">
     <br>
-<p>Example: <code>grocery</code></p>
+<p>Example: <code>pharmacy</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>restaurant</code></li> <li><code>grocery</code></li> <li><code>pharmacy</code></li></ul>
         </div>
@@ -14724,7 +14727,7 @@ Must be one of:
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
@@ -15027,6 +15030,240 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="GETapi-v1-public-app-config"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        </form>
+
+                    <h2 id="public-application-configuration-GETapi-v1-public-admin-permissions">Get All Permissions</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Retrieves all system permissions mapped with a key for the frontend.</p>
+
+<span id="example-requests-GETapi-v1-public-admin-permissions">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8000/api/v1/public/admin-permissions" \
+    --header "Authorization: Bearer {YOUR_AUTH_KEY}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/v1/public/admin-permissions"
+);
+
+const headers = {
+    "Authorization": "Bearer {YOUR_AUTH_KEY}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-public-admin-permissions">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: true,
+    &quot;message&quot;: null,
+    &quot;data&quot;: {
+        &quot;delivery zones&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;view delivery zones&quot;,
+                &quot;key&quot;: &quot;VIEW_DELIVERY_ZONES&quot;
+            },
+            {
+                &quot;id&quot;: 2,
+                &quot;name&quot;: &quot;create delivery zones&quot;,
+                &quot;key&quot;: &quot;CREATE_DELIVERY_ZONES&quot;
+            },
+            {
+                &quot;id&quot;: 3,
+                &quot;name&quot;: &quot;update delivery zones&quot;,
+                &quot;key&quot;: &quot;UPDATE_DELIVERY_ZONES&quot;
+            },
+            {
+                &quot;id&quot;: 4,
+                &quot;name&quot;: &quot;delete delivery zones&quot;,
+                &quot;key&quot;: &quot;DELETE_DELIVERY_ZONES&quot;
+            }
+        ],
+        &quot;roles&quot;: [
+            {
+                &quot;id&quot;: 5,
+                &quot;name&quot;: &quot;view roles&quot;,
+                &quot;key&quot;: &quot;VIEW_ROLES&quot;
+            },
+            {
+                &quot;id&quot;: 6,
+                &quot;name&quot;: &quot;create roles&quot;,
+                &quot;key&quot;: &quot;CREATE_ROLES&quot;
+            },
+            {
+                &quot;id&quot;: 7,
+                &quot;name&quot;: &quot;update roles&quot;,
+                &quot;key&quot;: &quot;UPDATE_ROLES&quot;
+            },
+            {
+                &quot;id&quot;: 8,
+                &quot;name&quot;: &quot;delete roles&quot;,
+                &quot;key&quot;: &quot;DELETE_ROLES&quot;
+            }
+        ],
+        &quot;vendors&quot;: [
+            {
+                &quot;id&quot;: 9,
+                &quot;name&quot;: &quot;view vendors&quot;,
+                &quot;key&quot;: &quot;VIEW_VENDORS&quot;
+            },
+            {
+                &quot;id&quot;: 10,
+                &quot;name&quot;: &quot;create vendors&quot;,
+                &quot;key&quot;: &quot;CREATE_VENDORS&quot;
+            },
+            {
+                &quot;id&quot;: 11,
+                &quot;name&quot;: &quot;update vendors&quot;,
+                &quot;key&quot;: &quot;UPDATE_VENDORS&quot;
+            },
+            {
+                &quot;id&quot;: 12,
+                &quot;name&quot;: &quot;delete vendors&quot;,
+                &quot;key&quot;: &quot;DELETE_VENDORS&quot;
+            }
+        ],
+        &quot;admins&quot;: [
+            {
+                &quot;id&quot;: 13,
+                &quot;name&quot;: &quot;view admins&quot;,
+                &quot;key&quot;: &quot;VIEW_ADMINS&quot;
+            },
+            {
+                &quot;id&quot;: 14,
+                &quot;name&quot;: &quot;create admins&quot;,
+                &quot;key&quot;: &quot;CREATE_ADMINS&quot;
+            },
+            {
+                &quot;id&quot;: 15,
+                &quot;name&quot;: &quot;update admins&quot;,
+                &quot;key&quot;: &quot;UPDATE_ADMINS&quot;
+            },
+            {
+                &quot;id&quot;: 16,
+                &quot;name&quot;: &quot;delete admins&quot;,
+                &quot;key&quot;: &quot;DELETE_ADMINS&quot;
+            }
+        ]
+    },
+    &quot;errors&quot;: null
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-v1-public-admin-permissions" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-public-admin-permissions"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-public-admin-permissions"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-public-admin-permissions" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-public-admin-permissions">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-public-admin-permissions" data-method="GET"
+      data-path="api/v1/public/admin-permissions"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-public-admin-permissions', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-public-admin-permissions"
+                    onclick="tryItOut('GETapi-v1-public-admin-permissions');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-public-admin-permissions"
+                    onclick="cancelTryOut('GETapi-v1-public-admin-permissions');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-public-admin-permissions"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/public/admin-permissions</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-v1-public-admin-permissions"
+               value="Bearer {YOUR_AUTH_KEY}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {YOUR_AUTH_KEY}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-public-admin-permissions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-public-admin-permissions"
                value="application/json"
                data-component="header">
     <br>

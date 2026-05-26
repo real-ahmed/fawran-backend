@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Enums\AdminPermission;
 use App\Models\Admin;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -17,14 +15,11 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
+        // Sync permissions first
+        $this->call(AdminPermissionSyncSeeder::class);
+
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
-
         setPermissionsTeamId(0);
-
-        // Seed all permissions from Enum
-        foreach (AdminPermission::values() as $permission) {
-            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'api_admin']);
-        }
 
         // Create Super Admin Role
         $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'api_admin', 'vendor_id' => 0]);

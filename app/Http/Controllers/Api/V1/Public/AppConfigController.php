@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Public;
 
+use App\Enums\AdminPermission;
 use App\Http\Controllers\Controller;
 use App\Models\Platform\SystemSetting;
 use Illuminate\Http\JsonResponse;
+use Spatie\Permission\Models\Permission;
 
 /**
  * @group Public - Application Configuration
@@ -31,5 +33,30 @@ class AppConfigController extends Controller
             ->pluck('value', 'key');
 
         return $this->successResponse($settings);
+    }
+
+    /**
+     * Get All Permissions
+     *
+     * Retrieves all system permissions mapped with a key for the frontend.
+     */
+    public function adminPermissions(): JsonResponse
+    {
+        $permissions = Permission::where('guard_name', 'api_admin')->get()->map(function ($permission) {
+            $enumKey = AdminPermission::tryFrom($permission->name)?->name
+                ?? strtoupper(str_replace(' ', '_', $permission->name));
+
+            return [
+                'id' => $permission->id,
+                'name' => $permission->name,
+                'key' => $enumKey,
+            ];
+        })->groupBy(function ($permission) {
+            $parts = explode(' ', $permission['name'], 2);
+
+            return $parts[1] ?? 'general';
+        });
+
+        return $this->successResponse($permissions);
     }
 }

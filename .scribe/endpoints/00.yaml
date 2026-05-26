@@ -49,3 +49,49 @@ endpoints:
     controller: null
     method: null
     route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/public/admin-permissions
+    metadata:
+      custom: []
+      groupName: 'Public - Application Configuration'
+      groupDescription: |-
+
+        Unauthenticated APIs for frontend applications to fetch required startup config.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get All Permissions'
+      description: 'Retrieves all system permissions mapped with a key for the frontend.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"success":true,"message":null,"data":{"delivery zones":[{"id":1,"name":"view delivery zones","key":"VIEW_DELIVERY_ZONES"},{"id":2,"name":"create delivery zones","key":"CREATE_DELIVERY_ZONES"},{"id":3,"name":"update delivery zones","key":"UPDATE_DELIVERY_ZONES"},{"id":4,"name":"delete delivery zones","key":"DELETE_DELIVERY_ZONES"}],"roles":[{"id":5,"name":"view roles","key":"VIEW_ROLES"},{"id":6,"name":"create roles","key":"CREATE_ROLES"},{"id":7,"name":"update roles","key":"UPDATE_ROLES"},{"id":8,"name":"delete roles","key":"DELETE_ROLES"}],"vendors":[{"id":9,"name":"view vendors","key":"VIEW_VENDORS"},{"id":10,"name":"create vendors","key":"CREATE_VENDORS"},{"id":11,"name":"update vendors","key":"UPDATE_VENDORS"},{"id":12,"name":"delete vendors","key":"DELETE_VENDORS"}],"admins":[{"id":13,"name":"view admins","key":"VIEW_ADMINS"},{"id":14,"name":"create admins","key":"CREATE_ADMINS"},{"id":15,"name":"update admins","key":"UPDATE_ADMINS"},{"id":16,"name":"delete admins","key":"DELETE_ADMINS"}]},"errors":null}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
