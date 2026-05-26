@@ -181,12 +181,30 @@ This document outlines the complete database architecture. **Architectural Rule:
 | `category_id` | BIGINT | PK, FK → categories.id |
 | `icon_class` | VARCHAR(255) | e.g. `'fas fa-burger'` |
 
+**`vendor_category_submissions` Table (Zero-Null Extension)**
+| Column | Type | Properties |
+| :--- | :--- | :--- |
+| `category_id` | BIGINT | PK, FK → categories.id |
+| `vendor_id` | BIGINT | FK → vendors.id |
+| `status` | ENUM | `'pending'`, `'rejected'` |
+| `created_at` | TIMESTAMP | |
+| `updated_at` | TIMESTAMP | |
+
 **`brands` Table**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
 | `name` | JSON | |
 | `is_active` | BOOLEAN | Default: true |
+
+**`vendor_brand_submissions` Table (Zero-Null Extension)**
+| Column | Type | Properties |
+| :--- | :--- | :--- |
+| `brand_id` | BIGINT | PK, FK → brands.id |
+| `vendor_id` | BIGINT | FK → vendors.id |
+| `status` | ENUM | `'pending'`, `'rejected'` |
+| `created_at` | TIMESTAMP | |
+| `updated_at` | TIMESTAMP | |
 
 **`vendors` Table**
 | Column | Type | Properties |
