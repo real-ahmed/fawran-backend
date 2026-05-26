@@ -81,4 +81,42 @@ class BrandController extends Controller
 
         return $this->successResponse(null, 'Brand deleted successfully');
     }
+
+    /**
+     * List Pending Brand Submissions
+     *
+     * Get all brands that are pending vendor approval.
+     */
+    public function pending()
+    {
+        $brands = Brand::whereHas('vendorSubmission', fn ($q) => $q->where('status', 'pending'))
+            ->with('vendorSubmission.vendor')
+            ->get();
+
+        return $this->successResponse(BrandResource::collection($brands));
+    }
+
+    /**
+     * Approve Brand
+     *
+     * Approve a vendor-submitted brand and notify the vendor.
+     */
+    public function approve(Brand $brand)
+    {
+        $this->brandService->approveBrand($brand);
+
+        return $this->successResponse(null, __('messages.brand_approved_successfully'));
+    }
+
+    /**
+     * Reject Brand
+     *
+     * Reject a vendor-submitted brand.
+     */
+    public function reject(Brand $brand)
+    {
+        $this->brandService->rejectBrand($brand);
+
+        return $this->successResponse(null, __('messages.brand_rejected_successfully'));
+    }
 }

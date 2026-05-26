@@ -83,4 +83,42 @@ class CategoryController extends Controller
 
         return $this->successResponse(null, 'Category deleted successfully');
     }
+
+    /**
+     * List Pending Category Submissions
+     *
+     * Get all categories that are pending vendor approval.
+     */
+    public function pending()
+    {
+        $categories = Category::whereHas('vendorSubmission', fn ($q) => $q->where('status', 'pending'))
+            ->with(['vendorSubmission.vendor', 'hierarchy', 'icon'])
+            ->get();
+
+        return $this->successResponse(CategoryResource::collection($categories));
+    }
+
+    /**
+     * Approve Category
+     *
+     * Approve a vendor-submitted category and notify the vendor.
+     */
+    public function approve(Category $category)
+    {
+        $this->categoryService->approveCategory($category);
+
+        return $this->successResponse(null, __('messages.category_approved_successfully'));
+    }
+
+    /**
+     * Reject Category
+     *
+     * Reject a vendor-submitted category.
+     */
+    public function reject(Category $category)
+    {
+        $this->categoryService->rejectCategory($category);
+
+        return $this->successResponse(null, __('messages.category_rejected_successfully'));
+    }
 }

@@ -36,6 +36,31 @@ enum AdminPermission: string
     case DELETE_BRANDS = 'delete brands';
     case APPROVE_BRANDS = 'approve brands';
 
+    case VIEW_CUSTOMERS = 'view customers';
+    case UPDATE_CUSTOMERS = 'update customers';
+
+    case VIEW_COURIERS = 'view couriers';
+    case APPROVE_COURIERS = 'approve couriers';
+
+    case VIEW_MASTER_PRODUCTS = 'view master products';
+    case CREATE_MASTER_PRODUCTS = 'create master products';
+    case UPDATE_MASTER_PRODUCTS = 'update master products';
+    case DELETE_MASTER_PRODUCTS = 'delete master products';
+
+    case VIEW_ORDERS = 'view orders';
+    case CANCEL_ORDERS = 'cancel orders';
+
+    case VIEW_HOT_ZONES = 'view hot zones';
+    case CREATE_HOT_ZONES = 'create hot zones';
+    case UPDATE_HOT_ZONES = 'update hot zones';
+    case DELETE_HOT_ZONES = 'delete hot zones';
+
+    case VIEW_FINANCES = 'view finances';
+    case MANAGE_SETTLEMENTS = 'manage settlements';
+    case MANAGE_PAYOUTS = 'manage payouts';
+    case MANAGE_REFUNDS = 'manage refunds';
+    case MANAGE_SYSTEM_SETTINGS = 'manage system settings';
+
     /**
      * Get all permission values.
      */

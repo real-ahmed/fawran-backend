@@ -5,8 +5,19 @@ use App\Http\Controllers\Api\V1\Admin\AdminAuthController;
 use App\Http\Controllers\Api\V1\Admin\AdminUserController;
 use App\Http\Controllers\Api\V1\Admin\BrandController;
 use App\Http\Controllers\Api\V1\Admin\CategoryController;
+use App\Http\Controllers\Api\V1\Admin\CourierController;
+use App\Http\Controllers\Api\V1\Admin\CustomerController;
+use App\Http\Controllers\Api\V1\Admin\DashboardController;
 use App\Http\Controllers\Api\V1\Admin\DeliveryZoneController;
+use App\Http\Controllers\Api\V1\Admin\FinanceController;
+use App\Http\Controllers\Api\V1\Admin\HotZoneController;
+use App\Http\Controllers\Api\V1\Admin\MasterProductController;
+use App\Http\Controllers\Api\V1\Admin\OrderController;
+use App\Http\Controllers\Api\V1\Admin\PayoutRequestController;
+use App\Http\Controllers\Api\V1\Admin\RefundRequestController;
 use App\Http\Controllers\Api\V1\Admin\RoleController;
+use App\Http\Controllers\Api\V1\Admin\SettlementController;
+use App\Http\Controllers\Api\V1\Admin\SystemSettingController;
 use App\Http\Controllers\Api\V1\Admin\VendorController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +29,14 @@ Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
     Route::post('refresh', [AdminAuthController::class, 'refresh']);
     Route::get('me', [AdminAuthController::class, 'me']);
     Route::put('profile/settings', [SettingsController::class, 'update']);
+
+    // Dashboard
+    Route::controller(DashboardController::class)
+        ->prefix('dashboard')
+        ->group(function () {
+            Route::get('/metrics', 'metrics');
+            Route::get('/pending-approvals', 'pendingApprovals');
+        });
 
     // Delivery Zones
     Route::controller(DeliveryZoneController::class)
@@ -52,26 +71,33 @@ Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
             Route::put('/{vendor}', 'update')->middleware('can:'.AdminPermission::UPDATE_VENDORS->value);
             Route::delete('/{vendor}', 'destroy')->middleware('can:'.AdminPermission::DELETE_VENDORS->value);
         });
+
     // Categories Management
     Route::controller(CategoryController::class)
         ->prefix('categories')
         ->group(function () {
+            Route::get('/pending', 'pending')->middleware('can:'.AdminPermission::APPROVE_CATEGORIES->value);
             Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_CATEGORIES->value);
             Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_CATEGORIES->value);
             Route::get('/{category}', 'show')->middleware('can:'.AdminPermission::VIEW_CATEGORIES->value);
             Route::put('/{category}', 'update')->middleware('can:'.AdminPermission::UPDATE_CATEGORIES->value);
             Route::delete('/{category}', 'destroy')->middleware('can:'.AdminPermission::DELETE_CATEGORIES->value);
+            Route::put('/{category}/approve', 'approve')->middleware('can:'.AdminPermission::APPROVE_CATEGORIES->value);
+            Route::put('/{category}/reject', 'reject')->middleware('can:'.AdminPermission::APPROVE_CATEGORIES->value);
         });
 
     // Brands Management
     Route::controller(BrandController::class)
         ->prefix('brands')
         ->group(function () {
+            Route::get('/pending', 'pending')->middleware('can:'.AdminPermission::APPROVE_BRANDS->value);
             Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_BRANDS->value);
             Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_BRANDS->value);
             Route::get('/{brand}', 'show')->middleware('can:'.AdminPermission::VIEW_BRANDS->value);
             Route::put('/{brand}', 'update')->middleware('can:'.AdminPermission::UPDATE_BRANDS->value);
             Route::delete('/{brand}', 'destroy')->middleware('can:'.AdminPermission::DELETE_BRANDS->value);
+            Route::put('/{brand}/approve', 'approve')->middleware('can:'.AdminPermission::APPROVE_BRANDS->value);
+            Route::put('/{brand}/reject', 'reject')->middleware('can:'.AdminPermission::APPROVE_BRANDS->value);
         });
 
     // Admins Management
@@ -83,5 +109,95 @@ Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
             Route::get('/{adminUser}', 'show')->middleware('can:'.AdminPermission::VIEW_ADMINS->value);
             Route::put('/{adminUser}', 'update')->middleware('can:'.AdminPermission::UPDATE_ADMINS->value);
             Route::delete('/{adminUser}', 'destroy')->middleware('can:'.AdminPermission::DELETE_ADMINS->value);
+        });
+
+    // Customers Management
+    Route::controller(CustomerController::class)
+        ->prefix('customers')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_CUSTOMERS->value);
+            Route::get('/{user}', 'show')->middleware('can:'.AdminPermission::VIEW_CUSTOMERS->value);
+            Route::put('/{user}/status', 'toggleStatus')->middleware('can:'.AdminPermission::UPDATE_CUSTOMERS->value);
+        });
+
+    // Couriers Management
+    Route::controller(CourierController::class)
+        ->prefix('couriers')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);
+            Route::get('/{courier}', 'show')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);
+            Route::put('/{courier}/approve', 'approve')->middleware('can:'.AdminPermission::APPROVE_COURIERS->value);
+            Route::put('/{courier}/reject', 'reject')->middleware('can:'.AdminPermission::APPROVE_COURIERS->value);
+            Route::get('/{courier}/location', 'location')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);
+        });
+
+    // Master Products
+    Route::controller(MasterProductController::class)
+        ->prefix('master-products')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_MASTER_PRODUCTS->value);
+            Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_MASTER_PRODUCTS->value);
+            Route::get('/{masterProduct}', 'show')->middleware('can:'.AdminPermission::VIEW_MASTER_PRODUCTS->value);
+            Route::put('/{masterProduct}', 'update')->middleware('can:'.AdminPermission::UPDATE_MASTER_PRODUCTS->value);
+            Route::delete('/{masterProduct}', 'destroy')->middleware('can:'.AdminPermission::DELETE_MASTER_PRODUCTS->value);
+        });
+
+    // Orders Management
+    Route::controller(OrderController::class)
+        ->prefix('orders')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_ORDERS->value);
+            Route::get('/{order}', 'show')->middleware('can:'.AdminPermission::VIEW_ORDERS->value);
+            Route::put('/{order}/cancel', 'cancel')->middleware('can:'.AdminPermission::CANCEL_ORDERS->value);
+        });
+
+    // Hot Zones
+    Route::controller(HotZoneController::class)
+        ->prefix('hot-zones')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_HOT_ZONES->value);
+            Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_HOT_ZONES->value);
+            Route::get('/{hotZone}', 'show')->middleware('can:'.AdminPermission::VIEW_HOT_ZONES->value);
+            Route::put('/{hotZone}', 'update')->middleware('can:'.AdminPermission::UPDATE_HOT_ZONES->value);
+            Route::delete('/{hotZone}', 'destroy')->middleware('can:'.AdminPermission::DELETE_HOT_ZONES->value);
+        });
+
+    // Finances
+    Route::get('finances/overview', [FinanceController::class, 'overview'])
+        ->middleware('can:'.AdminPermission::VIEW_FINANCES->value);
+
+    // Settlements
+    Route::controller(SettlementController::class)
+        ->prefix('settlements')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::MANAGE_SETTLEMENTS->value);
+            Route::get('/{settlement}', 'show')->middleware('can:'.AdminPermission::MANAGE_SETTLEMENTS->value);
+            Route::post('/{settlement}/execute', 'execute')->middleware('can:'.AdminPermission::MANAGE_SETTLEMENTS->value);
+        });
+
+    // Payout Requests
+    Route::controller(PayoutRequestController::class)
+        ->prefix('payout-requests')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::MANAGE_PAYOUTS->value);
+            Route::put('/{payoutRequest}/approve', 'approve')->middleware('can:'.AdminPermission::MANAGE_PAYOUTS->value);
+            Route::put('/{payoutRequest}/reject', 'reject')->middleware('can:'.AdminPermission::MANAGE_PAYOUTS->value);
+        });
+
+    // Refund Requests
+    Route::controller(RefundRequestController::class)
+        ->prefix('refund-requests')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::MANAGE_REFUNDS->value);
+            Route::get('/{refundRequest}', 'show')->middleware('can:'.AdminPermission::MANAGE_REFUNDS->value);
+            Route::put('/{refundRequest}/resolve', 'resolve')->middleware('can:'.AdminPermission::MANAGE_REFUNDS->value);
+        });
+
+    // System Settings
+    Route::controller(SystemSettingController::class)
+        ->prefix('system-settings')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::MANAGE_SYSTEM_SETTINGS->value);
+            Route::put('/', 'update')->middleware('can:'.AdminPermission::MANAGE_SYSTEM_SETTINGS->value);
         });
 });
