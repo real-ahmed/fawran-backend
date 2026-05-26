@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Admin;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -23,6 +24,7 @@ class AdminSeeder extends Seeder
 
         // Create Super Admin Role
         $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'api_admin', 'vendor_id' => 0]);
+        $role->syncPermissions(Permission::where('guard_name', 'api_admin')->get());
 
         // Create Default Admin and Assign Role
         $admin = Admin::firstOrCreate(
