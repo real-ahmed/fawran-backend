@@ -33,6 +33,8 @@ class User extends Authenticatable implements HasLocalePreference, JWTSubject
         'is_active',
     ];
 
+    protected $with = ['roles', 'permissions'];
+
     protected $attributes = [
         'is_active' => true,
     ];

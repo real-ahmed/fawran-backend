@@ -23,6 +23,8 @@ class Admin extends Authenticatable implements JWTSubject
 
     protected $guard_name = 'api_admin';
 
+    protected $with = ['roles', 'permissions'];
+
     protected $fillable = [
         'name',
         'email',
