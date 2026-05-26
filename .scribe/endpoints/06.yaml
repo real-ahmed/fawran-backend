@@ -1,23 +1,23 @@
-name: 'Vendor - Roles & Permissions'
+name: 'Admin - Brands'
 description: |-
 
-  APIs for managing store-level roles and permissions for vendor staff.
+  APIs for managing product brands in the catalog.
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: api/v1/vendor/roles/permissions
+    uri: api/v1/admin/brands
     metadata:
       custom: []
-      groupName: 'Vendor - Roles & Permissions'
+      groupName: 'Admin - Brands'
       groupDescription: |-
 
-        APIs for managing store-level roles and permissions for vendor staff.
+        APIs for managing product brands in the catalog.
       subgroup: ''
       subgroupDescription: ''
-      title: ''
-      description: ''
+      title: 'List Brands'
+      description: 'Get a paginated list of all brands.'
       authenticated: true
       deprecated: false
     headers:
@@ -52,88 +52,18 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - GET
-    uri: api/v1/vendor/roles
-    metadata:
-      custom: []
-      groupName: 'Vendor - Roles & Permissions'
-      groupDescription: |-
-
-        APIs for managing store-level roles and permissions for vendor staff.
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      search:
-        custom: []
-        name: search
-        description: 'Must not be greater than 100 characters.'
-        required: false
-        example: b
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      per_page:
-        custom: []
-        name: per_page
-        description: 'Must be at least 1. Must not be greater than 100.'
-        required: false
-        example: 22
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      search: b
-      per_page: 22
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
-        headers:
-          cache-control: 'no-cache, private'
-          content-type: application/json
-          access-control-allow-origin: '*'
-        description: null
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
       - POST
-    uri: api/v1/vendor/roles
+    uri: api/v1/admin/brands
     metadata:
       custom: []
-      groupName: 'Vendor - Roles & Permissions'
+      groupName: 'Admin - Brands'
       groupDescription: |-
 
-        APIs for managing store-level roles and permissions for vendor staff.
+        APIs for managing product brands in the catalog.
       subgroup: ''
       subgroupDescription: ''
-      title: ''
-      description: ''
+      title: 'Create Brand'
+      description: 'Store a newly created brand in the catalog.'
       authenticated: true
       deprecated: false
     headers:
@@ -150,28 +80,28 @@ endpoints:
         name: name
         description: 'Must not be greater than 255 characters.'
         required: true
-        example: b
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      permissions:
-        custom: []
-        name: permissions
-        description: ''
-        required: false
         example:
-          - architecto
+          - b
         type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      is_active:
+        custom: []
+        name: is_active
+        description: ''
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
     cleanBodyParameters:
-      name: b
-      permissions:
-        - architecto
+      name:
+        - b
+      is_active: false
     fileParameters: []
     responses: []
     responseFields: []
@@ -186,17 +116,17 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: 'api/v1/vendor/roles/{role}'
+    uri: 'api/v1/admin/brands/{brand_id}'
     metadata:
       custom: []
-      groupName: 'Vendor - Roles & Permissions'
+      groupName: 'Admin - Brands'
       groupDescription: |-
 
-        APIs for managing store-level roles and permissions for vendor staff.
+        APIs for managing product brands in the catalog.
       subgroup: ''
       subgroupDescription: ''
-      title: ''
-      description: ''
+      title: 'Get Brand Details'
+      description: 'Retrieve a specific brand by ID.'
       authenticated: true
       deprecated: false
     headers:
@@ -204,19 +134,19 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      role:
+      brand_id:
         custom: []
-        name: role
-        description: 'The role.'
+        name: brand_id
+        description: 'The ID of the brand.'
         required: true
-        example: architecto
-        type: string
+        example: 16
+        type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      role: architecto
+      brand_id: 16
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -244,17 +174,17 @@ endpoints:
     custom: []
     httpMethods:
       - PUT
-    uri: 'api/v1/vendor/roles/{role_id}'
+    uri: 'api/v1/admin/brands/{brand_id}'
     metadata:
       custom: []
-      groupName: 'Vendor - Roles & Permissions'
+      groupName: 'Admin - Brands'
       groupDescription: |-
 
-        APIs for managing store-level roles and permissions for vendor staff.
+        APIs for managing product brands in the catalog.
       subgroup: ''
       subgroupDescription: ''
-      title: ''
-      description: ''
+      title: 'Update Brand'
+      description: "Modify an existing brand's details."
       authenticated: true
       deprecated: false
     headers:
@@ -262,49 +192,49 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      role_id:
+      brand_id:
         custom: []
-        name: role_id
-        description: 'The ID of the role.'
+        name: brand_id
+        description: 'The ID of the brand.'
         required: true
-        example: 1
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      role_id: 1
+      brand_id: 16
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
       name:
         custom: []
         name: name
-        description: 'Must not be greater than 255 characters.'
-        required: false
-        example: b
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      permissions:
-        custom: []
-        name: permissions
-        description: ''
+        description: 'This field is required when <code>name</code> is present. Must not be greater than 255 characters.'
         required: false
         example:
-          - architecto
+          - b
         type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      is_active:
+        custom: []
+        name: is_active
+        description: ''
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
     cleanBodyParameters:
-      name: b
-      permissions:
-        - architecto
+      name:
+        - b
+      is_active: true
     fileParameters: []
     responses: []
     responseFields: []
@@ -319,17 +249,17 @@ endpoints:
     custom: []
     httpMethods:
       - DELETE
-    uri: 'api/v1/vendor/roles/{role_id}'
+    uri: 'api/v1/admin/brands/{brand_id}'
     metadata:
       custom: []
-      groupName: 'Vendor - Roles & Permissions'
+      groupName: 'Admin - Brands'
       groupDescription: |-
 
-        APIs for managing store-level roles and permissions for vendor staff.
+        APIs for managing product brands in the catalog.
       subgroup: ''
       subgroupDescription: ''
-      title: ''
-      description: ''
+      title: 'Delete Brand'
+      description: 'Remove the specified brand from the catalog.'
       authenticated: true
       deprecated: false
     headers:
@@ -337,19 +267,19 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      role_id:
+      brand_id:
         custom: []
-        name: role_id
-        description: 'The ID of the role.'
+        name: brand_id
+        description: 'The ID of the brand.'
         required: true
-        example: 1
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      role_id: 1
+      brand_id: 16
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []

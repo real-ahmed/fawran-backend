@@ -1,158 +1,23 @@
-name: 'Shared - Customer / Vendor / Courier Authentication'
+name: 'Admin - Categories'
 description: |-
 
-  APIs for authenticating standard users (Customers, Vendors, Couriers).
+  APIs for managing the catalog category tree, including hierarchy and icons.
 endpoints:
   -
     custom: []
     httpMethods:
-      - POST
-    uri: api/v1/customer/login
-    metadata:
-      custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
-      groupDescription: |-
-
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      login:
-        custom: []
-        name: login
-        description: ''
-        required: true
-        example: architecto
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      password:
-        custom: []
-        name: password
-        description: 'can be email or phone.'
-        required: true
-        example: '|]|{+-'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      login: architecto
-      password: '|]|{+-'
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: api/v1/customer/logout
-    metadata:
-      custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
-      groupDescription: |-
-
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: api/v1/customer/refresh
-    metadata:
-      custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
-      groupDescription: |-
-
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
       - GET
-    uri: api/v1/customer/me
+    uri: api/v1/admin/categories
     metadata:
       custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
+      groupName: 'Admin - Categories'
       groupDescription: |-
 
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
+        APIs for managing the catalog category tree, including hierarchy and icons.
       subgroup: ''
       subgroupDescription: ''
-      title: ''
-      description: ''
+      title: 'List Categories'
+      description: 'Get a paginated list of all categories with their hierarchy and icon details.'
       authenticated: true
       deprecated: false
     headers:
@@ -188,17 +53,17 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/v1/courier/login
+    uri: api/v1/admin/categories
     metadata:
       custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
+      groupName: 'Admin - Categories'
       groupDescription: |-
 
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
+        APIs for managing the catalog category tree, including hierarchy and icons.
       subgroup: ''
       subgroupDescription: ''
-      title: ''
-      description: ''
+      title: 'Create Category'
+      description: 'Store a newly created category, including its parent relation and icon.'
       authenticated: true
       deprecated: false
     headers:
@@ -210,105 +75,57 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      login:
+      name:
         custom: []
-        name: login
-        description: ''
+        name: name
+        description: 'Must not be greater than 255 characters.'
         required: true
-        example: architecto
-        type: string
+        example:
+          - b
+        type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      password:
+      is_active:
         custom: []
-        name: password
-        description: 'can be email or phone.'
-        required: true
-        example: '|]|{+-'
-        type: string
+        name: is_active
+        description: ''
+        required: false
+        example: true
+        type: boolean
         enumValues: []
         exampleWasSpecified: false
         nullable: false
+        deprecated: false
+      parent_category_id:
+        custom: []
+        name: parent_category_id
+        description: 'The <code>id</code> of an existing record in the categories table.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      icon_class:
+        custom: []
+        name: icon_class
+        description: 'Must not be greater than 255 characters.'
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
     cleanBodyParameters:
-      login: architecto
-      password: '|]|{+-'
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: api/v1/courier/logout
-    metadata:
-      custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
-      groupDescription: |-
-
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: api/v1/courier/refresh
-    metadata:
-      custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
-      groupDescription: |-
-
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
+      name:
+        - b
+      is_active: true
+      parent_category_id: 16
+      icon_class: 'n'
     fileParameters: []
     responses: []
     responseFields: []
@@ -323,25 +140,37 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: api/v1/courier/me
+    uri: 'api/v1/admin/categories/{category_id}'
     metadata:
       custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
+      groupName: 'Admin - Categories'
       groupDescription: |-
 
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
+        APIs for managing the catalog category tree, including hierarchy and icons.
       subgroup: ''
       subgroupDescription: ''
-      title: ''
-      description: ''
+      title: 'Get Category Details'
+      description: 'Retrieve a specific category by ID with its parent ID and icon class.'
       authenticated: true
       deprecated: false
     headers:
       Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
+    urlParameters:
+      category_id:
+        custom: []
+        name: category_id
+        description: 'The ID of the category.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      category_id: 16
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -368,54 +197,92 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - POST
-    uri: api/v1/vendor/login
+      - PUT
+    uri: 'api/v1/admin/categories/{category_id}'
     metadata:
       custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
+      groupName: 'Admin - Categories'
       groupDescription: |-
 
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
+        APIs for managing the catalog category tree, including hierarchy and icons.
       subgroup: ''
       subgroupDescription: ''
-      title: ''
-      description: ''
+      title: 'Update Category'
+      description: "Modify a category's details, parent assignment, or icon."
       authenticated: true
       deprecated: false
     headers:
       Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
+    urlParameters:
+      category_id:
+        custom: []
+        name: category_id
+        description: 'The ID of the category.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      category_id: 16
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      login:
+      name:
         custom: []
-        name: login
-        description: ''
-        required: true
-        example: architecto
-        type: string
+        name: name
+        description: 'This field is required when <code>name</code> is present. Must not be greater than 255 characters.'
+        required: false
+        example:
+          - b
+        type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      password:
+      is_active:
         custom: []
-        name: password
-        description: 'can be email or phone.'
-        required: true
-        example: '|]|{+-'
-        type: string
+        name: is_active
+        description: ''
+        required: false
+        example: false
+        type: boolean
         enumValues: []
         exampleWasSpecified: false
         nullable: false
+        deprecated: false
+      parent_category_id:
+        custom: []
+        name: parent_category_id
+        description: 'The <code>id</code> of an existing record in the categories table.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      icon_class:
+        custom: []
+        name: icon_class
+        description: 'Must not be greater than 255 characters.'
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
     cleanBodyParameters:
-      login: architecto
-      password: '|]|{+-'
+      name:
+        - b
+      is_active: false
+      parent_category_id: 16
+      icon_class: 'n'
     fileParameters: []
     responses: []
     responseFields: []
@@ -429,115 +296,44 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - POST
-    uri: api/v1/vendor/logout
+      - DELETE
+    uri: 'api/v1/admin/categories/{category_id}'
     metadata:
       custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
+      groupName: 'Admin - Categories'
       groupDescription: |-
 
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
+        APIs for managing the catalog category tree, including hierarchy and icons.
       subgroup: ''
       subgroupDescription: ''
-      title: ''
-      description: ''
+      title: 'Delete Category'
+      description: 'Remove the specified category and its extension relations (hierarchy, icons).'
       authenticated: true
       deprecated: false
     headers:
       Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: api/v1/vendor/refresh
-    metadata:
-      custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
-      groupDescription: |-
-
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: api/v1/vendor/me
-    metadata:
-      custom: []
-      groupName: 'Shared - Customer / Vendor / Courier Authentication'
-      groupDescription: |-
-
-        APIs for authenticating standard users (Customers, Vendors, Couriers).
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
+    urlParameters:
+      category_id:
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
-        headers:
-          cache-control: 'no-cache, private'
-          content-type: application/json
-          access-control-allow-origin: '*'
-        description: null
+        name: category_id
+        description: 'The ID of the category.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      category_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
     responseFields: []
     auth:
       - headers

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Model;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
                 if ($app->environment('local', 'testing')) {
                     return new \App\Services\Sms\LogSmsGateway();
                 }
-                
+
                 return new \App\Services\Sms\SmsMisrGateway();
             }
         );
@@ -29,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+
+        Model::preventLazyLoading(!$this->app->isProduction());
+
         // Implicitly grant "Super Admin" role all permissions
         // This avoids having to sync hundreds of permissions in the database
         \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
