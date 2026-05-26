@@ -45,7 +45,7 @@ class RoleService
     {
         if ($role->name === 'Super Admin') {
             throw ValidationException::withMessages([
-                'name' => 'The Super Admin role cannot be modified.',
+                'name' => __('messages.cannot_modify_super_admin_role'),
             ]);
         }
 
@@ -65,7 +65,7 @@ class RoleService
     {
         if ($role->name === 'Super Admin') {
             throw ValidationException::withMessages([
-                'name' => 'The Super Admin role cannot be deleted.',
+                'name' => __('messages.cannot_delete_super_admin_role'),
             ]);
         }
 

@@ -73,4 +73,7 @@ return [
     'admin_change_password' => 'يُرجى تسجيل الدخول وتغيير كلمة المرور الخاصة بك في أقرب وقت ممكن.',
     'open_app' => 'افتح التطبيق',
     'thank_you_for_using' => 'شكراً لاستخدامك تطبيقنا!',
+    'cannot_delete_super_admin' => 'لا يمكن حذف حساب المشرف العام.',
+    'cannot_modify_super_admin_role' => 'لا يمكن تعديل دور المشرف العام.',
+    'cannot_delete_super_admin_role' => 'لا يمكن حذف دور المشرف العام.',
 ];

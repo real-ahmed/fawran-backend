@@ -73,4 +73,7 @@ return [
     'admin_change_password' => 'Please log in and change your password as soon as possible.',
     'open_app' => 'Open App',
     'thank_you_for_using' => 'Thank you for using our application!',
+    'cannot_delete_super_admin' => 'Cannot delete a Super Admin account.',
+    'cannot_modify_super_admin_role' => 'The Super Admin role cannot be modified.',
+    'cannot_delete_super_admin_role' => 'The Super Admin role cannot be deleted.',
 ];
