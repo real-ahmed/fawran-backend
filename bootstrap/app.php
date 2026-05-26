@@ -10,6 +10,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: [
+            __DIR__.'/../routes/v1/public.php',
             __DIR__.'/../routes/v1/admin.php',
             __DIR__.'/../routes/v1/customer.php',
             __DIR__.'/../routes/v1/courier.php',

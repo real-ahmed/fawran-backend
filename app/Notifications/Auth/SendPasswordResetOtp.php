@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Auth;
 
+use App\Models\Platform\SystemSetting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -53,9 +54,9 @@ class SendPasswordResetOtp extends Notification implements ShouldQueue
 
     public function toSms(object $notifiable): string
     {
-        $setting = \App\Models\Platform\SystemSetting::where('key', 'app_name')->first();
+        $setting = SystemSetting::where('key', 'app_name')->first();
         $appName = 'Fawran';
-        
+
         if ($setting && $setting->value) {
             $decoded = json_decode($setting->value, true);
             $locale = app()->getLocale();
@@ -68,7 +69,7 @@ class SendPasswordResetOtp extends Notification implements ShouldQueue
 
         return __('messages.password_reset_sms', [
             'app_name' => $appName,
-            'otp' => $this->otp
+            'otp' => $this->otp,
         ]);
     }
 }

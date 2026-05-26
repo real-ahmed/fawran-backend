@@ -3,8 +3,10 @@
 namespace App\Services\Admin;
 
 use App\Models\Admin;
+use App\Notifications\Admin\AdminCredentialsGenerated;
 use App\Traits\Paginatable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AdminUserService
@@ -18,7 +20,7 @@ class AdminUserService
 
     public function createAdmin(array $data): Admin
     {
-        $plainPassword = \Illuminate\Support\Str::password(10);
+        $plainPassword = Str::password(10);
         $data['password'] = Hash::make($plainPassword);
 
         $admin = Admin::create($data);
@@ -29,7 +31,7 @@ class AdminUserService
 
         $admin->load('roles');
 
-        $admin->notify(new \App\Notifications\Admin\AdminCredentialsGenerated($plainPassword));
+        $admin->notify(new AdminCredentialsGenerated($plainPassword));
 
         return $admin;
     }

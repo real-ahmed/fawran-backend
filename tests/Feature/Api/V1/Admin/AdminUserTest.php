@@ -4,7 +4,9 @@ namespace Tests\Feature\Api\V1\Admin;
 
 use App\Enums\AdminPermission;
 use App\Models\Admin;
+use App\Notifications\Admin\AdminCredentialsGenerated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -46,7 +48,7 @@ class AdminUserTest extends TestCase
 
     public function test_can_create_admin()
     {
-        \Illuminate\Support\Facades\Notification::fake();
+        Notification::fake();
         setPermissionsTeamId(0);
         $this->superAdmin->givePermissionTo(AdminPermission::CREATE_ADMINS->value);
 
@@ -69,9 +71,9 @@ class AdminUserTest extends TestCase
         ]);
 
         $createdAdmin = Admin::where('email', 'manager@fawran.test')->first();
-        \Illuminate\Support\Facades\Notification::assertSentTo(
+        Notification::assertSentTo(
             $createdAdmin,
-            \App\Notifications\Admin\AdminCredentialsGenerated::class
+            AdminCredentialsGenerated::class
         );
     }
 
