@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Customer\ToggleCustomerStatusRequest;
 use App\Http\Resources\Admin\CustomerResource;
 use App\Models\User;
 use App\Services\Admin\CustomerService;
@@ -49,11 +50,9 @@ class CustomerController extends Controller
      *
      * @bodyParam is_active boolean required The new active status. Example: false
      */
-    public function toggleStatus(Request $request, User $user)
+    public function toggleStatus(ToggleCustomerStatusRequest $request, User $user)
     {
-        $request->validate(['is_active' => 'required|boolean']);
-
-        $user = $this->customerService->toggleStatus($user, $request->boolean('is_active'));
+        $user = $this->customerService->toggleCustomerStatus($user, $request->validated('is_active'));
 
         return $this->successResponse(
             new CustomerResource($user),

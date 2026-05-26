@@ -3,19 +3,25 @@
 namespace App\Services\Admin;
 
 use App\Models\Catalog\Brand;
+use App\Models\Vendor\Vendor;
+use App\Notifications\CatalogItemApproved;
 use App\Traits\Paginatable;
 
 class BrandService
 {
     use Paginatable;
 
-    public function listBrands(?string $search = null)
+    public function listBrands(?string $search = null, ?string $approvalStatus = null)
     {
         return Brand::query()
             ->when($search, function ($query, $search) {
                 $query->where('name->en', 'like', "%{$search}%")
                     ->orWhere('name->ar', 'like', "%{$search}%");
             })
+            ->when($approvalStatus, function ($query, $status) {
+                $query->whereHas('vendorSubmission', fn ($q) => $q->where('status', $status));
+            })
+            ->with('vendorSubmission.vendor')
             ->paginate($this->getPerPageLimit());
     }
 
@@ -36,7 +42,7 @@ class BrandService
         $brand->delete();
     }
 
-    public function proposeBrand(array $data, \App\Models\Vendor\Vendor $vendor): Brand
+    public function proposeBrand(array $data, Vendor $vendor): Brand
     {
         $data['is_active'] = false; // Force inactive until approved
         $brand = Brand::create($data);
@@ -58,7 +64,7 @@ class BrandService
             if ($vendor && $vendor->owner) {
                 // Determine name string based on locales, defaulting to 'en'
                 $brandName = is_array($brand->name) ? ($brand->name['en'] ?? current($brand->name)) : 'Unknown';
-                $vendor->owner->notify(new \App\Notifications\CatalogItemApproved('Brand', $brandName));
+                $vendor->owner->notify(new CatalogItemApproved('Brand', $brandName));
             }
             $submission->delete();
         }

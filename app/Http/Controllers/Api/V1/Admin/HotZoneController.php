@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\HotZone\StoreHotZoneRequest;
+use App\Http\Requests\Admin\HotZone\UpdateHotZoneRequest;
 use App\Http\Resources\Admin\HotZoneResource;
 use App\Models\Geo\HotZone;
 use App\Services\Admin\HotZoneService;
@@ -41,19 +43,9 @@ class HotZoneController extends Controller
      * @bodyParam intensity string required Intensity level (low, medium, high). Example: high
      * @bodyParam name object optional Localized name for manual hot zones. Example: {"en": "Downtown Cairo"}
      */
-    public function store(Request $request)
+    public function store(StoreHotZoneRequest $request)
     {
-        $validated = $request->validate([
-            'center_latitude' => 'required|numeric|between:-90,90',
-            'center_longitude' => 'required|numeric|between:-180,180',
-            'radius_meters' => 'required|integer|min:100',
-            'intensity' => 'required|string|in:low,medium,high',
-            'is_active' => 'sometimes|boolean',
-            'starts_at' => 'sometimes|date',
-            'name' => 'sometimes|array',
-        ]);
-
-        $hotZone = $this->hotZoneService->createHotZone($validated);
+        $hotZone = $this->hotZoneService->createHotZone($request->validated());
 
         return $this->successResponse(
             new HotZoneResource($hotZone),
@@ -79,19 +71,9 @@ class HotZoneController extends Controller
      *
      * Modify an existing hot zone and its extension tables.
      */
-    public function update(Request $request, HotZone $hotZone)
+    public function update(UpdateHotZoneRequest $request, HotZone $hotZone)
     {
-        $validated = $request->validate([
-            'center_latitude' => 'sometimes|numeric|between:-90,90',
-            'center_longitude' => 'sometimes|numeric|between:-180,180',
-            'radius_meters' => 'sometimes|integer|min:100',
-            'intensity' => 'sometimes|string|in:low,medium,high',
-            'is_active' => 'sometimes|boolean',
-            'starts_at' => 'sometimes|date',
-            'name' => 'nullable|array',
-        ]);
-
-        $hotZone = $this->hotZoneService->updateHotZone($hotZone, $validated);
+        $hotZone = $this->hotZoneService->updateHotZone($hotZone, $request->validated());
 
         return $this->successResponse(
             new HotZoneResource($hotZone),

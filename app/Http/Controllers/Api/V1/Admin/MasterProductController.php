@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\MasterProduct\StoreMasterProductRequest;
+use App\Http\Requests\Admin\MasterProduct\UpdateMasterProductRequest;
 use App\Http\Resources\Admin\MasterProductResource;
 use App\Models\Product\MasterProduct;
 use App\Services\Admin\MasterProductService;
@@ -44,20 +46,9 @@ class MasterProductController extends Controller
      * @bodyParam brand_id int optional Brand ID for retail products. Example: 1
      * @bodyParam sku_barcode string optional SKU barcode for retail products. Example: 123456789
      */
-    public function store(Request $request)
+    public function store(StoreMasterProductRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|array',
-            'name.en' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'unit_type' => 'required|string',
-            'is_active' => 'sometimes|boolean',
-            'description' => 'sometimes|array',
-            'brand_id' => 'sometimes|exists:brands,id',
-            'sku_barcode' => 'sometimes|string|unique:retail_product_details,sku_barcode',
-        ]);
-
-        $product = $this->masterProductService->createProduct($validated);
+        $product = $this->masterProductService->createProduct($request->validated());
 
         return $this->successResponse(
             new MasterProductResource($product),
@@ -83,20 +74,9 @@ class MasterProductController extends Controller
      *
      * Modify an existing master product and its extension tables.
      */
-    public function update(Request $request, MasterProduct $masterProduct)
+    public function update(UpdateMasterProductRequest $request, MasterProduct $masterProduct)
     {
-        $validated = $request->validate([
-            'name' => 'sometimes|array',
-            'name.en' => 'sometimes|string|max:255',
-            'category_id' => 'sometimes|exists:categories,id',
-            'unit_type' => 'sometimes|string',
-            'is_active' => 'sometimes|boolean',
-            'description' => 'nullable|array',
-            'brand_id' => 'nullable|exists:brands,id',
-            'sku_barcode' => 'nullable|string|unique:retail_product_details,sku_barcode,'.$masterProduct->id.',master_product_id',
-        ]);
-
-        $product = $this->masterProductService->updateProduct($masterProduct, $validated);
+        $product = $this->masterProductService->updateProduct($masterProduct, $request->validated());
 
         return $this->successResponse(
             new MasterProductResource($product),

@@ -76,7 +76,6 @@ Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
     Route::controller(CategoryController::class)
         ->prefix('categories')
         ->group(function () {
-            Route::get('/pending', 'pending')->middleware('can:'.AdminPermission::APPROVE_CATEGORIES->value);
             Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_CATEGORIES->value);
             Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_CATEGORIES->value);
             Route::get('/{category}', 'show')->middleware('can:'.AdminPermission::VIEW_CATEGORIES->value);
@@ -90,7 +89,6 @@ Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
     Route::controller(BrandController::class)
         ->prefix('brands')
         ->group(function () {
-            Route::get('/pending', 'pending')->middleware('can:'.AdminPermission::APPROVE_BRANDS->value);
             Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_BRANDS->value);
             Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_BRANDS->value);
             Route::get('/{brand}', 'show')->middleware('can:'.AdminPermission::VIEW_BRANDS->value);

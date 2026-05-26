@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\RefundRequest\ResolveRefundRequest;
 use App\Http\Resources\Admin\RefundRequestResource;
 use App\Models\Payment\RefundRequest;
 use App\Services\Admin\RefundService;
@@ -49,14 +50,9 @@ class RefundRequestController extends Controller
      * @bodyParam status string required New status (approved, rejected, processed). Example: approved
      * @bodyParam resolution string optional Resolution method (wallet_credit, gateway_refund). Example: wallet_credit
      */
-    public function resolve(Request $request, RefundRequest $refundRequest)
+    public function resolve(ResolveRefundRequest $request, RefundRequest $refundRequest)
     {
-        $validated = $request->validate([
-            'status' => 'required|string|in:approved,rejected,processed',
-            'resolution' => 'sometimes|string|in:wallet_credit,gateway_refund',
-        ]);
-
-        $refundRequest = $this->refundService->resolveRefundRequest($refundRequest, $validated);
+        $refundRequest = $this->refundService->resolveRefundRequest($refundRequest, $request->validated());
 
         return $this->successResponse(
             new RefundRequestResource($refundRequest),

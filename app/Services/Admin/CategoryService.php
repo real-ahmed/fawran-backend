@@ -3,6 +3,8 @@
 namespace App\Services\Admin;
 
 use App\Models\Catalog\Category;
+use App\Models\Vendor\Vendor;
+use App\Notifications\CatalogItemApproved;
 use App\Traits\Paginatable;
 use Illuminate\Support\Facades\DB;
 
@@ -10,7 +12,7 @@ class CategoryService
 {
     use Paginatable;
 
-    public function listCategories(?string $search = null)
+    public function listCategories(?string $search = null, ?string $approvalStatus = null)
     {
         return Category::query()
             ->with(['hierarchy', 'icon'])
@@ -18,6 +20,10 @@ class CategoryService
                 $query->where('name->en', 'like', "%{$search}%")
                     ->orWhere('name->ar', 'like', "%{$search}%");
             })
+            ->when($approvalStatus, function ($query, $status) {
+                $query->whereHas('vendorSubmission', fn ($q) => $q->where('status', $status));
+            })
+            ->with('vendorSubmission.vendor')
             ->paginate($this->getPerPageLimit());
     }
 
@@ -88,7 +94,7 @@ class CategoryService
         });
     }
 
-    public function proposeCategory(array $data, \App\Models\Vendor\Vendor $vendor): Category
+    public function proposeCategory(array $data, Vendor $vendor): Category
     {
         return DB::transaction(function () use ($data, $vendor) {
             $category = Category::create([
@@ -102,7 +108,7 @@ class CategoryService
                 ]);
             }
 
-            if (!empty($data['icon_class'])) {
+            if (! empty($data['icon_class'])) {
                 $category->icon()->create([
                     'icon_class' => $data['icon_class'],
                 ]);
@@ -126,7 +132,7 @@ class CategoryService
             if ($vendor && $vendor->owner) {
                 // Determine name string based on locales, defaulting to 'en'
                 $categoryName = is_array($category->name) ? ($category->name['en'] ?? current($category->name)) : 'Unknown';
-                $vendor->owner->notify(new \App\Notifications\CatalogItemApproved('Category', $categoryName));
+                $vendor->owner->notify(new CatalogItemApproved('Category', $categoryName));
             }
             $submission->delete();
         }

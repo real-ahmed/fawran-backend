@@ -26,7 +26,10 @@ class BrandController extends Controller
      */
     public function index(Request $request)
     {
-        return BrandResource::collection($this->brandService->listBrands($request->search));
+        return BrandResource::collection($this->brandService->listBrands(
+            $request->query('search'),
+            $request->query('approval_status')
+        ));
     }
 
     /**
@@ -80,20 +83,6 @@ class BrandController extends Controller
         $this->brandService->deleteBrand($brand);
 
         return $this->successResponse(null, 'Brand deleted successfully');
-    }
-
-    /**
-     * List Pending Brand Submissions
-     *
-     * Get all brands that are pending vendor approval.
-     */
-    public function pending()
-    {
-        $brands = Brand::whereHas('vendorSubmission', fn ($q) => $q->where('status', 'pending'))
-            ->with('vendorSubmission.vendor')
-            ->get();
-
-        return $this->successResponse(BrandResource::collection($brands));
     }
 
     /**

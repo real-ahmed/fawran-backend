@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Settlement\ExecuteSettlementRequest;
 use App\Http\Resources\Admin\SettlementResource;
 use App\Models\Payment\Settlement;
 use App\Services\Admin\SettlementService;
@@ -50,15 +51,10 @@ class SettlementController extends Controller
      * @bodyParam execution_method string required Payment method (cash, wallet, bank). Example: bank
      * @bodyParam notes string optional Notes about the execution. Example: Bank transfer ref #12345
      */
-    public function execute(Request $request, Settlement $settlement)
+    public function execute(ExecuteSettlementRequest $request, Settlement $settlement)
     {
-        $validated = $request->validate([
-            'execution_method' => 'required|string|in:cash,wallet,bank',
-            'notes' => 'sometimes|string|max:1000',
-        ]);
-
         $admin = auth('api_admin')->user();
-        $settlement = $this->settlementService->executeSettlement($settlement, $admin, $validated);
+        $settlement = $this->settlementService->executeSettlement($settlement, $admin, $request->validated());
 
         return $this->successResponse(
             new SettlementResource($settlement),

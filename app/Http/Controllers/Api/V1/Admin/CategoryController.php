@@ -26,7 +26,10 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        return CategoryResource::collection($this->categoryService->listCategories($request->search));
+        return CategoryResource::collection($this->categoryService->listCategories(
+            $request->query('search'),
+            $request->query('approval_status')
+        ));
     }
 
     /**
@@ -82,20 +85,6 @@ class CategoryController extends Controller
         $this->categoryService->deleteCategory($category);
 
         return $this->successResponse(null, 'Category deleted successfully');
-    }
-
-    /**
-     * List Pending Category Submissions
-     *
-     * Get all categories that are pending vendor approval.
-     */
-    public function pending()
-    {
-        $categories = Category::whereHas('vendorSubmission', fn ($q) => $q->where('status', 'pending'))
-            ->with(['vendorSubmission.vendor', 'hierarchy', 'icon'])
-            ->get();
-
-        return $this->successResponse(CategoryResource::collection($categories));
     }
 
     /**

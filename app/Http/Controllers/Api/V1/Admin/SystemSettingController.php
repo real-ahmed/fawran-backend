@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SystemSetting\UpdateSystemSettingRequest;
 use App\Http\Resources\Admin\SystemSettingResource;
 use App\Services\Admin\SystemSettingService;
 use Illuminate\Http\Request;
@@ -39,15 +40,9 @@ class SystemSettingController extends Controller
      * @bodyParam settings.*.key string required The setting key. Example: default_commission
      * @bodyParam settings.*.value string required The new value. Example: 15
      */
-    public function update(Request $request)
+    public function update(UpdateSystemSettingRequest $request)
     {
-        $validated = $request->validate([
-            'settings' => 'required|array|min:1',
-            'settings.*.key' => 'required|string|exists:system_settings,key',
-            'settings.*.value' => 'required|string',
-        ]);
-
-        $this->systemSettingService->updateSettings($validated['settings']);
+        $this->systemSettingService->updateSettings($request->validated('settings'));
 
         return $this->successResponse(null, __('messages.settings_updated_successfully'));
     }
