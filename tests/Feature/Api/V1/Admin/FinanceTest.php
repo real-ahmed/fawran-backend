@@ -8,6 +8,7 @@ use App\Models\Platform\PlatformWallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class FinanceTest extends TestCase
@@ -19,16 +20,16 @@ class FinanceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
         setPermissionsTeamId(0);
-        
+
         $this->admin = Admin::factory()->create();
         $role = Role::create(['name' => 'Super Admin', 'guard_name' => 'api_admin']);
         Permission::create(['name' => AdminPermission::VIEW_FINANCES->value, 'guard_name' => 'api_admin']);
         $role->givePermissionTo(Permission::all());
         $this->admin->assignRole($role);
-        
+
         PlatformWallet::create(['total_revenue' => 500, 'current_balance' => 250]);
     }
 

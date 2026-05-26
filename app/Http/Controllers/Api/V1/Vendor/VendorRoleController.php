@@ -8,8 +8,8 @@ use App\Http\Requests\V1\Vendor\Role\StoreVendorRoleRequest;
 use App\Http\Requests\V1\Vendor\Role\UpdateVendorRoleRequest;
 use App\Http\Resources\V1\VendorRoleResource;
 use App\Services\Auth\VendorRoleService;
-use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 /**
  * @group Vendor - Roles & Permissions
@@ -29,7 +29,8 @@ class VendorRoleController extends Controller
     {
         // Fallback for store identification
         $vendorId = $request->header('X-VENDOR-ID') ?? $request->query('vendor_id');
-        abort_if(!$vendorId, 400, 'Vendor ID is required in header or query parameter.');
+        abort_if(! $vendorId, 400, 'Vendor ID is required in header or query parameter.');
+
         return (int) $vendorId;
     }
 

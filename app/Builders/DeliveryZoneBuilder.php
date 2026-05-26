@@ -21,8 +21,8 @@ class DeliveryZoneBuilder extends Builder
     public function containsPoint(float $latitude, float $longitude): self
     {
         $point = "POINT({$longitude} {$latitude})";
-        
-        return $this->whereRaw("ST_Contains(polygon, ST_GeomFromText(?))", [$point]);
+
+        return $this->whereRaw('ST_Contains(polygon, ST_GeomFromText(?))', [$point]);
     }
 
     /**
@@ -34,7 +34,7 @@ class DeliveryZoneBuilder extends Builder
             $query->where('is_active', $filters['is_active']);
         });
 
-        $this->when(!empty($filters['search']), function ($query) use ($filters) {
+        $this->when(! empty($filters['search']), function ($query) use ($filters) {
             $query->search($filters['search']);
         });
 
@@ -49,7 +49,7 @@ class DeliveryZoneBuilder extends Builder
         // Since name is JSON {"ar": "...", "en": "..."}, we use JSON path searching
         return $this->where(function ($query) use ($term) {
             $query->where('name->ar', 'LIKE', "%{$term}%")
-                  ->orWhere('name->en', 'LIKE', "%{$term}%");
+                ->orWhere('name->en', 'LIKE', "%{$term}%");
         });
     }
 }

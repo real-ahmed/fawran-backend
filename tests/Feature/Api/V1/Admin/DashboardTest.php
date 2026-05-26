@@ -16,7 +16,7 @@ class DashboardTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->admin = Admin::factory()->create();
         PlatformWallet::create(['total_revenue' => 100, 'current_balance' => 50]);
     }

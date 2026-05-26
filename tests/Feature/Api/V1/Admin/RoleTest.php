@@ -3,8 +3,8 @@
 namespace Tests\Feature\Api\V1\Admin;
 
 use App\Models\Admin;
+use Database\Seeders\AdminSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -15,14 +15,15 @@ class RoleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\AdminSeeder::class);
+        $this->seed(AdminSeeder::class);
     }
 
     protected function authenticateAdmin(): array
     {
         $admin = Admin::where('email', 'admin@fawran.test')->first();
         $token = auth('api_admin')->login($admin);
-        return ['Authorization' => 'Bearer ' . $token];
+
+        return ['Authorization' => 'Bearer '.$token];
     }
 
     public function test_admin_can_view_roles(): void
@@ -39,8 +40,8 @@ class RoleTest extends TestCase
                     '*' => [
                         'id',
                         'name',
-                        'permissions'
-                    ]
+                        'permissions',
+                    ],
                 ],
             ]);
     }
@@ -59,7 +60,7 @@ class RoleTest extends TestCase
         $response->assertStatus(201);
         $this->assertDatabaseHas('roles', [
             'name' => 'Manager',
-            'guard_name' => 'api_admin'
+            'guard_name' => 'api_admin',
         ]);
     }
 
@@ -68,7 +69,7 @@ class RoleTest extends TestCase
         $headers = $this->authenticateAdmin();
         $role = Role::where('name', 'Super Admin')->first();
 
-        $response = $this->deleteJson('/api/v1/admin/roles/' . $role->id, [], $headers);
+        $response = $this->deleteJson('/api/v1/admin/roles/'.$role->id, [], $headers);
 
         $response->assertStatus(422); // ValidationException converted to 422
     }

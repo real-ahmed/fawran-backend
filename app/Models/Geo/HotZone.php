@@ -3,10 +3,11 @@
 namespace App\Models\Geo;
 
 use App\Enums\HotZoneIntensity;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 
 class HotZone extends Model
 {
@@ -15,7 +16,7 @@ class HotZone extends Model
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
         $query->whereExists(function ($sub) use ($zoneIds) {
-            $sub->select(\Illuminate\Support\Facades\DB::raw(1))
+            $sub->select(DB::raw(1))
                 ->from('delivery_zones')
                 ->whereIn('id', $zoneIds)
                 ->whereRaw('ST_Contains(polygon, POINT(hot_zones.center_longitude, hot_zones.center_latitude))');

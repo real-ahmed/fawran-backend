@@ -10,7 +10,7 @@ enum VendorType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::RESTAURANT => 'Restaurant',
             self::GROCERY => 'Grocery',
             self::PHARMACY => 'Pharmacy',

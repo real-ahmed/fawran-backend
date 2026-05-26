@@ -14,10 +14,10 @@ trait AdminZoneScope
     {
         if (auth('api_admin')->check()) {
             $admin = auth('api_admin')->user();
-            
-            if ($admin && !$admin->hasRole('Super Admin')) {
+
+            if ($admin && ! $admin->hasRole('Super Admin')) {
                 $zoneIds = $admin->deliveryZones()->pluck('delivery_zones.id')->toArray();
-                
+
                 if (empty($zoneIds)) {
                     // If the admin has no zones assigned, they should see no data.
                     $query->whereRaw('1 = 0');
@@ -32,9 +32,6 @@ trait AdminZoneScope
 
     /**
      * Apply the specific zone filter logic for the model.
-     * 
-     * @param Builder $query
-     * @param array $zoneIds
      */
     abstract protected function applyZoneFilter(Builder $query, array $zoneIds): void;
 }

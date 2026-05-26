@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('admin_id')->constrained()->cascadeOnDelete();
             $table->foreignId('delivery_zone_id')->constrained()->cascadeOnDelete();
-            
+
             $table->unique(['admin_id', 'delivery_zone_id']);
         });
     }

@@ -8,12 +8,12 @@ use App\Models\Order\Delivery;
 use App\Models\P2p\P2pAssignment;
 use App\Models\Payment\CourierCashCollection;
 use App\Models\User;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Traits\Scopes\AdminZoneScope;
-use Illuminate\Database\Eloquent\Builder;
 
 class Courier extends Model
 {

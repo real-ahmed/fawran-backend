@@ -4,7 +4,6 @@ namespace App\Models\Product;
 
 use App\Models\Media\SavedItem;
 use App\Models\Order\OrderItem;
-use App\Models\Vendor\Store;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;

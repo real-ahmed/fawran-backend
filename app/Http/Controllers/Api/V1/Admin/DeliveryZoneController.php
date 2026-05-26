@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Admin\DeliveryZone\IndexDeliveryZoneRequest;
-use App\Http\Requests\V1\Admin\DeliveryZone\VendorDeliveryZoneRequest;
 use App\Http\Requests\V1\Admin\DeliveryZone\UpdateDeliveryZoneRequest;
+use App\Http\Requests\V1\Admin\DeliveryZone\VendorDeliveryZoneRequest;
 use App\Http\Resources\V1\DeliveryZoneResource;
 use App\Models\Geo\DeliveryZone;
 use App\Services\Geo\DeliveryZoneService;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @group Admin - Delivery Zones
@@ -28,7 +27,7 @@ class DeliveryZoneController extends Controller
     public function index(IndexDeliveryZoneRequest $request)
     {
         $zones = $this->deliveryZoneService->getZones($request->validated());
-        
+
         return DeliveryZoneResource::collection($zones)->additional([
             'success' => true,
             'message' => __('messages.delivery_zones_retrieved_successfully'),

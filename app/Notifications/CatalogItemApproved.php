@@ -28,9 +28,9 @@ class CatalogItemApproved extends Notification implements ShouldQueue
             'title' => __('messages.catalog_item_approved_title', ['type' => __("messages.{$this->itemType}")]),
             'body' => __('messages.catalog_item_approved_body', [
                 'type' => __("messages.{$this->itemType}"),
-                'name' => $this->itemName
+                'name' => $this->itemName,
             ]),
-            'type' => 'catalog_approval'
+            'type' => 'catalog_approval',
         ];
     }
 
@@ -40,9 +40,9 @@ class CatalogItemApproved extends Notification implements ShouldQueue
             'title' => __('messages.catalog_item_approved_title', ['type' => __("messages.{$this->itemType}")]),
             'body' => __('messages.catalog_item_approved_body', [
                 'type' => __("messages.{$this->itemType}"),
-                'name' => $this->itemName
+                'name' => $this->itemName,
             ]),
-            'type' => 'catalog_approval'
+            'type' => 'catalog_approval',
         ]);
     }
 
@@ -52,11 +52,11 @@ class CatalogItemApproved extends Notification implements ShouldQueue
             'title' => __('messages.catalog_item_approved_title', ['type' => __("messages.{$this->itemType}")]),
             'body' => __('messages.catalog_item_approved_body', [
                 'type' => __("messages.{$this->itemType}"),
-                'name' => $this->itemName
+                'name' => $this->itemName,
             ]),
             'data' => [
-                'type' => 'catalog_approval'
-            ]
+                'type' => 'catalog_approval',
+            ],
         ];
     }
 }

@@ -3,28 +3,26 @@
 namespace App\Broadcasting;
 
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification as FcmNotification;
-use Illuminate\Support\Facades\Log;
 
 class FcmChannel
 {
-    public function __construct(protected Messaging $messaging)
-    {
-    }
+    public function __construct(protected Messaging $messaging) {}
 
     /**
      * Send the given notification.
      */
     public function send(object $notifiable, Notification $notification): void
     {
-        if (!method_exists($notification, 'toFcm')) {
+        if (! method_exists($notification, 'toFcm')) {
             return;
         }
 
         $fcmMessage = $notification->toFcm($notifiable);
-        
+
         if (empty($fcmMessage)) {
             return;
         }
@@ -38,7 +36,7 @@ class FcmChannel
             $token = $notifiable->fcm_token ?? null;
         }
 
-        if (!$token) {
+        if (! $token) {
             return;
         }
 
@@ -52,7 +50,7 @@ class FcmChannel
 
             $this->messaging->send($message);
         } catch (\Exception $e) {
-            Log::error("FCM Send failed for {$token}: " . $e->getMessage());
+            Log::error("FCM Send failed for {$token}: ".$e->getMessage());
         }
     }
 }

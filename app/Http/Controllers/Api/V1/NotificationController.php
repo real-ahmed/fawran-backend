@@ -36,6 +36,7 @@ class NotificationController extends Controller
      * Mark notification as read
      *
      * Marks a specific notification or all notifications as read.
+     *
      * @bodyParam id string optional The ID of the notification. If omitted, marks all as read.
      */
     public function markAsRead(Request $request)

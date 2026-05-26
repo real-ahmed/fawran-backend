@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Vendor\Vendor;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,19 +12,20 @@ class SetVendorTeamId
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             setPermissionsTeamId(0);
+
             return $next($request);
         }
 
         // Get all vendor IDs this user has access to (as owner or staff)
-        $ownedVendorIds = \App\Models\Vendor\Vendor::where('owner_id', $user->id)->pluck('id')->toArray();
+        $ownedVendorIds = Vendor::where('owner_id', $user->id)->pluck('id')->toArray();
         $staffVendorIds = $user->vendorStaff()->pluck('vendor_id')->toArray();
         $allowedVendorIds = array_unique(array_merge($ownedVendorIds, $staffVendorIds));
 
@@ -35,7 +37,7 @@ class SetVendorTeamId
 
         if ($requestedVendorId) {
             // Validate that the requested vendor ID is actually allowed for this user
-            if (!in_array((int)$requestedVendorId, $allowedVendorIds)) {
+            if (! in_array((int) $requestedVendorId, $allowedVendorIds)) {
                 abort(403, 'Unauthorized access to this vendor.');
             }
             setPermissionsTeamId($requestedVendorId);

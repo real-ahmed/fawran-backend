@@ -27,4 +27,3 @@ return new class extends Migration
         Schema::dropIfExists('vendor_category_submissions');
     }
 };
-

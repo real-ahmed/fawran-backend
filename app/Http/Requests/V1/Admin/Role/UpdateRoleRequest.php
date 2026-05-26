@@ -29,7 +29,7 @@ class UpdateRoleRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:roles,name,' . $roleId,
+                'unique:roles,name,'.$roleId,
             ],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['string', 'exists:permissions,name'],

@@ -7,21 +7,19 @@ use Illuminate\Notifications\Notification;
 
 class SmsChannel
 {
-    public function __construct(protected SmsGatewayContract $smsGateway)
-    {
-    }
+    public function __construct(protected SmsGatewayContract $smsGateway) {}
 
     /**
      * Send the given notification.
      */
     public function send(object $notifiable, Notification $notification): void
     {
-        if (!method_exists($notification, 'toSms')) {
+        if (! method_exists($notification, 'toSms')) {
             return;
         }
 
         $message = $notification->toSms($notifiable);
-        
+
         // If message is empty or null, don't send
         if (empty($message)) {
             return;
@@ -36,7 +34,7 @@ class SmsChannel
             $to = $notifiable->phone ?? null;
         }
 
-        if (!$to) {
+        if (! $to) {
             return;
         }
 

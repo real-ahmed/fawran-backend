@@ -4,7 +4,6 @@ namespace App\Traits;
 
 use App\Models\UserSetting;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-
 use Illuminate\Support\Facades\Cache;
 
 trait HasSettings
@@ -26,6 +25,7 @@ trait HasSettings
 
         return Cache::rememberForever($cacheKey, function () use ($key, $default) {
             $setting = $this->settings()->where('key', $key)->first();
+
             return $setting ? $setting->value : $default;
         });
     }

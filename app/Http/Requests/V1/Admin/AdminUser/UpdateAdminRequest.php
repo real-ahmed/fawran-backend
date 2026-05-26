@@ -18,7 +18,7 @@ class UpdateAdminRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -26,7 +26,7 @@ class UpdateAdminRequest extends FormRequest
 
         return [
             'name' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'unique:admins,email,' . $adminId],
+            'email' => ['nullable', 'email', 'unique:admins,email,'.$adminId],
             'password' => ['nullable', 'string', 'min:8'],
             'is_active' => ['nullable', 'boolean'],
             'roles' => ['nullable', 'array'],

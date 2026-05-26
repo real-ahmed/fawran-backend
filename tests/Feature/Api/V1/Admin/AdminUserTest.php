@@ -7,6 +7,7 @@ use App\Models\Admin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class AdminUserTest extends TestCase
@@ -18,12 +19,12 @@ class AdminUserTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Admin setup
         $this->superAdmin = Admin::factory()->create();
-        
+
         setPermissionsTeamId(0);
         foreach (AdminPermission::values() as $permission) {
             Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'api_admin']);
@@ -40,7 +41,7 @@ class AdminUserTest extends TestCase
         $response = $this->actingAs($this->superAdmin, 'api_admin')->getJson('/api/v1/admin/admins');
 
         $response->assertStatus(200)
-                 ->assertJsonStructure(['data' => [['id', 'name', 'email', 'is_active', 'roles']]]);
+            ->assertJsonStructure(['data' => [['id', 'name', 'email', 'is_active', 'roles']]]);
     }
 
     public function test_can_create_admin_with_roles()
@@ -55,14 +56,14 @@ class AdminUserTest extends TestCase
             'email' => 'manager@fawran.test',
             'password' => 'password123',
             'is_active' => true,
-            'roles' => ['Manager']
+            'roles' => ['Manager'],
         ];
 
         $response = $this->actingAs($this->superAdmin, 'api_admin')->postJson('/api/v1/admin/admins', $payload);
 
         $response->assertStatus(201)
-                 ->assertJsonPath('data.name', 'New Manager')
-                 ->assertJsonPath('data.roles.0', 'Manager');
+            ->assertJsonPath('data.name', 'New Manager')
+            ->assertJsonPath('data.roles.0', 'Manager');
 
         $this->assertDatabaseHas('admins', [
             'email' => 'manager@fawran.test',
@@ -79,14 +80,14 @@ class AdminUserTest extends TestCase
 
         $payload = [
             'is_active' => false,
-            'roles' => ['Editor']
+            'roles' => ['Editor'],
         ];
 
         $response = $this->actingAs($this->superAdmin, 'api_admin')->putJson("/api/v1/admin/admins/{$targetAdmin->id}", $payload);
 
         $response->assertStatus(200)
-                 ->assertJsonPath('data.is_active', false)
-                 ->assertJsonPath('data.roles.0', 'Editor');
+            ->assertJsonPath('data.is_active', false)
+            ->assertJsonPath('data.roles.0', 'Editor');
     }
 
     public function test_can_delete_admin()
@@ -98,7 +99,7 @@ class AdminUserTest extends TestCase
 
         // Ensure we are not testing ID 1 accidentally if factory makes ID 1.
         // Super admin created in setUp is ID 1 usually. targetAdmin is ID 2.
-        
+
         $response = $this->actingAs($this->superAdmin, 'api_admin')->deleteJson("/api/v1/admin/admins/{$targetAdmin->id}");
 
         $response->assertStatus(200);
@@ -117,7 +118,7 @@ class AdminUserTest extends TestCase
         $response = $this->actingAs($this->superAdmin, 'api_admin')->deleteJson("/api/v1/admin/admins/{$protectedAdmin->id}");
 
         $response->assertStatus(403)
-                 ->assertJsonPath('message', 'Cannot delete the primary Super Admin account.');
+            ->assertJsonPath('message', 'Cannot delete the primary Super Admin account.');
 
         $this->assertDatabaseHas('admins', ['id' => 1]);
     }

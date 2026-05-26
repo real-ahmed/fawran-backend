@@ -12,6 +12,7 @@ class LogSmsGateway implements SmsGatewayContract
     public function send(string $to, string $message): bool
     {
         Log::info("SMS Mock sent to [{$to}]: {$message}");
+
         return true;
     }
 }

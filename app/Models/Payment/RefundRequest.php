@@ -6,11 +6,11 @@ use App\Enums\RefundRequestStatus;
 use App\Enums\RefundResolution;
 use App\Models\Order\Order;
 use App\Models\User;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Traits\Scopes\AdminZoneScope;
-use Illuminate\Database\Eloquent\Builder;
 
 class RefundRequest extends Model
 {
@@ -18,8 +18,9 @@ class RefundRequest extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->whereHas('order.orderDelivery', fn($q) => $q->whereIn('delivery_zone_id', $zoneIds));
+        $query->whereHas('order.orderDelivery', fn ($q) => $q->whereIn('delivery_zone_id', $zoneIds));
     }
+
     public $timestamps = false;
 
     protected $fillable = [

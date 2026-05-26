@@ -3,9 +3,9 @@
 namespace App\Services\Auth;
 
 use App\Traits\Paginatable;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleService
 {
@@ -15,8 +15,8 @@ class RoleService
     {
         $query = Role::query()->where('guard_name', 'api_admin')->with('permissions');
 
-        if (!empty($filters['search'])) {
-            $query->where('name', 'LIKE', '%' . $filters['search'] . '%');
+        if (! empty($filters['search'])) {
+            $query->where('name', 'LIKE', '%'.$filters['search'].'%');
         }
 
         return $query->paginate($this->getPerPageLimit($filters['per_page'] ?? null));
@@ -77,6 +77,7 @@ class RoleService
         return Permission::where('guard_name', 'api_admin')->get()->groupBy(function ($permission) {
             // Group by the noun (e.g. "delivery zones" from "view delivery zones")
             $parts = explode(' ', $permission->name, 2);
+
             return $parts[1] ?? 'general';
         });
     }

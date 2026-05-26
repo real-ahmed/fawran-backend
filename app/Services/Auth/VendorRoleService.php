@@ -2,11 +2,10 @@
 
 namespace App\Services\Auth;
 
-use App\Traits\Paginatable;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use Illuminate\Validation\ValidationException;
 use App\Enums\VendorPermission;
+use App\Traits\Paginatable;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class VendorRoleService
 {
@@ -16,8 +15,8 @@ class VendorRoleService
     {
         $query = Role::query()->where('vendor_id', $vendorId)->with('permissions');
 
-        if (!empty($filters['search'])) {
-            $query->where('name', 'LIKE', '%' . $filters['search'] . '%');
+        if (! empty($filters['search'])) {
+            $query->where('name', 'LIKE', '%'.$filters['search'].'%');
         }
 
         return $query->paginate($this->getPerPageLimit($filters['per_page'] ?? null));
@@ -39,7 +38,7 @@ class VendorRoleService
         if (isset($data['permissions'])) {
             // Filter only valid store permissions
             $validPermissions = array_intersect($data['permissions'], VendorPermission::values());
-            
+
             // Ensure permissions exist in DB for vendor_id 0 (global definition)
             $permissionIds = [];
             foreach ($validPermissions as $permName) {
@@ -66,7 +65,7 @@ class VendorRoleService
 
         if (isset($data['permissions'])) {
             $validPermissions = array_intersect($data['permissions'], VendorPermission::values());
-            
+
             $permissionIds = [];
             foreach ($validPermissions as $permName) {
                 $permission = Permission::firstOrCreate(['name' => $permName, 'guard_name' => 'api']);
@@ -92,9 +91,10 @@ class VendorRoleService
     {
         // Group store permissions logically for frontend
         $permissions = collect(VendorPermission::values());
-        
+
         return $permissions->groupBy(function ($permission) {
             $parts = explode(' ', $permission, 3);
+
             return $parts[2] ?? 'general'; // e.g. "view store products" -> "products"
         });
     }

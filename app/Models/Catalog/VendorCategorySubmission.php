@@ -2,10 +2,10 @@
 
 namespace App\Models\Catalog;
 
-use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Vendor\Vendor;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class VendorCategorySubmission extends Model
 {
@@ -13,10 +13,11 @@ class VendorCategorySubmission extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->whereHas('vendor.deliveryZones', fn($q) => $q->whereIn('delivery_zones.id', $zoneIds));
+        $query->whereHas('vendor.deliveryZones', fn ($q) => $q->whereIn('delivery_zones.id', $zoneIds));
     }
 
     protected $primaryKey = 'category_id';
+
     public $incrementing = false;
 
     protected $fillable = [
@@ -32,6 +33,6 @@ class VendorCategorySubmission extends Model
 
     public function vendor()
     {
-        return $this->belongsTo(\App\Models\Vendor\Vendor::class);
+        return $this->belongsTo(Vendor::class);
     }
 }

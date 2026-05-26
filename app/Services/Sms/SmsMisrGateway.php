@@ -17,8 +17,9 @@ class SmsMisrGateway implements SmsGatewayContract
         $password = config('services.smsmisr.password');
         $sender = config('services.smsmisr.sender');
 
-        if (!$username || !$password) {
+        if (! $username || ! $password) {
             Log::error('SMS Misr credentials not configured.');
+
             return false;
         }
 
@@ -37,10 +38,12 @@ class SmsMisrGateway implements SmsGatewayContract
                 return true;
             }
 
-            Log::error("SMS Misr failed to send to {$to}: " . $response->body());
+            Log::error("SMS Misr failed to send to {$to}: ".$response->body());
+
             return false;
         } catch (\Exception $e) {
-            Log::error("SMS Misr Exception: " . $e->getMessage());
+            Log::error('SMS Misr Exception: '.$e->getMessage());
+
             return false;
         }
     }

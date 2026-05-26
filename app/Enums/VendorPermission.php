@@ -6,16 +6,16 @@ enum VendorPermission: string
 {
     case VIEW_DASHBOARD = 'view store dashboard';
     case MANAGE_SETTINGS = 'manage store settings';
-    
+
     // Inventory & Products
     case VIEW_PRODUCTS = 'view store products';
     case MANAGE_PRODUCTS = 'manage store products';
     case MANAGE_INVENTORY = 'manage store inventory';
-    
+
     // Orders
     case VIEW_ORDERS = 'view store orders';
     case PROCESS_ORDERS = 'process store orders';
-    
+
     // Roles & Staff
     case VIEW_STAFF = 'view store staff';
     case MANAGE_STAFF = 'manage store staff';

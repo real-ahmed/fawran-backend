@@ -2,21 +2,19 @@
 
 namespace App\Notifications;
 
+use App\Broadcasting\FcmChannel;
+use App\Broadcasting\SmsChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-
-use App\Broadcasting\SmsChannel;
-use App\Broadcasting\FcmChannel;
 
 class TestNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public string $messageTitle, public string $messageBody)
-    {
-    }
+    public function __construct(public string $messageTitle, public string $messageBody) {}
 
     /**
      * Get the notification's delivery channels.
@@ -50,7 +48,7 @@ class TestNotification extends Notification implements ShouldQueue
         return [
             'title' => $this->messageTitle,
             'body' => $this->messageBody,
-            'type' => 'system_alert'
+            'type' => 'system_alert',
         ];
     }
 
@@ -60,10 +58,10 @@ class TestNotification extends Notification implements ShouldQueue
      */
     public function toBroadcast(object $notifiable)
     {
-        return new \Illuminate\Notifications\Messages\BroadcastMessage([
+        return new BroadcastMessage([
             'title' => $this->messageTitle,
             'body' => $this->messageBody,
-            'type' => 'system_alert'
+            'type' => 'system_alert',
         ]);
     }
 
@@ -84,8 +82,8 @@ class TestNotification extends Notification implements ShouldQueue
             'title' => $this->messageTitle,
             'body' => $this->messageBody,
             'data' => [
-                'type' => 'system_alert'
-            ]
+                'type' => 'system_alert',
+            ],
         ];
     }
 }

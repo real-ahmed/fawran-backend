@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests\V1\Admin\Vendor;
 
+use App\Enums\VendorStatus;
+use App\Enums\VendorType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateVendorRequest extends FormRequest
 {
@@ -18,7 +21,7 @@ class UpdateVendorRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -29,14 +32,14 @@ class UpdateVendorRequest extends FormRequest
             'name' => ['nullable', 'array'],
             'name.en' => ['nullable', 'string', 'max:255'],
             'name.ar' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'unique:vendors,email,' . $vendorId],
-            'phone' => ['nullable', 'string', 'max:20', 'unique:vendors,phone,' . $vendorId],
+            'email' => ['nullable', 'email', 'unique:vendors,email,'.$vendorId],
+            'phone' => ['nullable', 'string', 'max:20', 'unique:vendors,phone,'.$vendorId],
             'formatted_address' => ['nullable', 'string', 'max:1000'],
-            'type' => ['nullable', \Illuminate\Validation\Rule::enum(\App\Enums\VendorType::class)],
+            'type' => ['nullable', Rule::enum(VendorType::class)],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'is_active' => ['nullable', 'boolean'],
-            'status' => ['nullable', \Illuminate\Validation\Rule::enum(\App\Enums\VendorStatus::class)],
+            'status' => ['nullable', Rule::enum(VendorStatus::class)],
         ];
     }
 }

@@ -2,19 +2,22 @@
 
 namespace App\Models\Vendor;
 
+use App\Enums\VendorStatus;
+use App\Enums\VendorType;
+use App\Models\Catalog\VendorBrandSubmission;
+use App\Models\Catalog\VendorCategorySubmission;
 use App\Models\Geo\VendorDeliveryZone;
 use App\Models\Inventory\Supplier;
 use App\Models\Media\Media;
 use App\Models\Order\SubOrder;
 use App\Models\Platform\OrderCommission;
 use App\Models\Product\VendorItem;
-use App\Enums\VendorType;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use App\Traits\Scopes\AdminZoneScope;
-use Illuminate\Database\Eloquent\Builder;
 
 class Vendor extends Model
 {
@@ -24,7 +27,7 @@ class Vendor extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->whereHas('deliveryZones', fn($q) => $q->whereIn('delivery_zones.id', $zoneIds));
+        $query->whereHas('deliveryZones', fn ($q) => $q->whereIn('delivery_zones.id', $zoneIds));
     }
 
     protected $fillable = [
@@ -42,7 +45,7 @@ class Vendor extends Model
 
     protected $attributes = [
         'is_active' => true,
-        'status' => \App\Enums\VendorStatus::OFFLINE->value,
+        'status' => VendorStatus::OFFLINE->value,
     ];
 
     protected function casts(): array
@@ -50,7 +53,7 @@ class Vendor extends Model
         return [
             'name' => 'array',
             'type' => VendorType::class,
-            'status' => \App\Enums\VendorStatus::class,
+            'status' => VendorStatus::class,
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
             'is_active' => 'boolean',
@@ -110,11 +113,11 @@ class Vendor extends Model
 
     public function categorySubmissions(): HasMany
     {
-        return $this->hasMany(\App\Models\Catalog\VendorCategorySubmission::class);
+        return $this->hasMany(VendorCategorySubmission::class);
     }
 
     public function brandSubmissions(): HasMany
     {
-        return $this->hasMany(\App\Models\Catalog\VendorBrandSubmission::class);
+        return $this->hasMany(VendorBrandSubmission::class);
     }
 }

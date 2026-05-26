@@ -8,11 +8,11 @@ use App\Models\Media\Rating;
 use App\Models\Payment\Payment;
 use App\Models\Payment\RefundRequest;
 use App\Models\Platform\OrderCommission;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Traits\Scopes\AdminZoneScope;
-use Illuminate\Database\Eloquent\Builder;
 
 class Order extends Model
 {
@@ -20,8 +20,9 @@ class Order extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->whereHas('orderDelivery', fn($q) => $q->whereIn('delivery_zone_id', $zoneIds));
+        $query->whereHas('orderDelivery', fn ($q) => $q->whereIn('delivery_zone_id', $zoneIds));
     }
+
     protected $fillable = [
         'order_type',
         'total_products',

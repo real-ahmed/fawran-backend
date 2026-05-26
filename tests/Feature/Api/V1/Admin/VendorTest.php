@@ -5,9 +5,12 @@ namespace Tests\Feature\Api\V1\Admin;
 use App\Enums\AdminPermission;
 use App\Enums\VendorType;
 use App\Models\Admin;
+use App\Models\User;
 use App\Models\Vendor\Vendor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class VendorTest extends TestCase
@@ -19,13 +22,13 @@ class VendorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Disable permission caching during tests
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Admin setup
         $this->admin = Admin::factory()->create();
-        
+
         // Seed permissions
         setPermissionsTeamId(0);
         foreach (AdminPermission::values() as $permission) {
@@ -35,13 +38,13 @@ class VendorTest extends TestCase
 
     public function test_can_list_vendors_with_permission()
     {
-        $role = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'api_admin', 'vendor_id' => 0]);
+        $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'api_admin', 'vendor_id' => 0]);
         $this->admin->assignRole($role);
 
         setPermissionsTeamId(0);
         $this->admin->givePermissionTo(AdminPermission::VIEW_VENDORS->value);
 
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
 
         Vendor::create([
             'owner_id' => $user->id,
@@ -58,7 +61,7 @@ class VendorTest extends TestCase
         $response = $this->actingAs($this->admin, 'api_admin')->getJson('/api/v1/admin/vendors');
 
         $response->assertStatus(200)
-                 ->assertJsonStructure(['data' => [['id', 'name', 'type']]]);
+            ->assertJsonStructure(['data' => [['id', 'name', 'type']]]);
     }
 
     public function test_cannot_list_vendors_without_permission()
@@ -73,13 +76,13 @@ class VendorTest extends TestCase
         setPermissionsTeamId(0);
         $this->admin->givePermissionTo(AdminPermission::CREATE_VENDORS->value);
 
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
 
         $payload = [
             'owner_id' => $user->id,
             'name' => [
                 'en' => 'New Store',
-                'ar' => 'متجر جديد'
+                'ar' => 'متجر جديد',
             ],
             'type' => VendorType::GROCERY->value,
             'email' => 'new@fawran.test',
@@ -87,13 +90,13 @@ class VendorTest extends TestCase
             'formatted_address' => 'Jeddah, SA',
             'latitude' => 25.0,
             'longitude' => 45.0,
-            'is_active' => true
+            'is_active' => true,
         ];
 
         $response = $this->actingAs($this->admin, 'api_admin')->postJson('/api/v1/admin/vendors', $payload);
 
         $response->assertStatus(201)
-                 ->assertJsonPath('data.name.en', 'New Store');
+            ->assertJsonPath('data.name.en', 'New Store');
 
         $this->assertDatabaseHas('vendors', [
             'type' => VendorType::GROCERY->value,
@@ -106,7 +109,7 @@ class VendorTest extends TestCase
         setPermissionsTeamId(0);
         $this->admin->givePermissionTo(AdminPermission::UPDATE_VENDORS->value);
 
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
 
         $vendor = Vendor::create([
             'owner_id' => $user->id,
@@ -122,13 +125,13 @@ class VendorTest extends TestCase
 
         $payload = [
             'is_active' => false,
-            'name' => ['en' => 'Updated Name', 'ar' => 'تحديث']
+            'name' => ['en' => 'Updated Name', 'ar' => 'تحديث'],
         ];
 
         $response = $this->actingAs($this->admin, 'api_admin')->putJson("/api/v1/admin/vendors/{$vendor->id}", $payload);
 
         $response->assertStatus(200)
-                 ->assertJsonPath('data.is_active', false);
+            ->assertJsonPath('data.is_active', false);
     }
 
     public function test_can_delete_vendor()
@@ -136,7 +139,7 @@ class VendorTest extends TestCase
         setPermissionsTeamId(0);
         $this->admin->givePermissionTo(AdminPermission::DELETE_VENDORS->value);
 
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
 
         $vendor = Vendor::create([
             'owner_id' => $user->id,

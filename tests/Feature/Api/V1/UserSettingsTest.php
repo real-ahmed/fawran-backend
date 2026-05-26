@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Api\V1;
 
-use App\Models\User;
+use App\Http\Middleware\SetLocale;
 use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 
@@ -44,12 +46,13 @@ class UserSettingsTest extends TestCase
 
     public function test_middleware_uses_accept_language_header_for_guest()
     {
-        $request = \Illuminate\Http\Request::create('/api/test', 'GET');
+        $request = Request::create('/api/test', 'GET');
         $request->headers->set('Accept-Language', 'en');
-        
-        $middleware = new \App\Http\Middleware\SetLocale();
+
+        $middleware = new SetLocale;
         $middleware->handle($request, function ($req) {
             $this->assertEquals('en', App::getLocale());
+
             return response('OK');
         });
     }
@@ -60,12 +63,13 @@ class UserSettingsTest extends TestCase
         $user->setSetting('locale', 'ar');
         $this->actingAs($user, 'api');
 
-        $request = \Illuminate\Http\Request::create('/api/test', 'GET');
+        $request = Request::create('/api/test', 'GET');
         $request->headers->set('Accept-Language', 'en'); // should be ignored
-        
-        $middleware = new \App\Http\Middleware\SetLocale();
+
+        $middleware = new SetLocale;
         $middleware->handle($request, function ($req) {
             $this->assertEquals('ar', App::getLocale());
+
             return response('OK');
         });
     }

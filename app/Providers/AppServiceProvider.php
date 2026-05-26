@@ -2,9 +2,15 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Services\Sms\LogSmsGateway;
+use App\Services\Sms\SmsGatewayContract;
+use App\Services\Sms\SmsMisrGateway;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,14 +20,14 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(
-            \App\Services\Sms\SmsGatewayContract::class,
+            SmsGatewayContract::class,
             function ($app) {
                 // Return LogSmsGateway in local/testing, else use real provider
                 if ($app->environment('local', 'testing')) {
-                    return new \App\Services\Sms\LogSmsGateway();
+                    return new LogSmsGateway;
                 }
 
-                return new \App\Services\Sms\SmsMisrGateway();
+                return new SmsMisrGateway;
             }
         );
     }
@@ -32,25 +38,26 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-
-        Model::preventLazyLoading(!$this->app->isProduction());
+        Model::preventLazyLoading(! $this->app->isProduction());
 
         // Implicitly grant "Super Admin" role all permissions
         // This avoids having to sync hundreds of permissions in the database
-        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
+        Gate::before(function ($user, $ability) {
             return $user->hasRole('Super Admin') ? true : null;
         });
 
         // Global API rate limiting
-        \Illuminate\Support\Facades\RateLimiter::for('api', function (\Illuminate\Http\Request $request) {
+        RateLimiter::for('api', function (Request $request) {
             $limit = config('api.rate_limits.api', 100);
-            return \Illuminate\Cache\RateLimiting\Limit::perMinute($limit)->by($request->user()?->id ?: $request->ip());
+
+            return Limit::perMinute($limit)->by($request->user()?->id ?: $request->ip());
         });
 
         // Strict rate limiting for Authentication endpoints
-        \Illuminate\Support\Facades\RateLimiter::for('auth', function (\Illuminate\Http\Request $request) {
+        RateLimiter::for('auth', function (Request $request) {
             $limit = config('api.rate_limits.auth', 5);
-            return \Illuminate\Cache\RateLimiting\Limit::perMinute($limit)->by($request->ip());
+
+            return Limit::perMinute($limit)->by($request->ip());
         });
     }
 }

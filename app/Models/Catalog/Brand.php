@@ -5,6 +5,7 @@ namespace App\Models\Catalog;
 use App\Models\Product\RetailProductDetail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Brand extends Model
 {
@@ -32,7 +33,7 @@ class Brand extends Model
         return $this->hasMany(RetailProductDetail::class);
     }
 
-    public function vendorSubmission(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function vendorSubmission(): HasOne
     {
         return $this->hasOne(VendorBrandSubmission::class, 'brand_id');
     }

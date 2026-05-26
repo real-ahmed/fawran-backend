@@ -3,11 +3,10 @@
 namespace App\Models\Product;
 
 use App\Models\Vendor\Vendor;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-use Illuminate\Database\Eloquent\Builder;
-use App\Traits\Scopes\AdminZoneScope;
 
 class VendorMasterProductSubmission extends Model
 {
@@ -15,7 +14,7 @@ class VendorMasterProductSubmission extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->whereHas('vendor.deliveryZones', fn($q) => $q->whereIn('delivery_zones.id', $zoneIds));
+        $query->whereHas('vendor.deliveryZones', fn ($q) => $q->whereIn('delivery_zones.id', $zoneIds));
     }
 
     protected $fillable = [

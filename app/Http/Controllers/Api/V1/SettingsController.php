@@ -16,7 +16,7 @@ class SettingsController extends Controller
     {
         $user = auth()->user() ?? auth('api_admin')->user();
 
-        if (!$user || !method_exists($user, 'setSetting')) {
+        if (! $user || ! method_exists($user, 'setSetting')) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.settings_cannot_be_updated'),

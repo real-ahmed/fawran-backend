@@ -13,18 +13,18 @@ use App\Models\Payment\PayoutRequest;
 use App\Models\Payment\Wallet;
 use App\Models\Vendor\VendorStaff;
 use App\Traits\HasSettings;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Translation\HasLocalePreference;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements JWTSubject, HasLocalePreference
+class User extends Authenticatable implements HasLocalePreference, JWTSubject
 {
-    use HasFactory, Notifiable, HasRoles, HasSettings;
+    use HasFactory, HasRoles, HasSettings, Notifiable;
 
     protected $fillable = [
         'name',

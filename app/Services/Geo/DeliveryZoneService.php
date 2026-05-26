@@ -3,12 +3,13 @@
 namespace App\Services\Geo;
 
 use App\Models\Geo\DeliveryZone;
-use Illuminate\Support\Facades\DB;
 use App\Traits\Paginatable;
+use Illuminate\Support\Facades\DB;
 
 class DeliveryZoneService
 {
     use Paginatable;
+
     /**
      * Get paginated delivery zones with optional filters.
      */
@@ -34,14 +35,13 @@ class DeliveryZoneService
     /**
      * Create a new Delivery Zone.
      *
-     * @param array $data Expected format: ['name' => [...], 'coordinates' => [['lat' => X, 'lng' => Y], ...], 'is_active' => true]
-     * @return DeliveryZone
+     * @param  array  $data  Expected format: ['name' => [...], 'coordinates' => [['lat' => X, 'lng' => Y], ...], 'is_active' => true]
      */
     public function createZone(array $data): DeliveryZone
     {
         $polygonWkt = $this->formatCoordinatesToWkt($data['coordinates']);
 
-        $zone = new DeliveryZone();
+        $zone = new DeliveryZone;
         $zone->name = $data['name'];
         $zone->is_active = $data['is_active'] ?? true;
         $zone->polygon = DB::raw("ST_GeomFromText('{$polygonWkt}')");
@@ -58,7 +58,7 @@ class DeliveryZoneService
         if (isset($data['name'])) {
             $zone->name = $data['name'];
         }
-        
+
         if (isset($data['is_active'])) {
             $zone->is_active = $data['is_active'];
         }

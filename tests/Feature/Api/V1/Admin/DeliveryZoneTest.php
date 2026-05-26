@@ -3,7 +3,7 @@
 namespace Tests\Feature\Api\V1\Admin;
 
 use App\Models\Admin;
-use App\Models\Geo\DeliveryZone;
+use Database\Seeders\AdminSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -15,7 +15,7 @@ class DeliveryZoneTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\AdminSeeder::class);
+        $this->seed(AdminSeeder::class);
     }
 
     protected function authenticateAdmin(): array
@@ -28,7 +28,8 @@ class DeliveryZoneTest extends TestCase
             ]
         );
         $token = auth('api_admin')->login($admin);
-        return ['Authorization' => 'Bearer ' . $token];
+
+        return ['Authorization' => 'Bearer '.$token];
     }
 
     public function test_admin_can_create_delivery_zone(): void
@@ -53,15 +54,15 @@ class DeliveryZoneTest extends TestCase
         $response->assertStatus(201);
         echo "4. ASSERT JSON\n";
         $response->assertJsonStructure([
-                'success',
-                'message',
-                'data' => [
-                    'id',
-                    'name' => ['en', 'ar'],
-                    'geometry' => ['type', 'coordinates']
-                ],
-                'errors',
-            ]);
+            'success',
+            'message',
+            'data' => [
+                'id',
+                'name' => ['en', 'ar'],
+                'geometry' => ['type', 'coordinates'],
+            ],
+            'errors',
+        ]);
 
         echo "5. ASSERT DB\n";
         $this->assertDatabaseHas('delivery_zones', [

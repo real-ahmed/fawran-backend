@@ -4,9 +4,10 @@ namespace Tests\Feature\Api\V1\Store;
 
 use App\Models\User;
 use App\Models\Vendor\Vendor;
+use Database\Seeders\AdminSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class VendorRoleTest extends TestCase
@@ -16,24 +17,24 @@ class VendorRoleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\AdminSeeder::class); // To seed initial global setup
+        $this->seed(AdminSeeder::class); // To seed initial global setup
     }
 
     protected function authenticateStoreUser(): array
     {
         $user = User::create([
             'name' => 'Test User',
-            'email' => 'user' . uniqid() . '@example.com',
-            'phone' => '123456' . rand(1000, 9999),
+            'email' => 'user'.uniqid().'@example.com',
+            'phone' => '123456'.rand(1000, 9999),
             'password' => bcrypt('password'),
         ]);
-        
+
         $vendor = Vendor::create([
             'owner_id' => $user->id,
             'name' => ['en' => 'Test Store'],
             'description' => ['en' => 'Test Description'],
-            'email' => 'vendor' . uniqid() . '@example.com',
-            'phone' => '12345678' . rand(1000, 9999),
+            'email' => 'vendor'.uniqid().'@example.com',
+            'phone' => '12345678'.rand(1000, 9999),
             'latitude' => 30.0444,
             'longitude' => 31.2357,
             'formatted_address' => 'Test Address',
@@ -49,14 +50,15 @@ class VendorRoleTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'manage store roles', 'guard_name' => 'api']);
         $role->givePermissionTo($permission);
         $user->assignRole($role);
-        
+
         $token = auth('api')->login($user);
+
         return [
             'vendor_id' => $vendorId,
             'headers' => [
-                'Authorization' => 'Bearer ' . $token,
+                'Authorization' => 'Bearer '.$token,
                 'X-VENDOR-ID' => $vendorId,
-            ]
+            ],
         ];
     }
 
@@ -85,8 +87,8 @@ class VendorRoleTest extends TestCase
         $vendor2 = Vendor::create([
             'owner_id' => User::factory()->create()->id,
             'name' => ['en' => 'Test Store 2'],
-            'email' => 'vendor2' . uniqid() . '@example.com',
-            'phone' => '98765432' . rand(1000, 9999),
+            'email' => 'vendor2'.uniqid().'@example.com',
+            'phone' => '98765432'.rand(1000, 9999),
             'latitude' => 30.0444,
             'longitude' => 31.2357,
             'formatted_address' => 'Test Address',
@@ -119,7 +121,7 @@ class VendorRoleTest extends TestCase
         $response->assertStatus(201);
         $this->assertDatabaseHas('roles', [
             'name' => 'Manager',
-            'vendor_id' => $vendorId
+            'vendor_id' => $vendorId,
         ]);
     }
 }

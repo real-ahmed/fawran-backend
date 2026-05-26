@@ -2,12 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Enums\AdminPermission;
+use App\Models\Admin;
 use Illuminate\Database\Seeder;
-
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use App\Enums\AdminPermission;
+use Spatie\Permission\PermissionRegistrar;
 
 class AdminSeeder extends Seeder
 {
@@ -16,7 +17,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         setPermissionsTeamId(0);
 
@@ -29,11 +30,11 @@ class AdminSeeder extends Seeder
         $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'api_admin', 'vendor_id' => 0]);
 
         // Create Default Admin and Assign Role
-        $admin = \App\Models\Admin::firstOrCreate(
+        $admin = Admin::firstOrCreate(
             ['email' => 'admin@fawran.test'],
             [
                 'name' => 'Super Admin',
-                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'password' => Hash::make('password'),
             ]
         );
 

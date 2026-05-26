@@ -6,20 +6,20 @@ use App\Models\Courier\CourierApproval;
 use App\Models\Geo\DeliveryZone;
 use App\Models\Payment\PayoutExecution;
 use App\Models\Payment\SettlementExecution;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\HasSettings;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 class Admin extends Authenticatable implements JWTSubject
 {
-    use HasRoles, HasSettings, HasFactory;
+    use HasFactory, HasRoles, HasSettings;
 
     public $timestamps = false;
-    
+
     protected $guard_name = 'api_admin';
 
     protected $fillable = [
@@ -56,7 +56,7 @@ class Admin extends Authenticatable implements JWTSubject
         return $this->hasMany(PayoutExecution::class);
     }
 
-    public function deliveryZones(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function deliveryZones(): BelongsToMany
     {
         return $this->belongsToMany(DeliveryZone::class, 'admin_delivery_zones');
     }

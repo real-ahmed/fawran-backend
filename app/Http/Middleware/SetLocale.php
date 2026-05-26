@@ -24,7 +24,7 @@ class SetLocale
         }
 
         // 2. If no user locale, fallback to Accept-Language header
-        if (!$locale && $request->hasHeader('Accept-Language')) {
+        if (! $locale && $request->hasHeader('Accept-Language')) {
             $headerLocale = strtolower(substr($request->header('Accept-Language'), 0, 2));
             if (in_array($headerLocale, ['ar', 'en'])) {
                 $locale = $headerLocale;

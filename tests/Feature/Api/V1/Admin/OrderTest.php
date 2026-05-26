@@ -7,6 +7,7 @@ use App\Models\Admin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class OrderTest extends TestCase
@@ -18,10 +19,10 @@ class OrderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
         setPermissionsTeamId(0);
-        
+
         $this->admin = Admin::factory()->create();
         $role = Role::create(['name' => 'Super Admin', 'guard_name' => 'api_admin']);
         Permission::create(['name' => AdminPermission::VIEW_ORDERS->value, 'guard_name' => 'api_admin']);

@@ -23,6 +23,9 @@ use App\Http\Controllers\Api\V1\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('admin/login', [AdminAuthController::class, 'login'])->middleware('throttle:auth');
+Route::post('admin/forgot-password', [AdminAuthController::class, 'forgotPassword'])->middleware('throttle:auth');
+Route::post('admin/verify-reset-otp', [AdminAuthController::class, 'verifyResetOtp'])->middleware('throttle:auth');
+Route::post('admin/reset-password', [AdminAuthController::class, 'resetPassword'])->middleware('throttle:auth');
 
 Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
     Route::post('logout', [AdminAuthController::class, 'logout']);

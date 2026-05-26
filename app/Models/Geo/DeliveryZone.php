@@ -2,11 +2,14 @@
 
 namespace App\Models\Geo;
 
+use App\Builders\DeliveryZoneBuilder;
 use App\Models\Admin;
 use App\Models\Courier\Courier;
 use App\Models\Vendor\VendorDeliveryZone;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
 
 class DeliveryZone extends Model
 {
@@ -40,7 +43,7 @@ class DeliveryZone extends Model
         return $this->hasMany(VendorDeliveryZone::class);
     }
 
-    public function admins(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function admins(): BelongsToMany
     {
         return $this->belongsToMany(Admin::class, 'admin_delivery_zones');
     }
@@ -53,11 +56,10 @@ class DeliveryZone extends Model
     /**
      * Create a new Eloquent query builder for the model.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return \App\Builders\DeliveryZoneBuilder
+     * @param  Builder  $query
      */
-    public function newEloquentBuilder($query): \App\Builders\DeliveryZoneBuilder
+    public function newEloquentBuilder($query): DeliveryZoneBuilder
     {
-        return new \App\Builders\DeliveryZoneBuilder($query);
+        return new DeliveryZoneBuilder($query);
     }
 }
