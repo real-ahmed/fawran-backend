@@ -17,6 +17,10 @@ class SetAdminTeamId
     {
         setPermissionsTeamId(0);
 
+        if ($user = $request->user()) {
+            $user->unsetRelation('roles')->unsetRelation('permissions');
+        }
+
         return $next($request);
     }
 }
