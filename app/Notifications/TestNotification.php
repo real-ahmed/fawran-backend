@@ -34,8 +34,8 @@ class TestNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject($this->messageTitle)
             ->line($this->messageBody)
-            ->action('Open App', url('/'))
-            ->line('Thank you for using our application!');
+            ->action(__('messages.open_app'), url('/'))
+            ->line(__('messages.thank_you_for_using'));
     }
 
     /**

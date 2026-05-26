@@ -18,7 +18,8 @@ class AdminUserService
 
     public function createAdmin(array $data): Admin
     {
-        $data['password'] = Hash::make($data['password']);
+        $plainPassword = \Illuminate\Support\Str::password(10);
+        $data['password'] = Hash::make($plainPassword);
 
         $admin = Admin::create($data);
 
@@ -27,6 +28,8 @@ class AdminUserService
         }
 
         $admin->load('roles');
+
+        $admin->notify(new \App\Notifications\Admin\AdminCredentialsGenerated($plainPassword));
 
         return $admin;
     }

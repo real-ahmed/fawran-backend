@@ -44,17 +44,16 @@ class AdminUserTest extends TestCase
             ->assertJsonStructure(['data' => [['id', 'name', 'email', 'is_active', 'roles']]]);
     }
 
-    public function test_can_create_admin_with_roles()
+    public function test_can_create_admin()
     {
+        \Illuminate\Support\Facades\Notification::fake();
         setPermissionsTeamId(0);
         $this->superAdmin->givePermissionTo(AdminPermission::CREATE_ADMINS->value);
 
         $role = Role::firstOrCreate(['name' => 'Manager', 'guard_name' => 'api_admin']);
-
         $payload = [
             'name' => 'New Manager',
             'email' => 'manager@fawran.test',
-            'password' => 'password123',
             'is_active' => true,
             'roles' => ['Manager'],
         ];
@@ -68,6 +67,12 @@ class AdminUserTest extends TestCase
         $this->assertDatabaseHas('admins', [
             'email' => 'manager@fawran.test',
         ]);
+
+        $createdAdmin = Admin::where('email', 'manager@fawran.test')->first();
+        \Illuminate\Support\Facades\Notification::assertSentTo(
+            $createdAdmin,
+            \App\Notifications\Admin\AdminCredentialsGenerated::class
+        );
     }
 
     public function test_can_update_admin_status_and_roles()

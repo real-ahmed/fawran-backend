@@ -43,20 +43,32 @@ class SendPasswordResetOtp extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('Password Reset Request'))
-            ->greeting(__('Hello!'))
-            ->line(__('You are receiving this email because we received a password reset request for your account.'))
-            ->line(__('Your password reset code is: :otp', ['otp' => $this->otp]))
-            ->line(__('This password reset code will expire in 15 minutes.'))
-            ->line(__('If you did not request a password reset, no further action is required.'));
+            ->subject(__('messages.password_reset_request_subject'))
+            ->greeting(__('messages.hello'))
+            ->line(__('messages.password_reset_request_reason'))
+            ->line(__('messages.password_reset_code_is', ['otp' => $this->otp]))
+            ->line(__('messages.password_reset_code_expire'))
+            ->line(__('messages.password_reset_no_action'));
     }
 
-    /**
-     * Get the SMS representation of the notification.
-     * This relies on the custom SMS channel we built earlier.
-     */
     public function toSms(object $notifiable): string
     {
-        return __('Your Fawran password reset code is: :otp. It is valid for 15 minutes.', ['otp' => $this->otp]);
+        $setting = \App\Models\Platform\SystemSetting::where('key', 'app_name')->first();
+        $appName = 'Fawran';
+        
+        if ($setting && $setting->value) {
+            $decoded = json_decode($setting->value, true);
+            $locale = app()->getLocale();
+            if (is_array($decoded) && isset($decoded[$locale])) {
+                $appName = $decoded[$locale];
+            } else {
+                $appName = $setting->value;
+            }
+        }
+
+        return __('messages.password_reset_sms', [
+            'app_name' => $appName,
+            'otp' => $this->otp
+        ]);
     }
 }
