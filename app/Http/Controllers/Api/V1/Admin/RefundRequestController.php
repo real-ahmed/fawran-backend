@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\RefundRequest\IndexRefundRequest;
 use App\Http\Requests\Admin\RefundRequest\ResolveRefundRequest;
 use App\Http\Resources\Admin\RefundRequestResource;
 use App\Models\Payment\RefundRequest;
@@ -25,7 +26,7 @@ class RefundRequestController extends Controller
      *
      * @queryParam status string Filter by status (pending, approved, rejected, processed). Example: pending
      */
-    public function index(Request $request)
+    public function index(IndexRefundRequest $request)
     {
         return RefundRequestResource::collection($this->refundService->listRefundRequests($request));
     }

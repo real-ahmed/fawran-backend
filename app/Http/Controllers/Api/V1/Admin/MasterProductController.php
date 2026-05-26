@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\MasterProduct\IndexMasterProductRequest;
 use App\Http\Requests\Admin\MasterProduct\StoreMasterProductRequest;
 use App\Http\Requests\Admin\MasterProduct\UpdateMasterProductRequest;
 use App\Http\Resources\Admin\MasterProductResource;
 use App\Models\Product\MasterProduct;
 use App\Services\Admin\MasterProductService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Master Products
@@ -29,7 +29,7 @@ class MasterProductController extends Controller
      * @queryParam is_active boolean Filter by active status. Example: 1
      * @queryParam search string Search by product name. Example: Rice
      */
-    public function index(Request $request)
+    public function index(IndexMasterProductRequest $request)
     {
         return MasterProductResource::collection($this->masterProductService->listProducts($request));
     }

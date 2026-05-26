@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\HotZone\IndexHotZoneRequest;
 use App\Http\Requests\Admin\HotZone\StoreHotZoneRequest;
 use App\Http\Requests\Admin\HotZone\UpdateHotZoneRequest;
 use App\Http\Resources\Admin\HotZoneResource;
 use App\Models\Geo\HotZone;
 use App\Services\Admin\HotZoneService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Hot Zones
@@ -27,7 +27,7 @@ class HotZoneController extends Controller
      * @queryParam is_active boolean Filter by active status. Example: 1
      * @queryParam intensity string Filter by intensity (low, medium, high). Example: high
      */
-    public function index(Request $request)
+    public function index(IndexHotZoneRequest $request)
     {
         return HotZoneResource::collection($this->hotZoneService->listHotZones($request));
     }

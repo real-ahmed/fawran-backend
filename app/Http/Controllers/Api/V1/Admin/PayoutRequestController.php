@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\PayoutRequest\IndexPayoutRequest;
 use App\Http\Resources\Admin\PayoutRequestResource;
 use App\Models\Payment\PayoutRequest;
 use App\Services\Admin\PayoutService;
@@ -24,7 +25,7 @@ class PayoutRequestController extends Controller
      *
      * @queryParam status string Filter by status (pending, transferred, rejected). Example: pending
      */
-    public function index(Request $request)
+    public function index(IndexPayoutRequest $request)
     {
         return PayoutRequestResource::collection($this->payoutService->listPayoutRequests($request));
     }

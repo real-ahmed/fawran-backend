@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SystemSetting\IndexSystemSettingRequest;
 use App\Http\Requests\Admin\SystemSetting\UpdateSystemSettingRequest;
 use App\Http\Resources\Admin\SystemSettingResource;
 use App\Services\Admin\SystemSettingService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - System Settings
@@ -24,9 +24,9 @@ class SystemSettingController extends Controller
      *
      * @queryParam group string Filter by settings group. Example: commissions
      */
-    public function index(Request $request)
+    public function index(IndexSystemSettingRequest $request)
     {
-        $settings = $this->systemSettingService->getSettings($request->query('group'));
+        $settings = $this->systemSettingService->getSettings($request->validated('group'));
 
         return SystemSettingResource::collection($settings);
     }

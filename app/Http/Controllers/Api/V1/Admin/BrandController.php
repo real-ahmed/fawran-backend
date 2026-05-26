@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Brand\IndexBrandRequest;
 use App\Http\Requests\Admin\Brand\StoreBrandRequest;
 use App\Http\Requests\Admin\Brand\UpdateBrandRequest;
 use App\Http\Resources\Admin\BrandResource;
 use App\Models\Catalog\Brand;
 use App\Services\Admin\BrandService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Brands
@@ -24,11 +24,11 @@ class BrandController extends Controller
      *
      * Get a paginated list of all brands.
      */
-    public function index(Request $request)
+    public function index(IndexBrandRequest $request)
     {
         return BrandResource::collection($this->brandService->listBrands(
-            $request->query('search'),
-            $request->query('approval_status')
+            $request->validated('search'),
+            $request->validated('approval_status')
         ));
     }
 

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Category\IndexCategoryRequest;
 use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Http\Resources\Admin\CategoryResource;
 use App\Models\Catalog\Category;
 use App\Services\Admin\CategoryService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Categories
@@ -24,11 +24,11 @@ class CategoryController extends Controller
      *
      * Get a paginated list of all categories with their hierarchy and icon details.
      */
-    public function index(Request $request)
+    public function index(IndexCategoryRequest $request)
     {
         return CategoryResource::collection($this->categoryService->listCategories(
-            $request->query('search'),
-            $request->query('approval_status')
+            $request->validated('search'),
+            $request->validated('approval_status')
         ));
     }
 

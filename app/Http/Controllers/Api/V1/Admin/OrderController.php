@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Order\IndexOrderRequest;
 use App\Http\Resources\Admin\OrderResource;
 use App\Models\Order\Order;
 use App\Services\Admin\OrderService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Orders
@@ -29,7 +29,7 @@ class OrderController extends Controller
      * @queryParam customer_id int Filter by customer ID. Example: 1
      * @queryParam vendor_id int Filter by vendor ID. Example: 1
      */
-    public function index(Request $request)
+    public function index(IndexOrderRequest $request)
     {
         return OrderResource::collection($this->orderService->listOrders($request));
     }

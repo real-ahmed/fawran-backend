@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Settlement\ExecuteSettlementRequest;
+use App\Http\Requests\Admin\Settlement\IndexSettlementRequest;
 use App\Http\Resources\Admin\SettlementResource;
 use App\Models\Payment\Settlement;
 use App\Services\Admin\SettlementService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Settlements
@@ -26,7 +26,7 @@ class SettlementController extends Controller
      * @queryParam settlement_type string Filter by type (courier, store). Example: store
      * @queryParam status string Filter by status (pending, completed, disputed). Example: pending
      */
-    public function index(Request $request)
+    public function index(IndexSettlementRequest $request)
     {
         return SettlementResource::collection($this->settlementService->listSettlements($request));
     }

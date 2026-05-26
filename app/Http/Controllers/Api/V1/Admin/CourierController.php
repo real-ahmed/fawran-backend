@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\CourierResource;
 use App\Models\Courier\Courier;
 use App\Services\Admin\CourierService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Couriers
@@ -27,7 +26,7 @@ class CourierController extends Controller
      * @queryParam delivery_zone_id int Filter by delivery zone. Example: 1
      * @queryParam approval_status string Filter by approval status (pending, approved). Example: pending
      */
-    public function index(Request $request)
+    public function index(IndexCourierRequest $request)
     {
         return CourierResource::collection($this->courierService->listCouriers($request));
     }

@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Vendor\Vendor;
+use App\Http\Requests\Admin\Vendor\IndexVendorRequest;
 use App\Http\Requests\V1\Admin\Vendor\StoreVendorRequest;
 use App\Http\Requests\V1\Admin\Vendor\UpdateVendorRequest;
 use App\Http\Resources\V1\VendorResource;
-use Illuminate\Http\Request;
-
+use App\Models\Vendor\Vendor;
 use App\Services\Admin\VendorService;
 
 /**
@@ -18,9 +17,7 @@ use App\Services\Admin\VendorService;
  */
 class VendorController extends Controller
 {
-    public function __construct(protected VendorService $vendorService)
-    {
-    }
+    public function __construct(protected VendorService $vendorService) {}
 
     /**
      * List Vendors
@@ -30,7 +27,7 @@ class VendorController extends Controller
      * @queryParam type string Filter by vendor type (restaurant, grocery, pharmacy). Example: restaurant
      * @queryParam is_active boolean Filter by active status (1 or 0). Example: 1
      */
-    public function index(Request $request)
+    public function index(IndexVendorRequest $request)
     {
         return VendorResource::collection($this->vendorService->listVendors($request));
     }
