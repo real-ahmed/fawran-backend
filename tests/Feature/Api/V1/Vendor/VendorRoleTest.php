@@ -3,7 +3,7 @@
 namespace Tests\Feature\Api\V1\Store;
 
 use App\Models\User;
-use App\Models\Vendor\Store;
+use App\Models\Vendor\Vendor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -19,7 +19,7 @@ class VendorRoleTest extends TestCase
         $this->seed(\Database\Seeders\AdminSeeder::class); // To seed initial global setup
     }
 
-    protected function authenticateStoreUser(int $vendorId): array
+    protected function authenticateStoreUser(): array
     {
         $user = User::create([
             'name' => 'Test User',
@@ -28,6 +28,21 @@ class VendorRoleTest extends TestCase
             'password' => bcrypt('password'),
         ]);
         
+        $vendor = Vendor::create([
+            'owner_id' => $user->id,
+            'name' => ['en' => 'Test Store'],
+            'description' => ['en' => 'Test Description'],
+            'email' => 'vendor' . uniqid() . '@example.com',
+            'phone' => '12345678' . rand(1000, 9999),
+            'latitude' => 30.0444,
+            'longitude' => 31.2357,
+            'formatted_address' => 'Test Address',
+            'type' => 'restaurant',
+            'is_active' => true,
+        ]);
+
+        $vendorId = $vendor->id;
+
         // Give user permission to manage roles in this store
         setPermissionsTeamId($vendorId);
         $role = Role::create(['name' => 'Vendor Owner', 'guard_name' => 'api', 'vendor_id' => $vendorId]);
@@ -37,15 +52,20 @@ class VendorRoleTest extends TestCase
         
         $token = auth('api')->login($user);
         return [
-            'Authorization' => 'Bearer ' . $token,
-            'X-Store-ID' => $vendorId,
+            'vendor_id' => $vendorId,
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+                'X-VENDOR-ID' => $vendorId,
+            ]
         ];
     }
 
     public function test_vendor_staff_can_view_their_roles(): void
     {
-        $vendorId = 1;
-        $headers = $this->authenticateStoreUser($vendorId);
+        $this->withoutExceptionHandling();
+        $authData = $this->authenticateStoreUser();
+        $vendorId = $authData['vendor_id'];
+        $headers = $authData['headers'];
 
         Role::create(['name' => 'Cashier', 'guard_name' => 'api', 'vendor_id' => $vendorId]);
 
@@ -57,10 +77,23 @@ class VendorRoleTest extends TestCase
 
     public function test_vendor_staff_cannot_view_other_vendor_roles(): void
     {
-        $vendorId1 = 1;
-        $vendorId2 = 2;
-        
-        $headers = $this->authenticateStoreUser($vendorId1);
+        $authData = $this->authenticateStoreUser();
+        $vendorId1 = $authData['vendor_id'];
+        $headers = $authData['headers'];
+
+        // Create another vendor and a role for it
+        $vendor2 = Vendor::create([
+            'owner_id' => User::factory()->create()->id,
+            'name' => ['en' => 'Test Store 2'],
+            'email' => 'vendor2' . uniqid() . '@example.com',
+            'phone' => '98765432' . rand(1000, 9999),
+            'latitude' => 30.0444,
+            'longitude' => 31.2357,
+            'formatted_address' => 'Test Address',
+            'type' => 'restaurant',
+            'is_active' => true,
+        ]);
+        $vendorId2 = $vendor2->id;
 
         Role::create(['name' => 'Cashier Vendor 2', 'guard_name' => 'api', 'vendor_id' => $vendorId2]);
 
@@ -72,8 +105,9 @@ class VendorRoleTest extends TestCase
 
     public function test_vendor_staff_can_create_role(): void
     {
-        $vendorId = 1;
-        $headers = $this->authenticateStoreUser($vendorId);
+        $authData = $this->authenticateStoreUser();
+        $vendorId = $authData['vendor_id'];
+        $headers = $authData['headers'];
 
         $payload = [
             'name' => 'Manager',
