@@ -26,6 +26,8 @@ class AppConfigController extends Controller
         $keys = [
             'app_name',
             'app_icon',
+            'app_logo',
+            'app_logo_white',
             'favicon',
             'currency',
         ];
