@@ -3,6 +3,8 @@
 namespace App\Services\Admin;
 
 use App\Models\Platform\SystemSetting;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class SystemSettingService
 {
@@ -25,8 +27,16 @@ class SystemSettingService
     public function updateSettings(array $settings): void
     {
         foreach ($settings as $setting) {
+            $value = $setting['value'];
+
+            if ($value instanceof UploadedFile) {
+                // Uses the default disk configured in filesystems.php (local, s3, gcs, etc.)
+                $path = $value->store('system_settings');
+                $value = Storage::url($path);
+            }
+
             SystemSetting::where('key', $setting['key'])->update([
-                'value' => $setting['value'],
+                'value' => $value,
                 'updated_at' => now(),
             ]);
         }
