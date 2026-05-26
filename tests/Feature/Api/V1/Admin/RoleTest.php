@@ -5,7 +5,7 @@ namespace Tests\Feature\Api\V1\Admin;
 use App\Models\Admin;
 use Database\Seeders\AdminSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 use Tests\TestCase;
 
 class RoleTest extends TestCase
@@ -51,7 +51,10 @@ class RoleTest extends TestCase
         $headers = $this->authenticateAdmin();
 
         $payload = [
-            'name' => 'Manager',
+            'display_name' => [
+                'en' => 'Manager',
+                'ar' => 'مدير'
+            ],
             'permissions' => ['view roles', 'create roles'],
         ];
 
@@ -59,7 +62,7 @@ class RoleTest extends TestCase
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('roles', [
-            'name' => 'Manager',
+            'name' => 'manager',
             'guard_name' => 'api_admin',
         ]);
     }

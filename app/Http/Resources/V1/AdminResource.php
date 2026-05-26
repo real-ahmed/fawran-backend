@@ -21,7 +21,7 @@ class AdminResource extends JsonResource
             'email' => $this->email,
             'is_active' => (bool) $this->is_active,
             'roles' => $this->whenLoaded('roles', function () {
-                return $this->roles->pluck('name');
+                return RoleResource::collection($this->roles);
             }),
             'permissions' => $this->resolvePermissions(),
             'created_at' => $this->created_at?->toIso8601String(),

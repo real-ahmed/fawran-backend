@@ -2,10 +2,11 @@
 
 namespace App\Services\Auth;
 
+use App\Models\Role;
 use App\Traits\Paginatable;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RoleService
 {
@@ -30,7 +31,8 @@ class RoleService
     public function createRole(array $data): Role
     {
         $role = Role::create([
-            'name' => $data['name'],
+            'name' => Str::slug($data['display_name']['en'] ?? 'role_'.time(), '_'),
+            'display_name' => $data['display_name'] ?? null,
             'guard_name' => 'api_admin',
         ]);
 
@@ -49,8 +51,8 @@ class RoleService
             ]);
         }
 
-        if (isset($data['name'])) {
-            $role->name = $data['name'];
+        if (isset($data['display_name'])) {
+            $role->display_name = $data['display_name'];
             $role->save();
         }
 
@@ -74,7 +76,14 @@ class RoleService
 
     public function getAllPermissions()
     {
-        return Permission::where('guard_name', 'api_admin')->get()->groupBy(function ($permission) {
+        return Permission::where('guard_name', 'api_admin')->get()->map(function ($permission) {
+            $permission->display_name = [
+                'en' => trans('permissions.'.$permission->name, [], 'en'),
+                'ar' => trans('permissions.'.$permission->name, [], 'ar'),
+            ];
+
+            return $permission;
+        })->groupBy(function ($permission) {
             // Group by the noun (e.g. "delivery zones" from "view delivery zones")
             $parts = explode(' ', $permission->name, 2);
 

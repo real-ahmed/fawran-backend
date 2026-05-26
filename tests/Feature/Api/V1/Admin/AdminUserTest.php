@@ -65,7 +65,7 @@ class AdminUserTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonPath('data.name', 'New Manager')
-            ->assertJsonPath('data.roles.0', 'Manager');
+            ->assertJsonPath('data.roles.0.name', 'Manager');
 
         $this->assertDatabaseHas('admins', [
             'email' => 'manager@fawran.test',
@@ -99,7 +99,7 @@ class AdminUserTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('data.is_active', false)
-            ->assertJsonPath('data.roles.0', 'Editor');
+            ->assertJsonPath('data.roles.0.name', 'Editor');
     }
 
     public function test_can_delete_admin()
@@ -130,7 +130,7 @@ class AdminUserTest extends TestCase
         $response = $this->actingAs($this->superAdmin, 'api_admin')->deleteJson("/api/v1/admin/admins/{$protectedAdmin->id}");
 
         $response->assertStatus(403)
-            ->assertJsonPath('message', 'Cannot delete the primary Super Admin account.');
+            ->assertJsonPath('message', 'Cannot delete a Super Admin account.');
 
         $this->assertDatabaseHas('admins', ['id' => 1]);
     }
