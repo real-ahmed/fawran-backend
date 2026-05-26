@@ -27,6 +27,7 @@ class AppConfigController extends Controller
             'app_name',
             'app_icon',
             'favicon',
+            'currency',
         ];
 
         $settings = SystemSetting::whereIn('key', $keys)
