@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V1;
 
+use App\Enums\AdminPermission;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +23,19 @@ class AdminResource extends JsonResource
             'roles' => $this->whenLoaded('roles', function () {
                 return $this->roles->pluck('name');
             }),
+            'permissions' => $this->resolvePermissions(),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
+    }
+
+    private function resolvePermissions(): array
+    {
+        setPermissionsTeamId(0);
+
+        return $this->getAllPermissions()
+            ->map(fn ($permission) => AdminPermission::tryFrom($permission->name)?->name
+                ?? strtoupper(str_replace(' ', '_', $permission->name)))
+            ->values()
+            ->all();
     }
 }

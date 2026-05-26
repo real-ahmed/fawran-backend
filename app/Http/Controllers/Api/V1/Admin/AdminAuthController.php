@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\AdminResource;
 use App\Models\Admin;
 use App\Notifications\Auth\SendPasswordResetOtp;
 use App\Services\Auth\PasswordResetService;
@@ -33,7 +34,9 @@ class AdminAuthController extends Controller
 
     public function me()
     {
-        return $this->successResponse(Auth::guard('api_admin')->user(), 'Profile retrieved successfully');
+        $user = Auth::guard('api_admin')->user();
+
+        return $this->successResponse(new AdminResource($user), 'Profile retrieved successfully');
     }
 
     public function logout()
