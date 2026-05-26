@@ -46,6 +46,7 @@ enum AdminPermission: string
     case CREATE_MASTER_PRODUCTS = 'create master products';
     case UPDATE_MASTER_PRODUCTS = 'update master products';
     case DELETE_MASTER_PRODUCTS = 'delete master products';
+    case APPROVE_MASTER_PRODUCTS = 'approve master products';
 
     case VIEW_ORDERS = 'view orders';
     case CANCEL_ORDERS = 'cancel orders';
