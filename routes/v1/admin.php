@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\V1\Admin\SettlementController;
 use App\Http\Controllers\Api\V1\Admin\SystemSettingController;
 use App\Http\Controllers\Api\V1\Admin\VendorController;
 use App\Http\Controllers\Api\V1\SettingsController;
+use App\Http\Middleware\SetAdminTeamId;
 use Illuminate\Support\Facades\Route;
 
 Route::post('admin/login', [AdminAuthController::class, 'login'])->middleware('throttle:auth');
@@ -27,7 +28,7 @@ Route::post('admin/forgot-password', [AdminAuthController::class, 'forgotPasswor
 Route::post('admin/verify-reset-otp', [AdminAuthController::class, 'verifyResetOtp'])->middleware('throttle:auth');
 Route::post('admin/reset-password', [AdminAuthController::class, 'resetPassword'])->middleware('throttle:auth');
 
-Route::middleware('auth:api_admin')->prefix('admin')->group(function () {
+Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->group(function () {
     Route::post('logout', [AdminAuthController::class, 'logout']);
     Route::post('refresh', [AdminAuthController::class, 'refresh']);
     Route::get('me', [AdminAuthController::class, 'me']);
