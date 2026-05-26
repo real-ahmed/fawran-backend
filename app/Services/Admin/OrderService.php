@@ -12,7 +12,7 @@ class OrderService
 
     public function listOrders(Request $request)
     {
-        $query = Order::with(['customer.customer', 'subOrders.vendor']);
+        $query = Order::with(['customer.customer', 'subOrders.vendor'])->forAdminZones();
 
         if ($request->filled('status')) {
             $query->where('status', $request->query('status'));

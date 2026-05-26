@@ -12,7 +12,7 @@ class RefundService
 
     public function listRefundRequests(Request $request)
     {
-        $query = RefundRequest::with(['customer', 'order']);
+        $query = RefundRequest::with(['customer', 'order'])->forAdminZones();
 
         if ($request->filled('status')) {
             $query->where('status', $request->query('status'));

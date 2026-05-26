@@ -13,10 +13,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 
 class Vendor extends Model
 {
+    use AdminZoneScope;
+
     public $timestamps = true;
+
+    protected function applyZoneFilter(Builder $query, array $zoneIds): void
+    {
+        $query->whereHas('deliveryZones', fn($q) => $q->whereIn('delivery_zones.id', $zoneIds));
+    }
 
     protected $fillable = [
         'owner_id',

@@ -35,6 +35,9 @@ class VendorTest extends TestCase
 
     public function test_can_list_vendors_with_permission()
     {
+        $role = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'api_admin', 'vendor_id' => 0]);
+        $this->admin->assignRole($role);
+
         setPermissionsTeamId(0);
         $this->admin->givePermissionTo(AdminPermission::VIEW_VENDORS->value);
 

@@ -7,9 +7,33 @@ use App\Enums\SettlementType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 
 class Settlement extends Model
 {
+    use AdminZoneScope;
+
+    protected function applyZoneFilter(Builder $query, array $zoneIds): void
+    {
+        $query->where(function ($q) use ($zoneIds) {
+            $q->where('settlement_type', SettlementType::COURIER->value)
+              ->whereExists(function ($sub) use ($zoneIds) {
+                  $sub->select(\Illuminate\Support\Facades\DB::raw(1))
+                      ->from('couriers')
+                      ->whereColumn('couriers.id', 'settlements.target_id')
+                      ->whereIn('couriers.delivery_zone_id', $zoneIds);
+              })
+              ->orWhere('settlement_type', SettlementType::STORE->value)
+              ->whereExists(function ($sub) use ($zoneIds) {
+                  $sub->select(\Illuminate\Support\Facades\DB::raw(1))
+                      ->from('vendors')
+                      ->join('store_delivery_zones', 'vendors.id', '=', 'store_delivery_zones.vendor_id')
+                      ->whereColumn('vendors.id', 'settlements.target_id')
+                      ->whereIn('store_delivery_zones.delivery_zone_id', $zoneIds);
+              });
+        });
+    }
     public $timestamps = false;
 
     protected $fillable = [

@@ -5,9 +5,23 @@ namespace App\Models\Geo;
 use App\Enums\HotZoneIntensity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 
 class HotZone extends Model
 {
+    use AdminZoneScope;
+
+    protected function applyZoneFilter(Builder $query, array $zoneIds): void
+    {
+        $query->whereExists(function ($sub) use ($zoneIds) {
+            $sub->select(\Illuminate\Support\Facades\DB::raw(1))
+                ->from('delivery_zones')
+                ->whereIn('id', $zoneIds)
+                ->whereRaw('ST_Contains(polygon, POINT(hot_zones.center_longitude, hot_zones.center_latitude))');
+        });
+    }
+
     public $timestamps = false;
 
     protected $fillable = [

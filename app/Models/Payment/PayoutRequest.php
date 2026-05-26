@@ -7,9 +7,30 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 
 class PayoutRequest extends Model
 {
+    use AdminZoneScope;
+
+    protected function applyZoneFilter(Builder $query, array $zoneIds): void
+    {
+        $query->where(function ($q) use ($zoneIds) {
+            $q->whereExists(function ($sub) use ($zoneIds) {
+                $sub->select(\Illuminate\Support\Facades\DB::raw(1))
+                    ->from('couriers')
+                    ->whereColumn('couriers.user_id', 'payout_requests.user_id')
+                    ->whereIn('couriers.delivery_zone_id', $zoneIds);
+            })->orWhereExists(function ($sub) use ($zoneIds) {
+                $sub->select(\Illuminate\Support\Facades\DB::raw(1))
+                    ->from('vendors')
+                    ->join('store_delivery_zones', 'vendors.id', '=', 'store_delivery_zones.vendor_id')
+                    ->whereColumn('vendors.owner_id', 'payout_requests.user_id')
+                    ->whereIn('store_delivery_zones.delivery_zone_id', $zoneIds);
+            });
+        });
+    }
     public $timestamps = false;
 
     protected $fillable = [

@@ -19,7 +19,7 @@ class BrandService
                     ->orWhere('name->ar', 'like', "%{$search}%");
             })
             ->when($approvalStatus, function ($query, $status) {
-                $query->whereHas('vendorSubmission', fn ($q) => $q->where('status', $status));
+                $query->whereHas('vendorSubmission', fn ($q) => $q->where('status', $status)->forAdminZones());
             })
             ->with('vendorSubmission.vendor')
             ->paginate($this->getPerPageLimit());

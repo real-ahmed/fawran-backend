@@ -12,7 +12,7 @@ class VendorService
 
     public function listVendors(Request $request)
     {
-        $query = Vendor::query();
+        $query = Vendor::query()->forAdminZones();
 
         if ($request->has('type')) {
             $query->where('type', $request->query('type'));

@@ -9,9 +9,17 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 
 class RefundRequest extends Model
 {
+    use AdminZoneScope;
+
+    protected function applyZoneFilter(Builder $query, array $zoneIds): void
+    {
+        $query->whereHas('order.orderDelivery', fn($q) => $q->whereIn('delivery_zone_id', $zoneIds));
+    }
     public $timestamps = false;
 
     protected $fillable = [

@@ -14,7 +14,7 @@ class SettlementService
 
     public function listSettlements(Request $request)
     {
-        $query = Settlement::with(['execution', 'note']);
+        $query = Settlement::with(['execution', 'note'])->forAdminZones();
 
         if ($request->filled('settlement_type')) {
             $query->where('settlement_type', $request->query('settlement_type'));

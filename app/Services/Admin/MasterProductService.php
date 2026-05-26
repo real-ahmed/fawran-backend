@@ -19,7 +19,7 @@ class MasterProductService
 
         if ($request->filled('approval_status')) {
             $status = $request->query('approval_status');
-            $query->whereHas('vendorSubmission', fn ($q) => $q->where('status', $status));
+            $query->whereHas('vendorSubmission', fn ($q) => $q->where('status', $status)->forAdminZones());
             $query->with('vendorSubmission.vendor');
         }
 

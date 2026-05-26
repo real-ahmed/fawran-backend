@@ -15,7 +15,7 @@ class CourierService
 
     public function listCouriers(Request $request)
     {
-        $query = Courier::with(['user', 'deliveryZone', 'approval']);
+        $query = Courier::with(['user', 'deliveryZone', 'approval'])->forAdminZones();
 
         if ($request->has('is_online')) {
             $query->where('is_online', $request->boolean('is_online'));

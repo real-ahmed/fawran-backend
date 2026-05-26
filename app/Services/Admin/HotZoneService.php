@@ -13,7 +13,7 @@ class HotZoneService
 
     public function listHotZones(Request $request)
     {
-        $query = HotZone::with(['manualHotZone', 'autoHotZone']);
+        $query = HotZone::with(['manualHotZone', 'autoHotZone'])->forAdminZones();
 
         if ($request->has('is_active')) {
             $query->where('is_active', $request->boolean('is_active'));

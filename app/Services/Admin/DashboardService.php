@@ -23,20 +23,20 @@ class DashboardService
 
         return [
             'orders' => [
-                'total' => Order::count(),
-                'pending' => Order::where('status', 'pending')->count(),
-                'processing' => Order::where('status', 'processing')->count(),
-                'delivered' => Order::where('status', 'delivered')->count(),
-                'cancelled' => Order::where('status', 'cancelled')->count(),
+                'total' => Order::forAdminZones()->count(),
+                'pending' => Order::forAdminZones()->where('status', 'pending')->count(),
+                'processing' => Order::forAdminZones()->where('status', 'processing')->count(),
+                'delivered' => Order::forAdminZones()->where('status', 'delivered')->count(),
+                'cancelled' => Order::forAdminZones()->where('status', 'cancelled')->count(),
             ],
             'vendors' => [
-                'total' => Vendor::count(),
-                'active' => Vendor::where('is_active', true)->count(),
+                'total' => Vendor::forAdminZones()->count(),
+                'active' => Vendor::forAdminZones()->where('is_active', true)->count(),
             ],
             'couriers' => [
-                'total' => Courier::count(),
-                'online' => Courier::where('is_online', true)->count(),
-                'pending_approval' => Courier::whereDoesntHave('approval')->count(),
+                'total' => Courier::forAdminZones()->count(),
+                'online' => Courier::forAdminZones()->where('is_online', true)->count(),
+                'pending_approval' => Courier::forAdminZones()->whereDoesntHave('approval')->count(),
             ],
             'revenue' => [
                 'total_revenue' => $platformWallet?->total_revenue ?? '0.00',
@@ -54,14 +54,17 @@ class DashboardService
     {
         return [
             'brands' => VendorBrandSubmission::with(['brand', 'vendor'])
+                ->forAdminZones()
                 ->where('status', 'pending')
                 ->latest()
                 ->get(),
             'categories' => VendorCategorySubmission::with(['category', 'vendor'])
+                ->forAdminZones()
                 ->where('status', 'pending')
                 ->latest()
                 ->get(),
             'couriers' => Courier::with(['user', 'deliveryZone', 'document'])
+                ->forAdminZones()
                 ->whereDoesntHave('approval')
                 ->latest('created_at')
                 ->get(),

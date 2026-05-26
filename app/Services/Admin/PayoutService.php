@@ -13,7 +13,7 @@ class PayoutService
 
     public function listPayoutRequests(Request $request)
     {
-        $query = PayoutRequest::with(['user', 'execution']);
+        $query = PayoutRequest::with(['user', 'execution'])->forAdminZones();
 
         if ($request->filled('status')) {
             $query->where('status', $request->query('status'));
