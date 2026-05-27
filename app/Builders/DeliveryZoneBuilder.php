@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class DeliveryZoneBuilder extends Builder
 {
+    public function withPolygonGeoJson(): self
+    {
+        return $this->select('*')->selectRaw('ST_AsGeoJSON(polygon) as polygon_geojson');
+    }
+
     /**
      * Scope a query to only include active delivery zones.
      */
@@ -51,5 +56,10 @@ class DeliveryZoneBuilder extends Builder
             $query->where('name->ar', 'LIKE', "%{$term}%")
                 ->orWhere('name->en', 'LIKE', "%{$term}%");
         });
+    }
+
+    public function newest(): self
+    {
+        return $this->orderByDesc('id');
     }
 }

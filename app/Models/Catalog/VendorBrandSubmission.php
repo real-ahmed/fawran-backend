@@ -2,10 +2,12 @@
 
 namespace App\Models\Catalog;
 
+use App\Builders\VendorBrandSubmissionBuilder;
 use App\Models\Vendor\Vendor;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VendorBrandSubmission extends Model
 {
@@ -26,13 +28,18 @@ class VendorBrandSubmission extends Model
         'status',
     ];
 
-    public function brand()
+    public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
     }
 
-    public function vendor()
+    public function vendor(): BelongsTo
     {
         return $this->belongsTo(Vendor::class);
+    }
+
+    public function newEloquentBuilder($query): VendorBrandSubmissionBuilder
+    {
+        return new VendorBrandSubmissionBuilder($query);
     }
 }

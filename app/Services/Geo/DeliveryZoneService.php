@@ -18,8 +18,8 @@ class DeliveryZoneService
         $perPage = $this->getPerPageLimit($filters['per_page'] ?? null);
 
         return DeliveryZone::filter($filters)
-            ->select('*', DB::raw('ST_AsGeoJSON(polygon) as polygon_geojson'))
-            ->orderByDesc('id')
+            ->withPolygonGeoJson()
+            ->newest()
             ->cursorPaginate($perPage);
     }
 
@@ -28,7 +28,8 @@ class DeliveryZoneService
      */
     public function getZoneById(int $id): DeliveryZone
     {
-        return DeliveryZone::select('*', DB::raw('ST_AsGeoJSON(polygon) as polygon_geojson'))
+        return DeliveryZone::query()
+            ->withPolygonGeoJson()
             ->findOrFail($id);
     }
 

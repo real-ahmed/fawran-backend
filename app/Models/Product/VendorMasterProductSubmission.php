@@ -2,6 +2,7 @@
 
 namespace App\Models\Product;
 
+use App\Builders\VendorMasterProductSubmissionBuilder;
 use App\Models\Vendor\Vendor;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,5 +33,10 @@ class VendorMasterProductSubmission extends Model
     public function vendor(): BelongsTo
     {
         return $this->belongsTo(Vendor::class);
+    }
+
+    public function newEloquentBuilder($query): VendorMasterProductSubmissionBuilder
+    {
+        return new VendorMasterProductSubmissionBuilder($query);
     }
 }

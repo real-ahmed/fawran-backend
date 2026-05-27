@@ -41,7 +41,7 @@ class SystemSetting extends Model
         return Cache::memo()->remember(
             self::valueCacheKey($key),
             now()->addMinutes(30),
-            fn (): ?string => self::query()->where('key', $key)->first()?->value ?? $default
+            fn (): ?string => self::query()->key($key)->first()?->value ?? $default
         );
     }
 
@@ -54,7 +54,7 @@ class SystemSetting extends Model
             self::PUBLIC_CONFIG_CACHE_KEY,
             [300, 900],
             fn (): array => self::query()
-                ->whereIn('key', self::PUBLIC_CONFIG_KEYS)
+                ->keys(self::PUBLIC_CONFIG_KEYS)
                 ->get()
                 ->pluck('value', 'key')
                 ->all()

@@ -2,10 +2,12 @@
 
 namespace App\Models\Catalog;
 
+use App\Builders\VendorCategorySubmissionBuilder;
 use App\Models\Vendor\Vendor;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VendorCategorySubmission extends Model
 {
@@ -26,13 +28,18 @@ class VendorCategorySubmission extends Model
         'status',
     ];
 
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function vendor()
+    public function vendor(): BelongsTo
     {
         return $this->belongsTo(Vendor::class);
+    }
+
+    public function newEloquentBuilder($query): VendorCategorySubmissionBuilder
+    {
+        return new VendorCategorySubmissionBuilder($query);
     }
 }

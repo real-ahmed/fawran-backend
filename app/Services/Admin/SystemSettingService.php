@@ -39,7 +39,7 @@ class SystemSettingService
                     }
 
                     if (! isset($pendingMerges[$baseKey])) {
-                        $existing = SystemSetting::where('key', $baseKey)->first();
+                        $existing = SystemSetting::query()->key($baseKey)->first();
                         $existingJson = json_decode($existing?->value ?? '{"ar":"","en":""}', true);
                         if (! is_array($existingJson)) {
                             // Convert legacy single string to array

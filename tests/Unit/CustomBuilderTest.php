@@ -6,6 +6,7 @@ use App\Builders\AdminBuilder;
 use App\Builders\BrandBuilder;
 use App\Builders\CategoryBuilder;
 use App\Builders\CourierBuilder;
+use App\Builders\DeliveryZoneBuilder;
 use App\Builders\HotZoneBuilder;
 use App\Builders\MasterProductBuilder;
 use App\Builders\OrderBuilder;
@@ -15,11 +16,17 @@ use App\Builders\RoleBuilder;
 use App\Builders\SettlementBuilder;
 use App\Builders\SystemSettingBuilder;
 use App\Builders\UserBuilder;
+use App\Builders\VendorBrandSubmissionBuilder;
 use App\Builders\VendorBuilder;
+use App\Builders\VendorCategorySubmissionBuilder;
+use App\Builders\VendorMasterProductSubmissionBuilder;
 use App\Models\Admin;
 use App\Models\Catalog\Brand;
 use App\Models\Catalog\Category;
+use App\Models\Catalog\VendorBrandSubmission;
+use App\Models\Catalog\VendorCategorySubmission;
 use App\Models\Courier\Courier;
+use App\Models\Geo\DeliveryZone;
 use App\Models\Geo\HotZone;
 use App\Models\Order\Order;
 use App\Models\Payment\PayoutRequest;
@@ -27,6 +34,7 @@ use App\Models\Payment\RefundRequest;
 use App\Models\Payment\Settlement;
 use App\Models\Platform\SystemSetting;
 use App\Models\Product\MasterProduct;
+use App\Models\Product\VendorMasterProductSubmission;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Vendor\Vendor;
@@ -55,6 +63,7 @@ class CustomBuilderTest extends TestCase
             'brand' => ['model' => Brand::class, 'builder' => BrandBuilder::class],
             'category' => ['model' => Category::class, 'builder' => CategoryBuilder::class],
             'courier' => ['model' => Courier::class, 'builder' => CourierBuilder::class],
+            'delivery zone' => ['model' => DeliveryZone::class, 'builder' => DeliveryZoneBuilder::class],
             'hot zone' => ['model' => HotZone::class, 'builder' => HotZoneBuilder::class],
             'master product' => ['model' => MasterProduct::class, 'builder' => MasterProductBuilder::class],
             'order' => ['model' => Order::class, 'builder' => OrderBuilder::class],
@@ -65,6 +74,9 @@ class CustomBuilderTest extends TestCase
             'system setting' => ['model' => SystemSetting::class, 'builder' => SystemSettingBuilder::class],
             'user' => ['model' => User::class, 'builder' => UserBuilder::class],
             'vendor' => ['model' => Vendor::class, 'builder' => VendorBuilder::class],
+            'vendor brand submission' => ['model' => VendorBrandSubmission::class, 'builder' => VendorBrandSubmissionBuilder::class],
+            'vendor category submission' => ['model' => VendorCategorySubmission::class, 'builder' => VendorCategorySubmissionBuilder::class],
+            'vendor master product submission' => ['model' => VendorMasterProductSubmission::class, 'builder' => VendorMasterProductSubmissionBuilder::class],
         ];
     }
 
@@ -102,11 +114,59 @@ class CustomBuilderTest extends TestCase
     public function test_system_setting_builder_applies_group_and_ordering(): void
     {
         $query = SystemSetting::query()
+            ->key('app_name')
+            ->keys(['app_name', 'currency'])
             ->group('general')
             ->ordered();
 
-        $this->assertStringContainsString('where `group` = ?', $query->toSql());
+        $this->assertStringContainsString('where `key` = ?', $query->toSql());
+        $this->assertStringContainsString('`key` in (?, ?)', $query->toSql());
+        $this->assertStringContainsString('`group` = ?', $query->toSql());
         $this->assertStringContainsString('order by `group` asc, `key` asc', $query->toSql());
-        $this->assertSame(['general'], $query->getBindings());
+        $this->assertSame(['app_name', 'app_name', 'currency', 'general'], $query->getBindings());
+    }
+
+    public function test_delivery_zone_builder_applies_filters_and_spatial_point_lookup(): void
+    {
+        $query = DeliveryZone::query()
+            ->withPolygonGeoJson()
+            ->filter([
+                'is_active' => 'true',
+                'search' => 'riyadh',
+            ])
+            ->containsPoint(24.7136, 46.6753)
+            ->newest();
+
+        $this->assertStringContainsString('ST_AsGeoJSON', $query->toSql());
+        $this->assertStringContainsString('`is_active` = ?', $query->toSql());
+        $this->assertStringContainsString('json_unquote', $query->toSql());
+        $this->assertStringContainsString('ST_Contains', $query->toSql());
+        $this->assertStringContainsString('order by `id` desc', $query->toSql());
+        $this->assertContains(true, $query->getBindings());
+        $this->assertContains('%riyadh%', $query->getBindings());
+        $this->assertContains('POINT(46.6753 24.7136)', $query->getBindings());
+    }
+
+    public function test_vendor_submission_builders_apply_pending_approval_list_shape(): void
+    {
+        $brandQuery = VendorBrandSubmission::query()
+            ->withApprovalRelations()
+            ->pending()
+            ->newest();
+        $categoryQuery = VendorCategorySubmission::query()
+            ->withApprovalRelations()
+            ->pending()
+            ->newest();
+        $productQuery = VendorMasterProductSubmission::query()
+            ->withApprovalRelations()
+            ->pending()
+            ->newest();
+
+        $this->assertSame(['brand', 'vendor'], array_keys($brandQuery->getEagerLoads()));
+        $this->assertSame(['category', 'vendor'], array_keys($categoryQuery->getEagerLoads()));
+        $this->assertSame(['masterProduct', 'vendor'], array_keys($productQuery->getEagerLoads()));
+        $this->assertStringContainsString('`status` = ?', $brandQuery->toSql());
+        $this->assertStringContainsString('order by', $categoryQuery->toSql());
+        $this->assertSame(['pending'], $productQuery->getBindings());
     }
 }

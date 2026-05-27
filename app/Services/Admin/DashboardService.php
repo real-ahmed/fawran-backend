@@ -89,20 +89,23 @@ class DashboardService
     public function getPendingApprovals(): array
     {
         return [
-            'brands' => VendorBrandSubmission::with(['brand', 'vendor'])
+            'brands' => VendorBrandSubmission::query()
+                ->withApprovalRelations()
                 ->forAdminZones()
-                ->where('status', 'pending')
-                ->latest()
+                ->pending()
+                ->newest()
                 ->get(),
-            'categories' => VendorCategorySubmission::with(['category', 'vendor'])
+            'categories' => VendorCategorySubmission::query()
+                ->withApprovalRelations()
                 ->forAdminZones()
-                ->where('status', 'pending')
-                ->latest()
+                ->pending()
+                ->newest()
                 ->get(),
-            'couriers' => Courier::with(['user', 'document'])
+            'couriers' => Courier::query()
+                ->with(['user', 'document'])
                 ->forAdminZones()
-                ->whereDoesntHave('approval')
-                ->latest('created_at')
+                ->approvalStatus('pending')
+                ->newest()
                 ->get(),
         ];
     }
