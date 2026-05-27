@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\V1\Admin\RoleController;
 use App\Http\Controllers\Api\V1\Admin\SettlementController;
 use App\Http\Controllers\Api\V1\Admin\SystemSettingController;
 use App\Http\Controllers\Api\V1\Admin\VendorController;
+use App\Http\Controllers\Api\V1\Admin\VendorOwnerController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Middleware\SetAdminTeamId;
 use Illuminate\Support\Facades\Route;
@@ -75,6 +76,15 @@ Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->g
             Route::put('/{vendor}', 'update')->middleware('can:'.AdminPermission::UPDATE_VENDORS->value);
             Route::delete('/{vendor}', 'destroy')->middleware('can:'.AdminPermission::DELETE_VENDORS->value);
         });
+
+    // Vendor Owners (Staff) Management
+    Route::controller(VendorOwnerController::class)
+        ->prefix('vendor-owners')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_VENDORS->value);
+            Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_VENDORS->value);
+        });
+
 
     // Categories Management
     Route::controller(CategoryController::class)

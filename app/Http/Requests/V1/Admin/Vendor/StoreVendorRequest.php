@@ -38,6 +38,7 @@ class StoreVendorRequest extends FormRequest
             'longitude' => ['required', 'numeric', 'between:-180,180'],
             'is_active' => ['nullable', 'boolean'],
             'status' => ['nullable', Rule::enum(VendorStatus::class)],
+            'image' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

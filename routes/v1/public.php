@@ -10,5 +10,6 @@ Route::prefix('public')->group(function () {
     Route::middleware([ValidateApiKey::class])->group(function () {
         Route::get('/admin-permissions', [AppConfigController::class, 'adminPermissions']);
         Route::get('/vendor-permissions', [AppConfigController::class, 'vendorPermissions']);
+        Route::get('/admin-enums', [AppConfigController::class, 'enums']);
     });
 });

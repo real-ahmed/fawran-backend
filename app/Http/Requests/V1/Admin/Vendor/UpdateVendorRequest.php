@@ -35,11 +35,12 @@ class UpdateVendorRequest extends FormRequest
             'email' => ['nullable', 'email', 'unique:vendors,email,'.$vendorId],
             'phone' => ['nullable', 'string', 'max:20', 'unique:vendors,phone,'.$vendorId],
             'formatted_address' => ['nullable', 'string', 'max:1000'],
-            'type' => ['nullable', Rule::enum(VendorType::class)],
-            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            'is_active' => ['nullable', 'boolean'],
-            'status' => ['nullable', Rule::enum(VendorStatus::class)],
+            'type' => ['sometimes', Rule::enum(VendorType::class)],
+            'latitude' => ['sometimes', 'numeric', 'between:-90,90'],
+            'longitude' => ['sometimes', 'numeric', 'between:-180,180'],
+            'is_active' => ['sometimes', 'boolean'],
+            'status' => ['sometimes', Rule::enum(VendorStatus::class)],
+            'image' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

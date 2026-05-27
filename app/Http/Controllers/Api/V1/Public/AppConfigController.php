@@ -88,4 +88,23 @@ class AppConfigController extends Controller
 
         return $this->successResponse($permissions);
     }
+
+    /**
+     * Get System Enums
+     *
+     * Retrieves system enums and their translations for frontend synchronization.
+     */
+    public function enums(): JsonResponse
+    {
+        $enums = [
+            'VendorType' => collect(\App\Enums\VendorType::cases())->mapWithKeys(function ($case) {
+                return [$case->name => $case->value];
+            }),
+            'VendorStatus' => collect(\App\Enums\VendorStatus::cases())->mapWithKeys(function ($case) {
+                return [$case->name => $case->value];
+            }),
+        ];
+
+        return $this->successResponse($enums);
+    }
 }

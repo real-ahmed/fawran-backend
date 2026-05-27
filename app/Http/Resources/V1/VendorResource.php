@@ -14,6 +14,8 @@ class VendorResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $primaryMedia = $this->whenLoaded('media', fn () => $this->media->where('is_primary', true)->first());
+
         return [
             'id' => $this->id,
             'owner_id' => $this->owner_id,
@@ -26,6 +28,7 @@ class VendorResource extends JsonResource
             'latitude' => (float) $this->latitude,
             'longitude' => (float) $this->longitude,
             'is_active' => (bool) $this->is_active,
+            'image' => $primaryMedia ? \Illuminate\Support\Facades\Storage::disk('public')->url($primaryMedia->file_path) : null,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];
