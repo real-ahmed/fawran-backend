@@ -8,6 +8,7 @@ use App\Models\Geo\DeliveryZone;
 use App\Models\Payment\PayoutExecution;
 use App\Models\Payment\SettlementExecution;
 use App\Traits\HasSettings;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +17,7 @@ use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
 
-class Admin extends Authenticatable implements JWTSubject
+class Admin extends Authenticatable implements JWTSubject, HasLocalePreference
 {
     use HasFactory, HasRoles, HasSettings, Notifiable;
 
@@ -90,5 +91,10 @@ class Admin extends Authenticatable implements JWTSubject
     public function newEloquentBuilder($query): AdminBuilder
     {
         return new AdminBuilder($query);
+    }
+
+    public function preferredLocale(): string
+    {
+        return $this->getSetting('locale') ?? config('app.locale', 'en');
     }
 }

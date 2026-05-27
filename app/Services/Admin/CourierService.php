@@ -109,14 +109,13 @@ class CourierService
         $courier->setRelation('document', $document);
 
         $contractNumber = $document->contract_number;
-        $date = $courier->approval?->approved_at
-            ? $courier->approval->approved_at->format('Y-m-d')
-            : date('Y-m-d');
+        $contractDate = $document->created_at ?? now();
+        $date = $contractDate->format('Y-m-d');
 
         $replacements = [
             '{contract_number}' => $contractNumber,
             '{date}' => $date,
-            '{day_name}' => __('messages.days.'.date('l')),
+            '{day_name}' => __('messages.days.'.$contractDate->format('l')),
             '{courier_name}' => $courier->user->name ?? 'غير متوفر',
             '{national_id}' => $courier->national_id ?? 'غير متوفر',
             '{phone}' => $courier->user->phone ?? 'غير متوفر',

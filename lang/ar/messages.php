@@ -49,6 +49,8 @@ return [
     'confirm_delete_message' => 'لا يمكن التراجع عن هذا الإجراء. سيتم حذف العنصر المحدد نهائياً.',
     'national_id' => 'رقم الهوية / الإقامة',
     'enter_national_id' => 'أدخل رقم الهوية أو الإقامة',
+    'new_courier_application' => 'تم تقديم طلب مندوب جديد بواسطة :name',
+    'unknown' => 'غير معروف',
 
     // Catalog Approvals
     'brand_approved_successfully' => 'تمت الموافقة على العلامة التجارية بنجاح',

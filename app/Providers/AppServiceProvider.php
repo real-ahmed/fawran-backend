@@ -37,8 +37,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
         Model::preventLazyLoading(! $this->app->isProduction());
+        
+        \App\Models\Courier\Courier::observe(\App\Observers\Courier\CourierObserver::class);
 
         // Implicitly grant "Super Admin" role all permissions
         // This avoids having to sync hundreds of permissions in the database

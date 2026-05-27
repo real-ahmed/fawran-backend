@@ -33,7 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(function (Request $request) {
-            return $request->is('api/*');
+            return $request->is('api/*') || $request->is('broadcasting/auth');
         });
 
         // $exceptions->render(function (\Throwable $e, Request $request) {

@@ -49,6 +49,8 @@ return [
     'confirm_delete_message' => 'This action cannot be undone. This will permanently delete the selected item.',
     'national_id' => 'National ID',
     'enter_national_id' => 'Enter national ID',
+    'new_courier_application' => 'New courier application submitted by :name',
+    'unknown' => 'Unknown',
 
     // Catalog Approvals
     'brand_approved_successfully' => 'Brand approved successfully',

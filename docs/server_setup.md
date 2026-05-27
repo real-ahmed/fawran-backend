@@ -145,12 +145,26 @@ Notification delivery is queued through Laravel notifications. Current notificat
    redirect_stderr=true
    stdout_logfile=/var/www/fawran/storage/logs/worker.log
    stopwaitsecs=3600
+
+   [program:fawran-reverb]
+   process_name=%(program_name)s_%(process_num)02d
+   command=php /var/www/fawran/artisan reverb:start --host="0.0.0.0" --port=8080
+   autostart=true
+   autorestart=true
+   stopasgroup=true
+   killasgroup=true
+   user=www-data
+   numprocs=1
+   redirect_stderr=true
+   stdout_logfile=/var/www/fawran/storage/logs/reverb.log
+   stopwaitsecs=3600
    ```
 3. Start the workers:
    ```bash
    sudo supervisorctl reread
    sudo supervisorctl update
    sudo supervisorctl start fawran-worker:*
+   sudo supervisorctl start fawran-reverb:*
    ```
 
 Useful queue commands:
@@ -191,6 +205,20 @@ server {
     location = /robots.txt  { access_log off; log_not_found off; }
 
     error_page 404 /index.php;
+
+    # Laravel Reverb WebSockets Proxy
+    location /app {
+        proxy_http_version 1.1;
+        proxy_set_header Host $http_host;
+        proxy_set_header Scheme $scheme;
+        proxy_set_header SERVER_PORT $server_port;
+        proxy_set_header REMOTE_ADDR $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+
+        proxy_pass http://0.0.0.0:8080;
+    }
 
     location ~ \.php$ {
         fastcgi_pass unix:/var/run/php/php8.4-fpm.sock; # Adjust PHP version
