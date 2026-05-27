@@ -76,4 +76,6 @@ return [
     'cannot_delete_super_admin' => 'Cannot delete a Super Admin account.',
     'cannot_modify_super_admin_role' => 'The Super Admin role cannot be modified.',
     'cannot_delete_super_admin_role' => 'The Super Admin role cannot be deleted.',
+    'cannot_assign_super_admin_role' => 'The Super Admin role cannot be assigned to admin accounts.',
+    'cannot_change_super_admin_account_role' => 'The Super Admin account must keep only the Super Admin role.',
 ];

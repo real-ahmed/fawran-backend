@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role as SpatieRole;
 
 class Role extends SpatieRole
 {
+    public const SUPER_ADMIN_NAME = 'Super Admin';
+
     /**
      * The attributes that should be cast.
      *
@@ -15,4 +18,17 @@ class Role extends SpatieRole
         'display_name' => 'array',
     ];
 
+    public static function isSuperAdminName(string $name): bool
+    {
+        return Str::of($name)
+            ->replace(['_', '-'], ' ')
+            ->squish()
+            ->lower()
+            ->toString() === 'super admin';
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return self::isSuperAdminName($this->name);
+    }
 }

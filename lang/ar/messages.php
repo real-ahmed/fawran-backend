@@ -76,4 +76,6 @@ return [
     'cannot_delete_super_admin' => 'لا يمكن حذف حساب المشرف العام.',
     'cannot_modify_super_admin_role' => 'لا يمكن تعديل دور المشرف العام.',
     'cannot_delete_super_admin_role' => 'لا يمكن حذف دور المشرف العام.',
+    'cannot_assign_super_admin_role' => 'لا يمكن تعيين دور المشرف العام لحسابات المسؤولين.',
+    'cannot_change_super_admin_account_role' => 'يجب أن يحتفظ حساب المشرف العام بدور المشرف العام فقط.',
 ];

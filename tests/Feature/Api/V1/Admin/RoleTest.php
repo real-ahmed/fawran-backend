@@ -3,9 +3,9 @@
 namespace Tests\Feature\Api\V1\Admin;
 
 use App\Models\Admin;
+use App\Models\Role;
 use Database\Seeders\AdminSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\Role;
 use Tests\TestCase;
 
 class RoleTest extends TestCase
@@ -53,7 +53,7 @@ class RoleTest extends TestCase
         $payload = [
             'display_name' => [
                 'en' => 'Manager',
-                'ar' => 'مدير'
+                'ar' => 'مدير',
             ],
             'permissions' => ['view roles', 'create roles'],
         ];
@@ -75,5 +75,22 @@ class RoleTest extends TestCase
         $response = $this->deleteJson('/api/v1/admin/roles/'.$role->id, [], $headers);
 
         $response->assertStatus(422); // ValidationException converted to 422
+    }
+
+    public function test_super_admin_role_cannot_be_updated(): void
+    {
+        $headers = $this->authenticateAdmin();
+        $role = Role::where('name', 'Super Admin')->first();
+
+        $response = $this->putJson('/api/v1/admin/roles/'.$role->id, [
+            'display_name' => [
+                'en' => 'Owner',
+                'ar' => 'المالك',
+            ],
+            'permissions' => ['view roles'],
+        ], $headers);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name']);
     }
 }

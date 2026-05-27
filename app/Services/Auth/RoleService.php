@@ -45,7 +45,7 @@ class RoleService
 
     public function updateRole(Role $role, array $data): Role
     {
-        if ($role->name === 'Super Admin') {
+        if ($role->isSuperAdmin()) {
             throw ValidationException::withMessages([
                 'name' => __('messages.cannot_modify_super_admin_role'),
             ]);
@@ -65,7 +65,7 @@ class RoleService
 
     public function deleteRole(Role $role): void
     {
-        if ($role->name === 'Super Admin') {
+        if ($role->isSuperAdmin()) {
             throw ValidationException::withMessages([
                 'name' => __('messages.cannot_delete_super_admin_role'),
             ]);

@@ -69,6 +69,13 @@ class Admin extends Authenticatable implements JWTSubject
         return $this->hasMany(CourierApproval::class);
     }
 
+    public function isSuperAdmin(): bool
+    {
+        return $this->id === 1 || $this->roles->contains(
+            fn (Role $role): bool => $role->isSuperAdmin()
+        );
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
