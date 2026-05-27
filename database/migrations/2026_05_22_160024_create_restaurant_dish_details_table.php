@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('restaurant_dish_details', function (Blueprint $table) {
-            $table->foreignId('store_item_id')->primary()->constrained()->cascadeOnDelete();
+            $table->foreignId('vendoritem_id')->primary()->constrained()->cascadeOnDelete();
             $table->integer('preparation_time');
         });
     }

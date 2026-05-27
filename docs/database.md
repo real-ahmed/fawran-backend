@@ -50,7 +50,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | :--- | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc | |
 | `user_id` | BIGINT | FK → users.id | |
-| `store_item_id` | BIGINT | FK → store_items.id | |
+| `vendoritem_id` | BIGINT | FK → vendoritems.id | |
 | `created_at` | TIMESTAMP | | |
 
 ---
@@ -231,19 +231,19 @@ Manages vendor proposals for new global master products.
 | `is_open` | BOOLEAN | Default: false |
 | `created_at` | TIMESTAMP | |
 
-**`store_descriptions` Table (Zero-Null Extension)**
+**`vendordescriptions` Table (Zero-Null Extension)**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `vendor_id` | BIGINT | PK, FK → vendors.id |
 | `description` | TEXT | |
 
-**`store_custom_commissions` Table (Zero-Null Extension)**
+**`vendorcustom_commissions` Table (Zero-Null Extension)**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `vendor_id` | BIGINT | PK, FK → vendors.id |
 | `commission_percentage`| DECIMAL(5,2) | |
 
-**`store_working_hours` Table**
+**`vendorworking_hours` Table**
 | Column | Type | Properties | Description |
 | :--- | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc | |
@@ -252,7 +252,7 @@ Manages vendor proposals for new global master products.
 | `open_time` | TIME | | |
 | `close_time` | TIME | | |
 
-**`store_staff` Table**
+**`vendorstaff` Table**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
@@ -283,7 +283,7 @@ Manages vendor proposals for new global master products.
 | `brand_id` | BIGINT | FK → brands.id |
 | `sku_barcode` | VARCHAR(100) | UNIQUE |
 
-**`store_items` Table**
+**`vendoritems` Table**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
@@ -292,24 +292,24 @@ Manages vendor proposals for new global master products.
 | `price` | DECIMAL(10,2) | |
 | `is_available` | BOOLEAN | Default: true |
 
-**`store_item_inventory` Table (Retail Only)**
+**`vendoritem_inventory` Table (Retail Only)**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
-| `store_item_id` | BIGINT | PK, FK → store_items.id |
+| `vendoritem_id` | BIGINT | PK, FK → vendoritems.id |
 | `current_stock` | DECIMAL(10,3) | |
 | `low_stock_threshold` | DECIMAL(10,3) | |
 
 **`restaurant_dish_details` Table (Restaurants Only)**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
-| `store_item_id` | BIGINT | PK, FK → store_items.id |
+| `vendoritem_id` | BIGINT | PK, FK → vendoritems.id |
 | `preparation_time` | SMALLINT | In minutes |
 
 **`product_options` Table**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
-| `store_item_id` | BIGINT | FK → store_items.id |
+| `vendoritem_id` | BIGINT | FK → vendoritems.id |
 | `name` | JSON | |
 | `is_required` | BOOLEAN | Default: false |
 | `max_selections` | TINYINT | Default: 1 |
@@ -355,7 +355,7 @@ Manages vendor proposals for new global master products.
 | `max_delivery_fee` | DECIMAL(8,2) | |
 | UNIQUE | | `(delivery_zone_id, vehicle_type)` |
 
-**`store_delivery_zones` Table**
+**`vendordelivery_zones` Table**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
@@ -505,7 +505,7 @@ Manages vendor proposals for new global master products.
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
 | `sub_order_id` | BIGINT | FK → sub_orders.id |
-| `store_item_id` | BIGINT | FK → store_items.id |
+| `vendoritem_id` | BIGINT | FK → vendoritems.id |
 | `quantity` | DECIMAL(10,3) | |
 | `unit_price` | DECIMAL(10,2) | |
 | `options_price` | DECIMAL(10,2) | Default: 0.00 |
@@ -567,7 +567,7 @@ Manages vendor proposals for new global master products.
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
 | `purchase_order_id`| BIGINT | FK → purchase_orders.id |
-| `store_item_id` | BIGINT | FK → store_items.id |
+| `vendoritem_id` | BIGINT | FK → vendoritems.id |
 | `quantity` | DECIMAL(10,3) | |
 | `cost_price` | DECIMAL(10,2) | |
 | `created_at` | TIMESTAMP | |
@@ -577,7 +577,7 @@ Manages vendor proposals for new global master products.
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
 | `vendor_id` | BIGINT | FK → vendors.id |
-| `store_item_id` | BIGINT | FK → store_items.id |
+| `vendoritem_id` | BIGINT | FK → vendoritems.id |
 | `quantity` | DECIMAL(10,3) | |
 | `type` | ENUM | `'sale'`, `'purchase'`, `'return'`, `'adjustment'` |
 | `reference_type` | VARCHAR(255) | Polymorphic |
@@ -736,8 +736,8 @@ Manages vendor proposals for new global master products.
 | `id` | BIGINT | PK, Auto Inc |
 | `order_id` | BIGINT | FK → orders.id |
 | `vendor_id` | BIGINT | FK → vendors.id |
-| `store_commission_percentage`| DECIMAL(5,2) | |
-| `store_commission_amount` | DECIMAL(10,2) | |
+| `vendorcommission_percentage`| DECIMAL(5,2) | |
+| `vendorcommission_amount` | DECIMAL(10,2) | |
 | `app_delivery_share` | DECIMAL(10,2) | |
 | `net_platform_profit`| DECIMAL(10,2) | |
 | `created_at` | TIMESTAMP | |

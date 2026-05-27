@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('product_options', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_item_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vendoritem_id')->constrained()->cascadeOnDelete();
             $table->json('name');
             $table->boolean('is_required')->default(false);
             $table->integer('max_selections')->default(1);

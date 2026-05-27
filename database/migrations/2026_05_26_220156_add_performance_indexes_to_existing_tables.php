@@ -49,8 +49,8 @@ return new class extends Migration
             $table->index(['status', 'created_at'], 'vendors_status_created_idx');
         });
 
-        Schema::table('store_delivery_zones', function (Blueprint $table) {
-            $table->index(['delivery_zone_id', 'vendor_id'], 'store_delivery_zones_zone_vendor_idx');
+        Schema::table('vendordelivery_zones', function (Blueprint $table) {
+            $table->index(['delivery_zone_id', 'vendor_id'], 'vendordelivery_zones_zone_vendor_idx');
         });
 
         Schema::table('users', function (Blueprint $table) {
@@ -171,8 +171,8 @@ return new class extends Migration
             $table->dropIndex('users_created_at_idx');
         });
 
-        Schema::table('store_delivery_zones', function (Blueprint $table) {
-            $table->dropIndex('store_delivery_zones_zone_vendor_idx');
+        Schema::table('vendordelivery_zones', function (Blueprint $table) {
+            $table->dropIndex('vendordelivery_zones_zone_vendor_idx');
         });
 
         Schema::table('vendors', function (Blueprint $table) {

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('store_descriptions', function (Blueprint $table) {
+        Schema::create('vendordescriptions', function (Blueprint $table) {
             $table->foreignId('vendor_id')->primary()->constrained()->cascadeOnDelete();
             $table->json('description');
         });
@@ -16,6 +16,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('store_descriptions');
+        Schema::dropIfExists('vendordescriptions');
     }
 };

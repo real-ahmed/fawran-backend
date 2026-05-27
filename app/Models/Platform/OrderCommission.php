@@ -13,8 +13,8 @@ class OrderCommission extends Model
     protected $fillable = [
         'order_id',
         'vendor_id',
-        'store_commission_percentage',
-        'store_commission_amount',
+        'vendorcommission_percentage',
+        'vendorcommission_amount',
         'app_delivery_share',
         'net_platform_profit',
     ];
@@ -22,8 +22,8 @@ class OrderCommission extends Model
     protected function casts(): array
     {
         return [
-            'store_commission_percentage' => 'decimal:2',
-            'store_commission_amount' => 'decimal:2',
+            'vendorcommission_percentage' => 'decimal:2',
+            'vendorcommission_amount' => 'decimal:2',
             'app_delivery_share' => 'decimal:2',
             'net_platform_profit' => 'decimal:2',
             'created_at' => 'datetime',

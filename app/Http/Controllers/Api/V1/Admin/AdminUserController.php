@@ -34,7 +34,7 @@ class AdminUserController extends Controller
      *
      * Create a new system admin and assign roles.
      */
-    public function store(StoreAdminRequest $request)
+    public function (AdminRequest $request)
     {
         $admin = $this->adminUserService->createAdmin($request->validated());
 

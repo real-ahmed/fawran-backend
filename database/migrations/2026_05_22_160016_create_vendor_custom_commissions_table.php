@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('store_custom_commissions', function (Blueprint $table) {
+        Schema::create('vendorcustom_commissions', function (Blueprint $table) {
             $table->foreignId('vendor_id')->primary()->constrained()->cascadeOnDelete();
             $table->decimal('commission_percentage', 5, 2);
         });
@@ -16,6 +16,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('store_custom_commissions');
+        Schema::dropIfExists('vendorcustom_commissions');
     }
 };

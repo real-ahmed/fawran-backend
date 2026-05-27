@@ -10,7 +10,7 @@ class VendorStaff extends Model
 {
     public $timestamps = false;
 
-    protected $table = 'store_staff';
+    protected $table = 'vendorstaff';
 
     protected $fillable = [
         'user_id',

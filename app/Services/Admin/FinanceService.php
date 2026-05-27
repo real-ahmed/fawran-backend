@@ -24,7 +24,7 @@ class FinanceService
             'commissions' => [
                 'total_count' => OrderCommission::count(),
                 'total_platform_profit' => OrderCommission::sum('net_platform_profit'),
-                'total_store_commission' => OrderCommission::sum('store_commission_amount'),
+                'total_vendorcommission' => OrderCommission::sum('vendorcommission_amount'),
                 'total_delivery_share' => OrderCommission::sum('app_delivery_share'),
             ],
         ];

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('store_working_hours', function (Blueprint $table) {
+        Schema::create('vendor_working_hours', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('day_of_week');
@@ -22,6 +22,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('store_working_hours');
+        Schema::dropIfExists('vendor_working_hours');
     }
 };

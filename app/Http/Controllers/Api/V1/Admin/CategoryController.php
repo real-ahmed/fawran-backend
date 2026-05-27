@@ -35,9 +35,9 @@ class CategoryController extends Controller
     /**
      * Create Category
      *
-     * Store a newly created category, including its parent relation and icon.
+     *  a newly created category, including its parent relation and icon.
      */
-    public function store(StoreCategoryRequest $request)
+    public function (StoreCategoryRequest $request)
     {
         $category = $this->categoryService->createCategory($request->validated());
 

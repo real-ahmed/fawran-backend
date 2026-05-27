@@ -22,7 +22,7 @@ return new class extends Migration
             ['key' => 'timezone', 'value' => 'Africa/Cairo', 'group' => 'general'],
 
             // Financial
-            ['key' => 'default_store_commission', 'value' => '10.00', 'group' => 'financial'],
+            ['key' => 'default_vendorcommission', 'value' => '10.00', 'group' => 'financial'],
             ['key' => 'default_courier_commission', 'value' => '5.00', 'group' => 'financial'],
             ['key' => 'payout_minimum_threshold', 'value' => '500.00', 'group' => 'financial'],
             ['key' => 'p2p_platform_commission_percentage', 'value' => '15.00', 'group' => 'financial'],
@@ -68,7 +68,7 @@ return new class extends Migration
             'currency_symbol',
             'support_phone',
             'timezone',
-            'default_store_commission',
+            'default_vendorcommission',
             'payout_minimum_threshold',
             'p2p_platform_commission_percentage',
             'tax_percentage',

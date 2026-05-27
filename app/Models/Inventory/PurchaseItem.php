@@ -12,7 +12,7 @@ class PurchaseItem extends Model
 
     protected $fillable = [
         'purchase_order_id',
-        'store_item_id',
+        'vendoritem_id',
         'quantity',
         'cost_price',
     ];

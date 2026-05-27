@@ -16,7 +16,7 @@ class PerformanceIndexesMigrationTest extends TestCase
         $migration = $this->migrationContents();
 
         $columnExpression = is_array($columns)
-            ? '['.collect($columns)->map(fn (string $column): string => "'{$column}'")->implode(', ').']'
+            ? '[' . collect($columns)->map(fn(string $column): string => "'{$column}'")->implode(', ') . ']'
             : "'{$columns}'";
 
         $this->assertStringContainsString("Schema::table('{$table}'", $migration);
@@ -57,7 +57,7 @@ class PerformanceIndexesMigrationTest extends TestCase
             'vendors active latest' => ['vendors', ['is_active', 'created_at'], 'vendors_active_created_idx'],
             'vendors type latest' => ['vendors', ['type', 'created_at'], 'vendors_type_created_idx'],
             'vendors status latest' => ['vendors', ['status', 'created_at'], 'vendors_status_created_idx'],
-            'store delivery zone join' => ['store_delivery_zones', ['delivery_zone_id', 'vendor_id'], 'store_delivery_zones_zone_vendor_idx'],
+            'store delivery zone join' => ['vendordelivery_zones', ['delivery_zone_id', 'vendor_id'], 'vendordelivery_zones_zone_vendor_idx'],
             'users latest' => ['users', 'created_at', 'users_created_at_idx'],
             'users active latest' => ['users', ['is_active', 'created_at'], 'users_active_created_idx'],
             'couriers latest' => ['couriers', 'created_at', 'couriers_created_at_idx'],
@@ -86,7 +86,7 @@ class PerformanceIndexesMigrationTest extends TestCase
 
     private function migrationContents(): string
     {
-        $path = dirname(__DIR__, 2).'/database/migrations/2026_05_26_220156_add_performance_indexes_to_existing_tables.php';
+        $path = dirname(__DIR__, 2) . '/database/migrations/2026_05_26_220156_add_performance_indexes_to_existing_tables.php';
 
         $contents = file_get_contents($path);
 

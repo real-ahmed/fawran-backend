@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
-            $table->decimal('store_commission_percentage', 5, 2);
-            $table->decimal('store_commission_amount', 10, 2);
+            $table->decimal('vendorcommission_percentage', 5, 2);
+            $table->decimal('vendorcommission_amount', 10, 2);
             $table->decimal('app_delivery_share', 10, 2);
             $table->decimal('net_platform_profit', 10, 2);
             $table->timestamp('created_at')->useCurrent();

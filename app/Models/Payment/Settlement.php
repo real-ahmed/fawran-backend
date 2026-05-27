@@ -29,9 +29,9 @@ class Settlement extends Model
                 ->whereExists(function ($sub) use ($zoneIds) {
                     $sub->select(DB::raw(1))
                         ->from('vendors')
-                        ->join('store_delivery_zones', 'vendors.id', '=', 'store_delivery_zones.vendor_id')
+                        ->join('vendordelivery_zones', 'vendors.id', '=', 'vendordelivery_zones.vendor_id')
                         ->whereColumn('vendors.id', 'settlements.target_id')
-                        ->whereIn('store_delivery_zones.delivery_zone_id', $zoneIds);
+                        ->whereIn('vendordelivery_zones.delivery_zone_id', $zoneIds);
                 });
         });
     }

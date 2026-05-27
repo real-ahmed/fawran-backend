@@ -9,14 +9,14 @@ class VendorItemInventory extends Model
 {
     public $timestamps = false;
 
-    protected $table = 'store_item_inventory';
+    protected $table = 'vendoritem_inventory';
 
-    protected $primaryKey = 'store_item_id';
+    protected $primaryKey = 'vendoritem_id';
 
     public $incrementing = false;
 
     protected $fillable = [
-        'store_item_id',
+        'vendoritem_id',
         'current_stock',
         'low_stock_threshold',
     ];
