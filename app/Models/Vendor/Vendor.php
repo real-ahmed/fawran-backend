@@ -18,16 +18,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Vendor extends Model
 {
-    use AdminZoneScope;
+    use AdminZoneScope, \App\Traits\HasPrimaryImage;
 
     public $timestamps = true;
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->whereHas('deliveryZones', fn ($q) => $q->whereIn('delivery_zones.id', $zoneIds));
+        $query->whereHas('deliveryZones', fn($q) => $q->whereIn('delivery_zones.id', $zoneIds));
     }
 
     protected $fillable = [
@@ -104,11 +105,6 @@ class Vendor extends Model
     public function commissions(): HasMany
     {
         return $this->hasMany(OrderCommission::class);
-    }
-
-    public function media(): MorphMany
-    {
-        return $this->morphMany(Media::class, 'model');
     }
 
     public function categorySubmissions(): HasMany

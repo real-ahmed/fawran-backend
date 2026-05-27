@@ -30,9 +30,9 @@ class SystemSettingService
             $value = $setting['value'];
 
             if ($value instanceof UploadedFile) {
-                // Uses the default disk configured in filesystems.php (local, s3, gcs, etc.)
-                $path = $value->store('system_settings');
-                $value = Storage::url($path);
+                // Store on public disk and save raw path
+                $path = $value->store('system_settings', 'public');
+                $value = $path;
             }
 
             SystemSetting::where('key', $setting['key'])->update([

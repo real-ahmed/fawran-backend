@@ -53,7 +53,7 @@ class VendorService
             ]);
         }
 
-        return $vendor;
+        return $vendor->load('media');
     }
 
     public function updateVendor(Vendor $vendor, array $data): Vendor
@@ -80,7 +80,7 @@ class VendorService
             ]);
         }
 
-        return $vendor;
+        return $vendor->load('media');
     }
 
     public function deleteVendor(Vendor $vendor): void

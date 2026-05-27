@@ -29,7 +29,9 @@ class SystemSetting extends Model
                 $imageKeys = ['app_logo', 'app_logo_white', 'app_icon', 'favicon'];
 
                 if (in_array($this->key, $imageKeys) && ! empty($value) && ! str_starts_with($value, 'http')) {
-                    return asset($value);
+                    // Strip legacy '/storage/' prefix if present
+                    $cleanValue = preg_replace('/^\/?storage\//', '', $value);
+                    return asset(\Illuminate\Support\Facades\Storage::disk('public')->url($cleanValue));
                 }
 
                 return $value;
