@@ -55,7 +55,7 @@ class VendorController extends Controller
      */
     public function show(Vendor $vendor)
     {
-        return $this->successResponse(new VendorResource($vendor->load('media')));
+        return $this->successResponse(new VendorResource($vendor->load(['media', 'workingHours', 'deliveryZones'])));
     }
 
     /**
