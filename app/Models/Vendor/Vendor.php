@@ -67,6 +67,11 @@ class Vendor extends Model
         return $this->hasOne(VendorDescription::class);
     }
 
+    public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class, 'owner_id');
+    }
+
     public function customCommission(): HasOne
     {
         return $this->hasOne(VendorCustomCommission::class);
