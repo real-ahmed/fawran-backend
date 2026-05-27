@@ -26,7 +26,7 @@ class AdminAuthController extends Controller
         ]);
 
         if (! $token = Auth::guard('api_admin')->attempt($credentials)) {
-            return $this->errorResponse('Unauthorized', null, 401);
+            return $this->errorResponse(__('auth.failed'), null, 401);
         }
 
         return $this->respondWithToken($token);

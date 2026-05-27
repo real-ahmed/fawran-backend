@@ -32,14 +32,14 @@ class UserAuthController extends Controller
         $user = User::where('email', $login)->orWhere('phone', $login)->first();
 
         if (! $user) {
-            return $this->errorResponse('Unauthorized', null, 401);
+            return $this->errorResponse(__('auth.failed'), null, 401);
         }
 
         // Verify local account exists and password matches
         $localAccount = $user->localAccount;
 
         if (! $localAccount || ! Hash::check($password, $localAccount->password)) {
-            return $this->errorResponse('Unauthorized', null, 401);
+            return $this->errorResponse(__('auth.failed'), null, 401);
         }
 
         // Generate token
