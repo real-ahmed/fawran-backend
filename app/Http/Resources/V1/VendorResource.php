@@ -29,6 +29,8 @@ class VendorResource extends JsonResource
             'image' => $this->whenLoaded('media', function () {
                 return $this->image;
             }),
+            'working_hours' => $this->whenLoaded('workingHours'),
+            'delivery_zones' => $this->whenLoaded('deliveryZones'),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

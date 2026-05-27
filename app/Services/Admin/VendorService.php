@@ -40,7 +40,10 @@ class VendorService
     public function createVendor(array $data): Vendor
     {
         $image = $data['image'] ?? null;
-        unset($data['image']);
+        $workingHours = $data['working_hours'] ?? [];
+        $deliveryZones = $data['delivery_zones'] ?? [];
+
+        unset($data['image'], $data['working_hours'], $data['delivery_zones']);
 
         $vendor = Vendor::create($data);
 
@@ -53,13 +56,24 @@ class VendorService
             ]);
         }
 
-        return $vendor->load('media');
+        if (!empty($workingHours)) {
+            $vendor->workingHours()->createMany($workingHours);
+        }
+
+        if (!empty($deliveryZones)) {
+            $vendor->deliveryZones()->createMany($deliveryZones);
+        }
+
+        return $vendor->load(['media', 'workingHours', 'deliveryZones']);
     }
 
     public function updateVendor(Vendor $vendor, array $data): Vendor
     {
         $image = $data['image'] ?? null;
-        unset($data['image']);
+        $workingHours = $data['working_hours'] ?? [];
+        $deliveryZones = $data['delivery_zones'] ?? [];
+        
+        unset($data['image'], $data['working_hours'], $data['delivery_zones']);
 
         $vendor->update($data);
 
@@ -80,7 +94,21 @@ class VendorService
             ]);
         }
 
-        return $vendor->load('media');
+        if (isset($data['working_hours'])) {
+            $vendor->workingHours()->delete();
+            if (!empty($workingHours)) {
+                $vendor->workingHours()->createMany($workingHours);
+            }
+        }
+
+        if (isset($data['delivery_zones'])) {
+            $vendor->deliveryZones()->delete();
+            if (!empty($deliveryZones)) {
+                $vendor->deliveryZones()->createMany($deliveryZones);
+            }
+        }
+
+        return $vendor->load(['media', 'workingHours', 'deliveryZones']);
     }
 
     public function deleteVendor(Vendor $vendor): void
