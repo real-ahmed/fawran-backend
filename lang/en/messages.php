@@ -86,4 +86,9 @@ return [
     'issue_date' => 'Issue Date:',
     'contract_issued_by' => 'This contract is issued by the :app_name electronic system.',
     'print_date' => 'Print Date:',
+    
+    // Vehicles
+    'vehicle_motorcycle' => 'Motorcycle',
+    'vehicle_bicycle' => 'Bicycle',
+    'vehicle_car' => 'Car',
 ];

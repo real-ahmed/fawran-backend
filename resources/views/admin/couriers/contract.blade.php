@@ -132,51 +132,15 @@
         .contract-body {
             font-family: 'Amiri', serif;
             font-size: 16px;
-            text-align: justify;
-            text-justify: inter-word;
+            line-height: 1.8;
+            color: var(--text-main);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
-        .contract-body h2, .contract-body h3 {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--primary-color);
-            margin-top: 30px;
-            margin-bottom: 15px;
-            position: relative;
-        }
-
-        .contract-body h2 {
-            text-align: center;
-            font-size: 24px;
-            text-decoration: underline;
-            text-underline-offset: 8px;
-            margin-bottom: 40px;
-        }
-
-        .contract-body h3 {
-            font-size: 18px;
-            background-color: var(--bg-color);
-            padding: 8px 15px;
-            border-right: 4px solid var(--accent-color);
-            border-radius: 4px 0 0 4px;
-        }
-
-        .contract-body p {
-            margin-bottom: 15px;
-        }
-
-        .contract-body ul, .contract-body ol {
-            margin-bottom: 20px;
-            padding-right: 30px;
-        }
-
-        .contract-body li {
-            margin-bottom: 8px;
-        }
-
-        .contract-body strong {
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 700;
-            color: var(--primary-color);
+        .contract-body * {
+            max-width: 100%;
         }
 
         /* Signatures Section */
@@ -264,10 +228,6 @@
                 width: 100%;
                 max-width: 100%;
                 border-radius: 0;
-            }
-
-            .contract-body h3 {
-                background-color: #f1f5f9 !important; /* Force background in print */
             }
         }
     </style>

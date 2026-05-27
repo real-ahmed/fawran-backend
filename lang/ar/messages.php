@@ -86,4 +86,9 @@ return [
     'issue_date' => 'تاريخ الإصدار:',
     'contract_issued_by' => 'هذا العقد صادر عن نظام :app_name الإلكتروني.',
     'print_date' => 'تاريخ الطباعة:',
+    
+    // Vehicles
+    'vehicle_motorcycle' => 'دراجة نارية',
+    'vehicle_bicycle' => 'دراجة هوائية',
+    'vehicle_car' => 'سيارة',
 ];
