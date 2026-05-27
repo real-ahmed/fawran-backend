@@ -78,4 +78,12 @@ return [
     'cannot_delete_super_admin_role' => 'The Super Admin role cannot be deleted.',
     'cannot_assign_super_admin_role' => 'The Super Admin role cannot be assigned to admin accounts.',
     'cannot_change_super_admin_account_role' => 'The Super Admin account must keep only the Super Admin role.',
+    
+    // Contract
+    'courier_contract' => 'Courier Contract',
+    'print_contract' => 'Print Contract',
+    'reference_number' => 'Reference Number:',
+    'issue_date' => 'Issue Date:',
+    'contract_issued_by' => 'This contract is issued by the :app_name electronic system.',
+    'print_date' => 'Print Date:',
 ];

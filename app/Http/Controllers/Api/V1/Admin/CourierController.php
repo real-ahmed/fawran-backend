@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\CourierResource;
 use App\Http\Requests\Admin\Courier\IndexCourierRequest;
+use App\Http\Resources\Admin\CourierResource;
 use App\Models\Courier\Courier;
+use App\Models\Platform\SystemSetting;
 use App\Services\Admin\CourierService;
 
 /**
@@ -88,17 +89,19 @@ class CourierController extends Controller
      */
     public function printContract(Courier $courier)
     {
-        $template = \App\Models\Platform\SystemSetting::where('key', 'courier_contract_template')->value('value');
-        
-        if (!$template) {
+        $template = SystemSetting::cachedValue('courier_contract_template');
+        $appName = SystemSetting::cachedValue('app_name', 'منصة فورا - Fawran');
+        $appLogo = SystemSetting::cachedValue('app_logo');
+
+        if (! $template) {
             return response('Contract template not found in settings.', 404);
         }
 
         $courier->load(['user', 'document', 'approval']);
 
-        $contractNumber = $courier->document?->contract_number ?? 'CTR-' . $courier->id . '-' . date('Y');
+        $contractNumber = $courier->document?->contract_number ?? 'CTR-'.$courier->id.'-'.date('Y');
         $date = $courier->approval?->approved_at ? $courier->approval->approved_at->format('Y-m-d') : date('Y-m-d');
-        
+
         $dayNamesAr = [
             'Sunday' => 'الأحد',
             'Monday' => 'الاثنين',
@@ -116,11 +119,11 @@ class CourierController extends Controller
             '{day_name}' => $dayName,
             '{courier_name}' => $courier->user->name ?? 'غير متوفر',
             '{phone}' => $courier->user->phone ?? 'غير متوفر',
-            '{vehicle_type}' => __('messages.vehicle_' . ($courier->vehicle_type?->value ?? 'motorcycle')),
+            '{vehicle_type}' => __('messages.vehicle_'.($courier->vehicle_type?->value ?? 'motorcycle')),
         ];
 
         $html = str_replace(array_keys($replacements), array_values($replacements), $template);
 
-        return view('admin.couriers.contract', compact('html', 'courier', 'contractNumber'));
+        return view('admin.couriers.contract', compact('html', 'courier', 'contractNumber', 'appName', 'appLogo'));
     }
 }

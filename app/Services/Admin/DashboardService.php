@@ -9,6 +9,7 @@ use App\Models\Order\Order;
 use App\Models\Platform\PlatformWallet;
 use App\Models\Vendor\Vendor;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardService
 {
@@ -18,6 +19,20 @@ class DashboardService
      * @return array{orders: array, vendors: array, couriers: array, revenue: array}
      */
     public function getMetrics(): array
+    {
+        return Cache::flexible(
+            $this->metricsCacheKey(),
+            [30, 120],
+            fn (): array => $this->buildMetrics()
+        );
+    }
+
+    /**
+     * Build key platform metrics for the admin dashboard.
+     *
+     * @return array{orders: array, vendors: array, couriers: array, revenue: array}
+     */
+    private function buildMetrics(): array
     {
         $platformWallet = PlatformWallet::first();
 
@@ -43,6 +58,27 @@ class DashboardService
                 'current_balance' => $platformWallet?->current_balance ?? '0.00',
             ],
         ];
+    }
+
+    private function metricsCacheKey(): string
+    {
+        $admin = auth('api_admin')->user();
+
+        if (! $admin) {
+            return 'admin.dashboard.metrics.guest';
+        }
+
+        if ($admin->hasRole('Super Admin')) {
+            return 'admin.dashboard.metrics.super_admin';
+        }
+
+        $zoneIds = $admin->deliveryZones()
+            ->pluck('delivery_zones.id')
+            ->sort()
+            ->values()
+            ->implode('.');
+
+        return sprintf('admin.dashboard.metrics.admin.%s.zones.%s', $admin->id, $zoneIds ?: 'none');
     }
 
     /**

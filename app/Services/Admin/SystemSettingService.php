@@ -4,7 +4,6 @@ namespace App\Services\Admin;
 
 use App\Models\Platform\SystemSetting;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 
 class SystemSettingService
 {
@@ -26,6 +25,8 @@ class SystemSettingService
      */
     public function updateSettings(array $settings): void
     {
+        $updatedKeys = [];
+
         foreach ($settings as $setting) {
             $value = $setting['value'];
 
@@ -39,6 +40,10 @@ class SystemSettingService
                 'value' => $value,
                 'updated_at' => now(),
             ]);
+
+            $updatedKeys[] = $setting['key'];
         }
+
+        SystemSetting::flushCachedValues($updatedKeys);
     }
 }

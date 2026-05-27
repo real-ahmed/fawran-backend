@@ -57,16 +57,16 @@ class SendPasswordResetOtp extends Notification implements ShouldQueue
 
     public function toSms(object $notifiable): string
     {
-        $setting = SystemSetting::where('key', 'app_name')->first();
+        $setting = SystemSetting::cachedValue('app_name');
         $appName = 'Fawran';
 
-        if ($setting && $setting->value) {
-            $decoded = json_decode($setting->value, true);
+        if ($setting) {
+            $decoded = json_decode($setting, true);
             $locale = app()->getLocale();
             if (is_array($decoded) && isset($decoded[$locale])) {
                 $appName = $decoded[$locale];
             } else {
-                $appName = $setting->value;
+                $appName = $setting;
             }
         }
 

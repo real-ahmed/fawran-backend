@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api\V1\Public;
 
 use App\Enums\AdminPermission;
 use App\Enums\VendorPermission;
+use App\Enums\VendorStatus;
+use App\Enums\VendorType;
 use App\Http\Controllers\Controller;
 use App\Models\Platform\SystemSetting;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Permission;
 
 /**
@@ -23,20 +26,7 @@ class AppConfigController extends Controller
      */
     public function index(): JsonResponse
     {
-        $keys = [
-            'app_name',
-            'app_icon',
-            'app_logo',
-            'app_logo_white',
-            'favicon',
-            'currency',
-        ];
-
-        $settings = SystemSetting::whereIn('key', $keys)
-            ->get()
-            ->pluck('value', 'key');
-
-        return $this->successResponse($settings);
+        return $this->successResponse(SystemSetting::cachedPublicConfig());
     }
 
     /**
@@ -46,19 +36,27 @@ class AppConfigController extends Controller
      */
     public function adminPermissions(): JsonResponse
     {
-        $permissions = Permission::where('guard_name', 'api_admin')->get()->map(function ($permission) {
-            $enumKey = AdminPermission::tryFrom($permission->name)?->name
-                ?? strtoupper(str_replace(' ', '_', $permission->name));
+        $permissions = Cache::flexible('public.admin_permissions', [3600, 7200], function (): array {
+            return Permission::where('guard_name', 'api_admin')
+                ->orderBy('id')
+                ->get()
+                ->map(function ($permission) {
+                    $enumKey = AdminPermission::tryFrom($permission->name)?->name
+                        ?? strtoupper(str_replace(' ', '_', $permission->name));
 
-            return [
-                'id' => $permission->id,
-                'name' => $permission->name,
-                'key' => $enumKey,
-            ];
-        })->groupBy(function ($permission) {
-            $parts = explode(' ', $permission['name'], 2);
+                    return [
+                        'id' => $permission->id,
+                        'name' => $permission->name,
+                        'key' => $enumKey,
+                    ];
+                })
+                ->groupBy(function ($permission) {
+                    $parts = explode(' ', $permission['name'], 2);
 
-            return $parts[1] ?? 'general';
+                    return $parts[1] ?? 'general';
+                })
+                ->map->values()
+                ->toArray();
         });
 
         return $this->successResponse($permissions);
@@ -71,19 +69,27 @@ class AppConfigController extends Controller
      */
     public function vendorPermissions(): JsonResponse
     {
-        $permissions = Permission::where('guard_name', 'api_vendor')->get()->map(function ($permission) {
-            $enumKey = VendorPermission::tryFrom($permission->name)?->name
-                ?? strtoupper(str_replace(' ', '_', $permission->name));
+        $permissions = Cache::flexible('public.vendor_permissions', [3600, 7200], function (): array {
+            return Permission::where('guard_name', 'api_vendor')
+                ->orderBy('id')
+                ->get()
+                ->map(function ($permission) {
+                    $enumKey = VendorPermission::tryFrom($permission->name)?->name
+                        ?? strtoupper(str_replace(' ', '_', $permission->name));
 
-            return [
-                'id' => $permission->id,
-                'name' => $permission->name,
-                'key' => $enumKey,
-            ];
-        })->groupBy(function ($permission) {
-            $parts = explode(' ', $permission['name'], 2);
+                    return [
+                        'id' => $permission->id,
+                        'name' => $permission->name,
+                        'key' => $enumKey,
+                    ];
+                })
+                ->groupBy(function ($permission) {
+                    $parts = explode(' ', $permission['name'], 2);
 
-            return $parts[1] ?? 'general';
+                    return $parts[1] ?? 'general';
+                })
+                ->map->values()
+                ->toArray();
         });
 
         return $this->successResponse($permissions);
@@ -96,14 +102,14 @@ class AppConfigController extends Controller
      */
     public function enums(): JsonResponse
     {
-        $enums = [
-            'VendorType' => collect(\App\Enums\VendorType::cases())->mapWithKeys(function ($case) {
+        $enums = Cache::rememberForever('public.admin_enums', fn (): array => [
+            'VendorType' => collect(VendorType::cases())->mapWithKeys(function ($case) {
                 return [$case->name => $case->value];
-            }),
-            'VendorStatus' => collect(\App\Enums\VendorStatus::cases())->mapWithKeys(function ($case) {
+            })->all(),
+            'VendorStatus' => collect(VendorStatus::cases())->mapWithKeys(function ($case) {
                 return [$case->name => $case->value];
-            }),
-        ];
+            })->all(),
+        ]);
 
         return $this->successResponse($enums);
     }
