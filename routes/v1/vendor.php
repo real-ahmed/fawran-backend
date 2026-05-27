@@ -10,10 +10,10 @@ Route::post('vendor/login', [UserAuthController::class, 'login'])->middleware('t
 Route::post('vendor/forgot-password', [UserAuthController::class, 'forgotPassword'])->middleware('throttle:auth');
 Route::post('vendor/verify-reset-otp', [UserAuthController::class, 'verifyResetOtp'])->middleware('throttle:auth');
 Route::post('vendor/reset-password', [UserAuthController::class, 'resetPassword'])->middleware('throttle:auth');
+Route::post('vendor/refresh', [UserAuthController::class, 'refresh']);
 
 Route::middleware(['auth:api', 'vendor.team'])->prefix('vendor')->group(function () {
     Route::post('logout', [UserAuthController::class, 'logout']);
-    Route::post('refresh', [UserAuthController::class, 'refresh']);
     Route::get('me', [UserAuthController::class, 'me']);
     Route::put('profile/settings', [SettingsController::class, 'update']);
 

@@ -28,10 +28,10 @@ Route::post('admin/login', [AdminAuthController::class, 'login'])->middleware('t
 Route::post('admin/forgot-password', [AdminAuthController::class, 'forgotPassword'])->middleware('throttle:auth');
 Route::post('admin/verify-reset-otp', [AdminAuthController::class, 'verifyResetOtp'])->middleware('throttle:auth');
 Route::post('admin/reset-password', [AdminAuthController::class, 'resetPassword'])->middleware('throttle:auth');
+Route::post('admin/refresh', [AdminAuthController::class, 'refresh']);
 
 Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->group(function () {
     Route::post('logout', [AdminAuthController::class, 'logout']);
-    Route::post('refresh', [AdminAuthController::class, 'refresh']);
     Route::get('me', [AdminAuthController::class, 'me']);
     Route::put('profile/settings', [SettingsController::class, 'update']);
 
