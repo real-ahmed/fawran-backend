@@ -49,8 +49,8 @@ return new class extends Migration
             $table->index(['status', 'created_at'], 'vendors_status_created_idx');
         });
 
-        Schema::table('vendordelivery_zones', function (Blueprint $table) {
-            $table->index(['delivery_zone_id', 'vendor_id'], 'vendordelivery_zones_zone_vendor_idx');
+        Schema::table('vendor_delivery_zones', function (Blueprint $table) {
+            $table->index(['delivery_zone_id', 'vendor_id'], 'vendor_delivery_zones_zone_vendor_idx');
         });
 
         Schema::table('users', function (Blueprint $table) {

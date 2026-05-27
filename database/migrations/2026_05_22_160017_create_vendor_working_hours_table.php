@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('day_of_week');
-            $table->time('opening_time');
-            $table->time('closing_time');
+            $table->time('open_time');
+            $table->time('close_time');
             $table->boolean('is_closed')->default(false);
 
             $table->unique(['vendor_id', 'day_of_week']);
