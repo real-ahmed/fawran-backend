@@ -4,6 +4,8 @@ namespace App\Models\Courier;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Facades\Storage;
 
 class CourierDocument extends Model
 {
@@ -22,5 +24,21 @@ class CourierDocument extends Model
     public function courier(): BelongsTo
     {
         return $this->belongsTo(Courier::class);
+    }
+
+    /**
+     * Get the full URL for the criminal record file.
+     */
+    protected function criminalRecordFile(): Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value) {
+                if ($value && !str_starts_with($value, 'http')) {
+                    return asset(Storage::disk('public')->url($value));
+                }
+
+                return $value;
+            }
+        );
     }
 }
