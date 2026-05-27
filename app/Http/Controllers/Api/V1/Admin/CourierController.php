@@ -80,4 +80,47 @@ class CourierController extends Controller
 
         return $this->successResponse($location);
     }
+
+    /**
+     * Print Courier Contract
+     *
+     * Retrieve and render the courier's contract for printing.
+     */
+    public function printContract(Courier $courier)
+    {
+        $template = \App\Models\Platform\SystemSetting::where('key', 'courier_contract_template')->value('value');
+        
+        if (!$template) {
+            return response('Contract template not found in settings.', 404);
+        }
+
+        $courier->load(['user', 'document', 'approval']);
+
+        $contractNumber = $courier->document?->contract_number ?? 'CTR-' . $courier->id . '-' . date('Y');
+        $date = $courier->approval?->approved_at ? $courier->approval->approved_at->format('Y-m-d') : date('Y-m-d');
+        
+        $dayNamesAr = [
+            'Sunday' => 'الأحد',
+            'Monday' => 'الاثنين',
+            'Tuesday' => 'الثلاثاء',
+            'Wednesday' => 'الأربعاء',
+            'Thursday' => 'الخميس',
+            'Friday' => 'الجمعة',
+            'Saturday' => 'السبت',
+        ];
+        $dayName = $dayNamesAr[date('l')] ?? date('l');
+
+        $replacements = [
+            '{contract_number}' => $contractNumber,
+            '{date}' => $date,
+            '{day_name}' => $dayName,
+            '{courier_name}' => $courier->user->name ?? 'غير متوفر',
+            '{phone}' => $courier->user->phone ?? 'غير متوفر',
+            '{vehicle_type}' => __('messages.vehicle_' . ($courier->vehicle_type?->value ?? 'motorcycle')),
+        ];
+
+        $html = str_replace(array_keys($replacements), array_values($replacements), $template);
+
+        return view('admin.couriers.contract', compact('html', 'courier', 'contractNumber'));
+    }
 }

@@ -141,6 +141,7 @@ Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->g
             Route::put('/{courier}/approve', 'approve')->middleware('can:'.AdminPermission::APPROVE_COURIERS->value);
             Route::put('/{courier}/reject', 'reject')->middleware('can:'.AdminPermission::APPROVE_COURIERS->value);
             Route::get('/{courier}/location', 'location')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);
+            Route::get('/{courier}/contract/print', 'printContract')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);
         });
 
     // Master Products Management

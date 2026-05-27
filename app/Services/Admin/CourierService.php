@@ -53,6 +53,12 @@ class CourierService
             'approved_at' => now(),
         ]);
 
+        $contractNumber = 'CTR-' . $courier->id . '-' . date('Ym');
+        $courier->document()->updateOrCreate(
+            ['courier_id' => $courier->id],
+            ['contract_number' => $contractNumber]
+        );
+
         $courierName = $courier->user->name ?? 'Unknown';
         $courier->user->notify(new CourierApproved($courierName));
     }
