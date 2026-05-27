@@ -46,7 +46,11 @@ class AdminUserService
             $admin->syncRoles($data['roles']);
         }
 
-        $admin->load('roles');
+        if (isset($data['delivery_zones'])) {
+            $admin->deliveryZones()->sync($data['delivery_zones']);
+        }
+
+        $admin->load('roles', 'deliveryZones');
 
         $admin->notify(new AdminCredentialsGenerated($plainPassword));
 
@@ -67,7 +71,11 @@ class AdminUserService
             $admin->syncRoles($data['roles']);
         }
 
-        $admin->load('roles');
+        if (isset($data['delivery_zones'])) {
+            $admin->deliveryZones()->sync($data['delivery_zones']);
+        }
+
+        $admin->load('roles', 'deliveryZones');
 
         return $admin;
     }

@@ -28,6 +28,8 @@ class StoreAdminRequest extends FormRequest
             'is_active' => ['nullable', 'boolean'],
             'roles' => ['nullable', 'array'],
             'roles.*' => ['string', 'exists:roles,name'],
+            'delivery_zones' => ['nullable', 'array'],
+            'delivery_zones.*' => ['integer', 'exists:delivery_zones,id'],
         ];
     }
 }

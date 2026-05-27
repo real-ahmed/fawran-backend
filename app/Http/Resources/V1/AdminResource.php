@@ -3,6 +3,7 @@
 namespace App\Http\Resources\V1;
 
 use App\Enums\AdminPermission;
+use App\Http\Resources\V1\DeliveryZoneResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,6 +23,9 @@ class AdminResource extends JsonResource
             'is_active' => (bool) $this->is_active,
             'roles' => $this->whenLoaded('roles', function () {
                 return RoleResource::collection($this->roles);
+            }),
+            'delivery_zones' => $this->whenLoaded('deliveryZones', function () {
+                return DeliveryZoneResource::collection($this->deliveryZones);
             }),
             'permissions' => $this->resolvePermissions(),
             'created_at' => $this->created_at?->toIso8601String(),
