@@ -78,7 +78,7 @@ return [
     'cannot_delete_super_admin_role' => 'The Super Admin role cannot be deleted.',
     'cannot_assign_super_admin_role' => 'The Super Admin role cannot be assigned to admin accounts.',
     'cannot_change_super_admin_account_role' => 'The Super Admin account must keep only the Super Admin role.',
-    
+
     // Contract
     'courier_contract' => 'Courier Contract',
     'print_contract' => 'Print Contract',
@@ -86,7 +86,9 @@ return [
     'issue_date' => 'Issue Date:',
     'contract_issued_by' => 'This contract is issued by the :app_name electronic system.',
     'print_date' => 'Print Date:',
-    
+    'must_print_contract_first' => 'You must print the contract before approving the courier.',
+    'print_contract_to_enable' => '⚠️ Please print the contract first to enable approval.',
+
     // Vehicles
     'vehicle_motorcycle' => 'Motorcycle',
     'vehicle_bicycle' => 'Bicycle',

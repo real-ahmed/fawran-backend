@@ -78,7 +78,7 @@ return [
     'cannot_delete_super_admin_role' => 'لا يمكن حذف دور المشرف العام.',
     'cannot_assign_super_admin_role' => 'لا يمكن تعيين دور المشرف العام لحسابات المسؤولين.',
     'cannot_change_super_admin_account_role' => 'يجب أن يحتفظ حساب المشرف العام بدور المشرف العام فقط.',
-    
+
     // Contract
     'courier_contract' => 'عقد المندوب',
     'print_contract' => 'طباعة العقد',
@@ -86,7 +86,9 @@ return [
     'issue_date' => 'تاريخ الإصدار:',
     'contract_issued_by' => 'هذا العقد صادر عن نظام :app_name الإلكتروني.',
     'print_date' => 'تاريخ الطباعة:',
-    
+    'must_print_contract_first' => 'يجب عليك طباعة العقد قبل الموافقة على المندوب.',
+    'print_contract_to_enable' => '⚠️ يرجى طباعة العقد أولاً لتفعيل الموافقة.',
+
     // Vehicles
     'vehicle_motorcycle' => 'دراجة نارية',
     'vehicle_bicycle' => 'دراجة هوائية',

@@ -23,6 +23,7 @@ class CourierController extends Controller
      *
      * Get a paginated list of all couriers with optional filters.
      *
+     * @queryParam search string Search by courier name, email, phone, or plate number. Example: Ahmed
      * @queryParam is_online boolean Filter by online status. Example: 1
      * @queryParam vehicle_type string Filter by vehicle type (motorcycle, bicycle, car). Example: motorcycle
      * @queryParam delivery_zone_id int Filter by delivery zone. Example: 1
@@ -53,6 +54,14 @@ class CourierController extends Controller
     public function approve(Courier $courier)
     {
         $admin = auth('api_admin')->user();
+
+        $document = $courier->document;
+        if (! $document || ! $document->contract_number) {
+            return response()->json([
+                'message' => __('messages.must_print_contract_first'),
+            ], 400);
+        }
+
         $this->courierService->approveCourier($courier, $admin);
 
         return $this->successResponse(null, __('messages.courier_approved_successfully'));
@@ -90,7 +99,7 @@ class CourierController extends Controller
     public function printContract(Courier $courier)
     {
         $template = SystemSetting::cachedValue('courier_contract_template');
-        
+
         $appNameJson = SystemSetting::cachedValue('app_name', '{"ar":"منصة فورا - Fawran","en":"Fawran"}');
         $appNameDecoded = json_decode($appNameJson, true);
         $appName = is_array($appNameDecoded) ? ($appNameDecoded[app()->getLocale()] ?? $appNameDecoded['ar'] ?? 'منصة فورا - Fawran') : $appNameJson;
@@ -108,7 +117,12 @@ class CourierController extends Controller
 
         $courier->load(['user', 'document', 'approval']);
 
-        $contractNumber = $courier->document?->contract_number ?? 'CTR-'.$courier->id.'-'.date('Y');
+        $document = $courier->document()->firstOrCreate(['courier_id' => $courier->id]);
+        if (! $document->contract_number) {
+            $document->update(['contract_number' => 'CTR-'.$courier->id.'-'.date('Ym')]);
+        }
+        $contractNumber = $document->contract_number;
+
         $date = $courier->approval?->approved_at ? $courier->approval->approved_at->format('Y-m-d') : date('Y-m-d');
 
         $dayNamesAr = [

@@ -17,6 +17,19 @@ class CourierService
     {
         $query = Courier::with(['user', 'deliveryZone', 'approval'])->forAdminZones();
 
+        if ($request->filled('search')) {
+            $search = $request->query('search');
+
+            $query->where(function ($query) use ($search) {
+                $query->where('plate_number', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($query) use ($search) {
+                        $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         if ($request->has('is_online')) {
             $query->where('is_online', $request->boolean('is_online'));
         }
@@ -52,12 +65,6 @@ class CourierService
             'admin_id' => $admin->id,
             'approved_at' => now(),
         ]);
-
-        $contractNumber = 'CTR-' . $courier->id . '-' . date('Ym');
-        $courier->document()->updateOrCreate(
-            ['courier_id' => $courier->id],
-            ['contract_number' => $contractNumber]
-        );
 
         $courierName = $courier->user->name ?? 'Unknown';
         $courier->user->notify(new CourierApproved($courierName));
