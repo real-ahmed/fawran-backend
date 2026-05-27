@@ -24,12 +24,14 @@ class AuthLoginTest extends TestCase
         $response = $this->postJson('/api/v1/customer/login', [
             'login' => 'customer@fawran.test',
             'password' => 'wrong-password',
+        ], [
+            'Accept-Language' => 'en',
         ]);
 
         $response
             ->assertUnauthorized()
             ->assertJsonPath('success', false)
-            ->assertJsonPath('message', __('auth.failed'))
+            ->assertJsonPath('message', __('auth.failed', locale: 'en'))
             ->assertJsonPath('data', null)
             ->assertJsonPath('errors', null);
     }
@@ -39,12 +41,14 @@ class AuthLoginTest extends TestCase
         $response = $this->postJson('/api/v1/customer/login', [
             'login' => 'missing@fawran.test',
             'password' => 'wrong-password',
+        ], [
+            'Accept-Language' => 'ar',
         ]);
 
         $response
             ->assertUnauthorized()
             ->assertJsonPath('success', false)
-            ->assertJsonPath('message', __('auth.failed'))
+            ->assertJsonPath('message', __('auth.failed', locale: 'ar'))
             ->assertJsonPath('data', null)
             ->assertJsonPath('errors', null);
     }
@@ -59,12 +63,14 @@ class AuthLoginTest extends TestCase
         $response = $this->postJson('/api/v1/admin/login', [
             'email' => 'admin@fawran.test',
             'password' => 'wrong-password',
+        ], [
+            'Accept-Language' => 'en',
         ]);
 
         $response
             ->assertUnauthorized()
             ->assertJsonPath('success', false)
-            ->assertJsonPath('message', __('auth.failed'))
+            ->assertJsonPath('message', __('auth.failed', locale: 'en'))
             ->assertJsonPath('data', null)
             ->assertJsonPath('errors', null);
     }
@@ -74,12 +80,14 @@ class AuthLoginTest extends TestCase
         $response = $this->postJson('/api/v1/admin/login', [
             'email' => 'missing@fawran.test',
             'password' => 'wrong-password',
+        ], [
+            'Accept-Language' => 'ar',
         ]);
 
         $response
             ->assertUnauthorized()
             ->assertJsonPath('success', false)
-            ->assertJsonPath('message', __('auth.failed'))
+            ->assertJsonPath('message', __('auth.failed', locale: 'ar'))
             ->assertJsonPath('data', null)
             ->assertJsonPath('errors', null);
     }
