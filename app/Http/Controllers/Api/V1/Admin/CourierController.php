@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\CourierResource;
+use App\Http\Requests\Admin\Courier\IndexCourierRequest;
 use App\Models\Courier\Courier;
 use App\Services\Admin\CourierService;
 
