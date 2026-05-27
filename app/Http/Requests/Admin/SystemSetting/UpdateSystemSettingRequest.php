@@ -24,7 +24,7 @@ class UpdateSystemSettingRequest extends FormRequest
     {
         return [
             'settings' => 'required|array|min:1',
-            'settings.*.key' => 'required|string|exists:system_settings,key',
+            'settings.*.key' => 'required|string',
             'settings.*.value' => 'nullable',
         ];
     }

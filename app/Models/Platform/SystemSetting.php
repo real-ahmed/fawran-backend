@@ -83,11 +83,25 @@ class SystemSetting extends Model
             get: function ($value) {
                 $imageKeys = ['app_logo', 'app_logo_white', 'app_icon', 'favicon'];
 
-                if (in_array($this->key, $imageKeys) && ! empty($value) && ! str_starts_with($value, 'http')) {
-                    // Strip legacy '/storage/' prefix if present
-                    $cleanValue = preg_replace('/^\/?storage\//', '', $value);
-
-                    return asset(Storage::disk('public')->url($cleanValue));
+                if (in_array($this->key, $imageKeys) && ! empty($value)) {
+                    $decoded = json_decode($value, true);
+                    
+                    if (is_array($decoded)) {
+                        $processed = [];
+                        foreach ($decoded as $lang => $path) {
+                            if (!empty($path) && !str_starts_with($path, 'http')) {
+                                $cleanPath = preg_replace('/^\/?storage\//', '', $path);
+                                $processed[$lang] = asset(\Illuminate\Support\Facades\Storage::disk('public')->url($cleanPath));
+                            } else {
+                                $processed[$lang] = $path;
+                            }
+                        }
+                        return json_encode($processed);
+                    } else if (!str_starts_with($value, 'http')) {
+                        // Legacy single string support
+                        $cleanValue = preg_replace('/^\/?storage\//', '', $value);
+                        return asset(\Illuminate\Support\Facades\Storage::disk('public')->url($cleanValue));
+                    }
                 }
 
                 return $value;

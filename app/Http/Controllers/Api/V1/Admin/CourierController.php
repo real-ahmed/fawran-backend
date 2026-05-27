@@ -90,8 +90,17 @@ class CourierController extends Controller
     public function printContract(Courier $courier)
     {
         $template = SystemSetting::cachedValue('courier_contract_template');
-        $appName = SystemSetting::cachedValue('app_name', 'منصة فورا - Fawran');
-        $appLogo = SystemSetting::cachedValue('app_logo');
+        
+        $appNameJson = SystemSetting::cachedValue('app_name', '{"ar":"منصة فورا - Fawran","en":"Fawran"}');
+        $appNameDecoded = json_decode($appNameJson, true);
+        $appName = is_array($appNameDecoded) ? ($appNameDecoded[app()->getLocale()] ?? $appNameDecoded['ar'] ?? 'منصة فورا - Fawran') : $appNameJson;
+
+        $appLogoJson = SystemSetting::cachedValue('app_logo');
+        $appLogo = null;
+        if ($appLogoJson) {
+            $decoded = json_decode($appLogoJson, true);
+            $appLogo = is_array($decoded) ? ($decoded[app()->getLocale()] ?? $decoded['ar'] ?? null) : $appLogoJson;
+        }
 
         if (! $template) {
             return response('Contract template not found in settings.', 404);
