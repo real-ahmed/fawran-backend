@@ -31,7 +31,7 @@ class DeliveryZoneBuilder extends Builder
     public function filter(array $filters): self
     {
         $this->when(isset($filters['is_active']), function ($query) use ($filters) {
-            $query->where('is_active', $filters['is_active']);
+            $query->where('is_active', filter_var($filters['is_active'], FILTER_VALIDATE_BOOLEAN));
         });
 
         $this->when(! empty($filters['search']), function ($query) use ($filters) {

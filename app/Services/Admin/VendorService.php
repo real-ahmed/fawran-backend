@@ -69,6 +69,9 @@ class VendorService
 
     public function updateVendor(Vendor $vendor, array $data): Vendor
     {
+        $hasWorkingHours = array_key_exists('working_hours', $data);
+        $hasDeliveryZones = array_key_exists('delivery_zones', $data);
+        
         $image = $data['image'] ?? null;
         $workingHours = $data['working_hours'] ?? [];
         $deliveryZones = $data['delivery_zones'] ?? [];
@@ -94,14 +97,14 @@ class VendorService
             ]);
         }
 
-        if (isset($data['working_hours'])) {
+        if ($hasWorkingHours) {
             $vendor->workingHours()->delete();
             if (!empty($workingHours)) {
                 $vendor->workingHours()->createMany($workingHours);
             }
         }
 
-        if (isset($data['delivery_zones'])) {
+        if ($hasDeliveryZones) {
             $vendor->deliveryZones()->delete();
             if (!empty($deliveryZones)) {
                 $vendor->deliveryZones()->createMany($deliveryZones);
