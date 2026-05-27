@@ -3,9 +3,9 @@
 namespace App\Services\Auth;
 
 use App\Enums\VendorPermission;
+use App\Models\Role;
 use App\Traits\Paginatable;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class VendorRoleService
 {
@@ -13,18 +13,19 @@ class VendorRoleService
 
     public function getRoles(int $vendorId, array $filters)
     {
-        $query = Role::query()->where('vendor_id', $vendorId)->with('permissions');
-
-        if (! empty($filters['search'])) {
-            $query->where('name', 'LIKE', '%'.$filters['search'].'%');
-        }
-
-        return $query->paginate($this->getPerPageLimit($filters['per_page'] ?? null));
+        return Role::query()
+            ->vendor($vendorId)
+            ->withPermissions()
+            ->searchName($filters['search'] ?? null)
+            ->paginate($this->getPerPageLimit($filters['per_page'] ?? null));
     }
 
     public function getRoleById(int $vendorId, $id): Role
     {
-        return Role::where('vendor_id', $vendorId)->with('permissions')->findOrFail($id);
+        return Role::query()
+            ->vendor($vendorId)
+            ->withPermissions()
+            ->findOrFail($id);
     }
 
     public function createRole(int $vendorId, array $data): Role

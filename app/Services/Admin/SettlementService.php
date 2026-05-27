@@ -14,17 +14,13 @@ class SettlementService
 
     public function listSettlements(Request $request)
     {
-        $query = Settlement::with(['execution', 'note'])->forAdminZones();
-
-        if ($request->filled('settlement_type')) {
-            $query->where('settlement_type', $request->query('settlement_type'));
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->query('status'));
-        }
-
-        return $query->latest('created_at')->paginate($this->getPerPageLimit());
+        return Settlement::query()
+            ->withListRelations()
+            ->forAdminZones()
+            ->type($request->query('settlement_type'))
+            ->status($request->query('status'))
+            ->newest()
+            ->paginate($this->getPerPageLimit());
     }
 
     public function getSettlement(Settlement $settlement): Settlement

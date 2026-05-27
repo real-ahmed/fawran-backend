@@ -17,16 +17,11 @@ class AdminUserService
 
     public function listAdmins(?string $search = null)
     {
-        $query = Admin::with('roles')->latest();
-
-        if (! empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%");
-            });
-        }
-
-        return $query->paginate($this->getPerPageLimit());
+        return Admin::query()
+            ->withRoles()
+            ->searchIdentity($search)
+            ->newest()
+            ->paginate($this->getPerPageLimit());
     }
 
     public function createAdmin(array $data): Admin

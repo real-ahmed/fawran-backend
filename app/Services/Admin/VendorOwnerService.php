@@ -15,18 +15,10 @@ class VendorOwnerService
      */
     public function listOwners(array $filters = []): LengthAwarePaginator
     {
-        $query = User::latest();
-
-        if (!empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%")
-                    ->orWhere('phone', 'LIKE', "%{$search}%");
-            });
-        }
-
-        return $query->paginate(15);
+        return User::query()
+            ->searchIdentity($filters['search'] ?? null)
+            ->newest()
+            ->paginate(15);
     }
 
     /**

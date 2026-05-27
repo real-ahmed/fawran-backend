@@ -40,6 +40,8 @@ enum AdminPermission: string
     case UPDATE_CUSTOMERS = 'update customers';
 
     case VIEW_COURIERS = 'view couriers';
+    case UPDATE_COURIERS = 'update couriers';
+    case DELETE_COURIERS = 'delete couriers';
     case APPROVE_COURIERS = 'approve couriers';
 
     case VIEW_MASTER_PRODUCTS = 'view master products';

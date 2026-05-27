@@ -12,33 +12,17 @@ class OrderService
 
     public function listOrders(Request $request)
     {
-        $query = Order::with(['customer.customer', 'subOrders.vendor'])->forAdminZones();
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->query('status'));
-        }
-
-        if ($request->filled('order_type')) {
-            $query->where('order_type', $request->query('order_type'));
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->query('date_from'));
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->query('date_to'));
-        }
-
-        if ($request->filled('customer_id')) {
-            $query->whereHas('customer', fn ($q) => $q->where('customer_id', $request->query('customer_id')));
-        }
-
-        if ($request->filled('vendor_id')) {
-            $query->whereHas('subOrders', fn ($q) => $q->where('vendor_id', $request->query('vendor_id')));
-        }
-
-        return $query->latest()->paginate($this->getPerPageLimit());
+        return Order::query()
+            ->withListRelations()
+            ->forAdminZones()
+            ->status($request->query('status'))
+            ->type($request->query('order_type'))
+            ->dateFrom($request->query('date_from'))
+            ->dateTo($request->query('date_to'))
+            ->forCustomer($request->query('customer_id'))
+            ->forVendor($request->query('vendor_id'))
+            ->newest()
+            ->paginate($this->getPerPageLimit());
     }
 
     public function getOrder(Order $order): Order

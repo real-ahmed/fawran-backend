@@ -12,13 +12,12 @@ class RefundService
 
     public function listRefundRequests(Request $request)
     {
-        $query = RefundRequest::with(['customer', 'order'])->forAdminZones();
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->query('status'));
-        }
-
-        return $query->latest('created_at')->paginate($this->getPerPageLimit());
+        return RefundRequest::query()
+            ->withListRelations()
+            ->forAdminZones()
+            ->status($request->query('status'))
+            ->newest()
+            ->paginate($this->getPerPageLimit());
     }
 
     public function getRefundRequest(RefundRequest $refundRequest): RefundRequest

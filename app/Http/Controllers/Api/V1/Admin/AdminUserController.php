@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminUser\IndexAdminUserRequest;
-use App\Http\Requests\V1\Admin\AdminUser\StoreAdminRequest;
 use App\Http\Requests\V1\Admin\AdminUser\UpdateAdminRequest;
 use App\Http\Resources\V1\AdminResource;
 use App\Models\Admin;
@@ -34,7 +33,7 @@ class AdminUserController extends Controller
      *
      * Create a new system admin and assign roles.
      */
-    public function (AdminRequest $request)
+    public function store(AdminRequest $request)
     {
         $admin = $this->adminUserService->createAdmin($request->validated());
 

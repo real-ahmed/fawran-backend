@@ -9,13 +9,10 @@ class SystemSettingService
 {
     public function getSettings(?string $group = null)
     {
-        $query = SystemSetting::query();
-
-        if ($group) {
-            $query->where('group', $group);
-        }
-
-        return $query->orderBy('group')->orderBy('key')->get();
+        return SystemSetting::query()
+            ->group($group)
+            ->ordered()
+            ->get();
     }
 
     public function updateSettings(array $settings): void
@@ -31,7 +28,7 @@ class SystemSettingService
             // Handle localized image uploads like app_logo_ar
             $isMergedKey = false;
             foreach ($mergedJsonKeys as $mergedKey) {
-                if (preg_match('/^(' . $mergedKey . ')_(ar|en)$/', $key, $matches)) {
+                if (preg_match('/^('.$mergedKey.')_(ar|en)$/', $key, $matches)) {
                     $baseKey = $matches[1];
                     $locale = $matches[2];
                     $isMergedKey = true;
@@ -41,10 +38,10 @@ class SystemSettingService
                         $value = $path;
                     }
 
-                    if (!isset($pendingMerges[$baseKey])) {
+                    if (! isset($pendingMerges[$baseKey])) {
                         $existing = SystemSetting::where('key', $baseKey)->first();
                         $existingJson = json_decode($existing?->value ?? '{"ar":"","en":""}', true);
-                        if (!is_array($existingJson)) {
+                        if (! is_array($existingJson)) {
                             // Convert legacy single string to array
                             $existingJson = ['ar' => $existing?->value, 'en' => $existing?->value];
                         }

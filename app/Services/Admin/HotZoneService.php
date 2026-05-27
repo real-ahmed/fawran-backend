@@ -13,17 +13,13 @@ class HotZoneService
 
     public function listHotZones(Request $request)
     {
-        $query = HotZone::with(['manualHotZone', 'autoHotZone'])->forAdminZones();
-
-        if ($request->has('is_active')) {
-            $query->where('is_active', $request->boolean('is_active'));
-        }
-
-        if ($request->filled('intensity')) {
-            $query->where('intensity', $request->query('intensity'));
-        }
-
-        return $query->latest('starts_at')->paginate($this->getPerPageLimit());
+        return HotZone::query()
+            ->withListRelations()
+            ->forAdminZones()
+            ->active($request->has('is_active') ? $request->boolean('is_active') : null)
+            ->intensity($request->query('intensity'))
+            ->newest()
+            ->paginate($this->getPerPageLimit());
     }
 
     public function createHotZone(array $data): HotZone

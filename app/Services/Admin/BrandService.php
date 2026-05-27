@@ -14,14 +14,9 @@ class BrandService
     public function listBrands(?string $search = null, ?string $approvalStatus = null)
     {
         return Brand::query()
-            ->when($search, function ($query, $search) {
-                $query->where('name->en', 'like', "%{$search}%")
-                    ->orWhere('name->ar', 'like', "%{$search}%");
-            })
-            ->when($approvalStatus, function ($query, $status) {
-                $query->whereHas('vendorSubmission', fn ($q) => $q->where('status', $status)->forAdminZones());
-            })
-            ->with('vendorSubmission.vendor')
+            ->searchName($search)
+            ->approvalStatus($approvalStatus)
+            ->withVendorSubmission()
             ->paginate($this->getPerPageLimit());
     }
 

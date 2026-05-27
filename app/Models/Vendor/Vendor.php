@@ -2,23 +2,23 @@
 
 namespace App\Models\Vendor;
 
+use App\Builders\VendorBuilder;
 use App\Enums\VendorStatus;
 use App\Enums\VendorType;
 use App\Models\Catalog\VendorBrandSubmission;
 use App\Models\Catalog\VendorCategorySubmission;
 use App\Models\Geo\VendorDeliveryZone;
 use App\Models\Inventory\Supplier;
-use App\Models\Media\Media;
 use App\Models\Order\SubOrder;
 use App\Models\Platform\OrderCommission;
 use App\Models\Product\VendorItem;
+use App\Models\User;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Vendor extends Model
 {
@@ -28,7 +28,7 @@ class Vendor extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->whereHas('deliveryZones', fn($q) => $q->whereIn('delivery_zones.id', $zoneIds));
+        $query->whereHas('deliveryZones', fn ($q) => $q->whereIn('delivery_zones.id', $zoneIds));
     }
 
     protected $fillable = [
@@ -67,9 +67,9 @@ class Vendor extends Model
         return $this->hasOne(VendorDescription::class);
     }
 
-    public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function owner(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'owner_id');
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function customCommission(): HasOne
@@ -120,5 +120,10 @@ class Vendor extends Model
     public function brandSubmissions(): HasMany
     {
         return $this->hasMany(VendorBrandSubmission::class);
+    }
+
+    public function newEloquentBuilder($query): VendorBuilder
+    {
+        return new VendorBuilder($query);
     }
 }

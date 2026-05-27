@@ -14,18 +14,19 @@ class RoleService
 
     public function getRoles(array $filters)
     {
-        $query = Role::query()->where('guard_name', 'api_admin')->with('permissions');
-
-        if (! empty($filters['search'])) {
-            $query->where('name', 'LIKE', '%'.$filters['search'].'%');
-        }
-
-        return $query->paginate($this->getPerPageLimit($filters['per_page'] ?? null));
+        return Role::query()
+            ->guard('api_admin')
+            ->withPermissions()
+            ->searchName($filters['search'] ?? null)
+            ->paginate($this->getPerPageLimit($filters['per_page'] ?? null));
     }
 
     public function getRoleById($id): Role
     {
-        return Role::where('guard_name', 'api_admin')->with('permissions')->findOrFail($id);
+        return Role::query()
+            ->guard('api_admin')
+            ->withPermissions()
+            ->findOrFail($id);
     }
 
     public function createRole(array $data): Role

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Builders\AdminBuilder;
 use App\Models\Courier\CourierApproval;
 use App\Models\Geo\DeliveryZone;
 use App\Models\Payment\PayoutExecution;
@@ -84,5 +85,10 @@ class Admin extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function newEloquentBuilder($query): AdminBuilder
+    {
+        return new AdminBuilder($query);
     }
 }

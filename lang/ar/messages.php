@@ -41,6 +41,14 @@ return [
     'courier_approved_body' => 'مبارك :name، تمت الموافقة على طلب التسجيل كمندوب توصيل!',
     'courier_approved_successfully' => 'تمت الموافقة على المندوب بنجاح',
     'courier_rejected_successfully' => 'تم رفض المندوب بنجاح',
+    'edit_courier' => 'تعديل بيانات المندوب',
+    'edit_courier_desc' => 'قم بتحديث معلومات المندوب أدناه.',
+    'courier_details' => 'تفاصيل المندوب',
+    'view_courier_details_desc' => 'عرض المعلومات والمستندات الكاملة لهذا المندوب.',
+    'confirm_delete' => 'هل أنت متأكد؟',
+    'confirm_delete_message' => 'لا يمكن التراجع عن هذا الإجراء. سيتم حذف العنصر المحدد نهائياً.',
+    'national_id' => 'رقم الهوية / الإقامة',
+    'enter_national_id' => 'أدخل رقم الهوية أو الإقامة',
 
     // Catalog Approvals
     'brand_approved_successfully' => 'تمت الموافقة على العلامة التجارية بنجاح',
@@ -88,6 +96,15 @@ return [
     'print_date' => 'تاريخ الطباعة:',
     'must_print_contract_first' => 'يجب عليك طباعة العقد قبل الموافقة على المندوب.',
     'print_contract_to_enable' => '⚠️ يرجى طباعة العقد أولاً لتفعيل الموافقة.',
+    'days' => [
+        'Sunday' => 'الأحد',
+        'Monday' => 'الاثنين',
+        'Tuesday' => 'الثلاثاء',
+        'Wednesday' => 'الأربعاء',
+        'Thursday' => 'الخميس',
+        'Friday' => 'الجمعة',
+        'Saturday' => 'السبت',
+    ],
 
     // Vehicles
     'vehicle_motorcycle' => 'دراجة نارية',

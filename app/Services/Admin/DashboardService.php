@@ -39,19 +39,19 @@ class DashboardService
         return [
             'orders' => [
                 'total' => Order::forAdminZones()->count(),
-                'pending' => Order::forAdminZones()->where('status', 'pending')->count(),
-                'processing' => Order::forAdminZones()->where('status', 'processing')->count(),
-                'delivered' => Order::forAdminZones()->where('status', 'delivered')->count(),
-                'cancelled' => Order::forAdminZones()->where('status', 'cancelled')->count(),
+                'pending' => Order::forAdminZones()->status('pending')->count(),
+                'processing' => Order::forAdminZones()->status('processing')->count(),
+                'delivered' => Order::forAdminZones()->status('delivered')->count(),
+                'cancelled' => Order::forAdminZones()->status('cancelled')->count(),
             ],
             'vendors' => [
                 'total' => Vendor::forAdminZones()->count(),
-                'active' => Vendor::forAdminZones()->where('is_active', true)->count(),
+                'active' => Vendor::forAdminZones()->active(true)->count(),
             ],
             'couriers' => [
                 'total' => Courier::forAdminZones()->count(),
-                'online' => Courier::forAdminZones()->where('is_online', true)->count(),
-                'pending_approval' => Courier::forAdminZones()->whereDoesntHave('approval')->count(),
+                'online' => Courier::forAdminZones()->online(true)->count(),
+                'pending_approval' => Courier::forAdminZones()->approvalStatus('pending')->count(),
             ],
             'revenue' => [
                 'total_revenue' => $platformWallet?->total_revenue ?? '0.00',
@@ -99,7 +99,7 @@ class DashboardService
                 ->where('status', 'pending')
                 ->latest()
                 ->get(),
-            'couriers' => Courier::with(['user', 'deliveryZone', 'document'])
+            'couriers' => Courier::with(['user', 'document'])
                 ->forAdminZones()
                 ->whereDoesntHave('approval')
                 ->latest('created_at')

@@ -17,7 +17,7 @@ return new class extends Migration
     <p><strong>تاريخ تحرير العقد:</strong> {date}</p>
     <p>إنه في يوم <strong>{day_name}</strong> الموافق <strong>{date}</strong> تم إبرام هذا العقد بين كل من:</p>
     <p><strong>الطرف الأول (المنصة):</strong> منصة فورا (Fawran) لخدمات التوصيل.</p>
-    <p><strong>الطرف الثاني (المندوب):</strong> السيد/ {courier_name}، ويحمل رقم هاتف: {phone}</p>
+    <p><strong>الطرف الثاني (المندوب):</strong> السيد/ {courier_name}، رقم الهوية: {national_id}، ويحمل رقم هاتف: {phone}</p>
     
     <h3>البند الأول: موضوع العقد</h3>
     <p>يقر الطرف الثاني بموافقته على العمل كمندوب توصيل مستقل عبر منصة الطرف الأول، باستخدام مركبته الخاصة من نوع <strong>{vehicle_type}</strong>، وتوصيل الطلبات للعملاء وفقاً للمعايير والشروط المحددة.</p>

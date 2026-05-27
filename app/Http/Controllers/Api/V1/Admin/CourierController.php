@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Courier\IndexCourierRequest;
+use App\Http\Requests\Admin\Courier\UpdateCourierRequest;
 use App\Http\Resources\Admin\CourierResource;
 use App\Models\Courier\Courier;
-use App\Models\Platform\SystemSetting;
 use App\Services\Admin\CourierService;
 
 /**
@@ -44,6 +44,33 @@ class CourierController extends Controller
         return $this->successResponse(
             new CourierResource($this->courierService->getCourier($courier))
         );
+    }
+
+    /**
+     * Update Courier
+     *
+     * Update an existing courier's details.
+     */
+    public function update(UpdateCourierRequest $request, Courier $courier)
+    {
+        $courier = $this->courierService->updateCourier($courier, $request->validated());
+
+        return $this->successResponse(
+            new CourierResource($courier),
+            __('messages.updated_successfully')
+        );
+    }
+
+    /**
+     * Delete Courier
+     *
+     * Remove a courier's profile from the system.
+     */
+    public function destroy(Courier $courier)
+    {
+        $this->courierService->deleteCourier($courier);
+
+        return $this->successResponse(null, __('messages.deleted_successfully'));
     }
 
     /**
@@ -98,55 +125,12 @@ class CourierController extends Controller
      */
     public function printContract(Courier $courier)
     {
-        $template = SystemSetting::cachedValue('courier_contract_template');
+        $contract = $this->courierService->getContractViewData($courier);
 
-        $appNameJson = SystemSetting::cachedValue('app_name', '{"ar":"منصة فورا - Fawran","en":"Fawran"}');
-        $appNameDecoded = json_decode($appNameJson, true);
-        $appName = is_array($appNameDecoded) ? ($appNameDecoded[app()->getLocale()] ?? $appNameDecoded['ar'] ?? 'منصة فورا - Fawran') : $appNameJson;
-
-        $appLogoJson = SystemSetting::cachedValue('app_logo');
-        $appLogo = null;
-        if ($appLogoJson) {
-            $decoded = json_decode($appLogoJson, true);
-            $appLogo = is_array($decoded) ? ($decoded[app()->getLocale()] ?? $decoded['ar'] ?? null) : $appLogoJson;
-        }
-
-        if (! $template) {
+        if (! $contract) {
             return response('Contract template not found in settings.', 404);
         }
 
-        $courier->load(['user', 'document', 'approval']);
-
-        $document = $courier->document()->firstOrCreate(['courier_id' => $courier->id]);
-        if (! $document->contract_number) {
-            $document->update(['contract_number' => 'CTR-'.$courier->id.'-'.date('Ym')]);
-        }
-        $contractNumber = $document->contract_number;
-
-        $date = $courier->approval?->approved_at ? $courier->approval->approved_at->format('Y-m-d') : date('Y-m-d');
-
-        $dayNamesAr = [
-            'Sunday' => 'الأحد',
-            'Monday' => 'الاثنين',
-            'Tuesday' => 'الثلاثاء',
-            'Wednesday' => 'الأربعاء',
-            'Thursday' => 'الخميس',
-            'Friday' => 'الجمعة',
-            'Saturday' => 'السبت',
-        ];
-        $dayName = $dayNamesAr[date('l')] ?? date('l');
-
-        $replacements = [
-            '{contract_number}' => $contractNumber,
-            '{date}' => $date,
-            '{day_name}' => $dayName,
-            '{courier_name}' => $courier->user->name ?? 'غير متوفر',
-            '{phone}' => $courier->user->phone ?? 'غير متوفر',
-            '{vehicle_type}' => __('messages.vehicle_'.($courier->vehicle_type?->value ?? 'motorcycle')),
-        ];
-
-        $html = str_replace(array_keys($replacements), array_values($replacements), $template);
-
-        return view('admin.couriers.contract', compact('html', 'courier', 'contractNumber', 'appName', 'appLogo'));
+        return view('admin.couriers.contract', $contract);
     }
 }

@@ -14,27 +14,14 @@ class VendorService
 
     public function listVendors(Request $request)
     {
-        $query = Vendor::query()->with('media')->forAdminZones();
-
-        if ($request->has('type')) {
-            $query->where('type', $request->query('type'));
-        }
-
-        if ($request->has('is_active')) {
-            $query->where('is_active', $request->query('is_active'));
-        }
-
-        if ($request->has('search') && !empty($request->query('search'))) {
-            $search = $request->query('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name->en', 'LIKE', "%{$search}%")
-                  ->orWhere('name->ar', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%")
-                  ->orWhere('phone', 'LIKE', "%{$search}%");
-            });
-        }
-
-        return $query->latest()->paginate($this->getPerPageLimit());
+        return Vendor::query()
+            ->withListRelations()
+            ->forAdminZones()
+            ->type($request->query('type'))
+            ->active($request->has('is_active') ? $request->query('is_active') : null)
+            ->search($request->query('search'))
+            ->newest()
+            ->paginate($this->getPerPageLimit());
     }
 
     public function createVendor(array $data): Vendor
@@ -56,11 +43,11 @@ class VendorService
             ]);
         }
 
-        if (!empty($workingHours)) {
+        if (! empty($workingHours)) {
             $vendor->workingHours()->createMany($workingHours);
         }
 
-        if (!empty($deliveryZones)) {
+        if (! empty($deliveryZones)) {
             $vendor->deliveryZones()->createMany($deliveryZones);
         }
 
@@ -71,18 +58,18 @@ class VendorService
     {
         $hasWorkingHours = array_key_exists('working_hours', $data);
         $hasDeliveryZones = array_key_exists('delivery_zones', $data);
-        
+
         $image = $data['image'] ?? null;
         $workingHours = $data['working_hours'] ?? [];
         $deliveryZones = $data['delivery_zones'] ?? [];
-        
+
         unset($data['image'], $data['working_hours'], $data['delivery_zones']);
 
         $vendor->update($data);
 
         if ($image) {
             $path = $image->store('vendors', 'public');
-            
+
             // Delete old primary media if exists
             $oldMedia = $vendor->media()->where('is_primary', true)->first();
             if ($oldMedia) {
@@ -99,14 +86,14 @@ class VendorService
 
         if ($hasWorkingHours) {
             $vendor->workingHours()->delete();
-            if (!empty($workingHours)) {
+            if (! empty($workingHours)) {
                 $vendor->workingHours()->createMany($workingHours);
             }
         }
 
         if ($hasDeliveryZones) {
             $vendor->deliveryZones()->delete();
-            if (!empty($deliveryZones)) {
+            if (! empty($deliveryZones)) {
                 $vendor->deliveryZones()->createMany($deliveryZones);
             }
         }

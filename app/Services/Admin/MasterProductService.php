@@ -15,32 +15,15 @@ class MasterProductService
 
     public function listProducts(Request $request)
     {
-        $query = MasterProduct::with(['category', 'description', 'retailDetail']);
-
-        if ($request->filled('approval_status')) {
-            $status = $request->query('approval_status');
-            $query->whereHas('vendorSubmission', fn ($q) => $q->where('status', $status)->forAdminZones());
-            $query->with('vendorSubmission.vendor');
-        }
-
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->query('category_id'));
-        }
-
-        if ($request->filled('unit_type')) {
-            $query->where('unit_type', $request->query('unit_type'));
-        }
-
-        if ($request->has('is_active')) {
-            $query->where('is_active', $request->boolean('is_active'));
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->query('search');
-            $query->where('name', 'like', "%{$search}%");
-        }
-
-        return $query->latest('created_at')->paginate($this->getPerPageLimit());
+        return MasterProduct::query()
+            ->withListRelations()
+            ->approvalStatus($request->query('approval_status'))
+            ->inCategory($request->query('category_id'))
+            ->unitType($request->query('unit_type'))
+            ->active($request->has('is_active') ? $request->boolean('is_active') : null)
+            ->searchName($request->query('search'))
+            ->newest()
+            ->paginate($this->getPerPageLimit());
     }
 
     public function createProduct(array $data): MasterProduct

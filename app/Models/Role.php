@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Builders\RoleBuilder;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role as SpatieRole;
 
@@ -30,5 +31,10 @@ class Role extends SpatieRole
     public function isSuperAdmin(): bool
     {
         return self::isSuperAdminName($this->name);
+    }
+
+    public function newEloquentBuilder($query): RoleBuilder
+    {
+        return new RoleBuilder($query);
     }
 }

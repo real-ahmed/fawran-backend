@@ -18,16 +18,13 @@ class CourierResource extends JsonResource
                 'phone' => $this->user->phone,
             ]),
             'vehicle_type' => $this->vehicle_type,
+            'national_id' => $this->national_id,
             'plate_number' => $this->plate_number,
             'is_online' => $this->is_online,
-            'delivery_zone' => $this->whenLoaded('deliveryZone', fn () => [
-                'id' => $this->deliveryZone->id,
-                'name' => $this->deliveryZone->name,
-            ]),
-            'document' => $this->whenLoaded('document', fn () => [
+            'document' => $this->whenLoaded('document', fn () => $this->document ? [
                 'criminal_record_file' => $this->document->criminal_record_file,
                 'contract_number' => $this->document->contract_number,
-            ]),
+            ] : null),
             'is_approved' => $this->whenLoaded('approval', fn () => $this->approval !== null, false),
             'approved_at' => $this->whenLoaded('approval', fn () => $this->approval?->approved_at),
             'location' => $this->whenLoaded('location', fn () => [

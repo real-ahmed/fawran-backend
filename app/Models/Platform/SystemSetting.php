@@ -2,6 +2,7 @@
 
 namespace App\Models\Platform;
 
+use App\Builders\SystemSettingBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
@@ -77,6 +78,11 @@ class SystemSetting extends Model
         return "system_settings.value.{$key}";
     }
 
+    public function newEloquentBuilder($query): SystemSettingBuilder
+    {
+        return new SystemSettingBuilder($query);
+    }
+
     protected function value(): Attribute
     {
         return Attribute::make(
@@ -85,22 +91,24 @@ class SystemSetting extends Model
 
                 if (in_array($this->key, $imageKeys) && ! empty($value)) {
                     $decoded = json_decode($value, true);
-                    
+
                     if (is_array($decoded)) {
                         $processed = [];
                         foreach ($decoded as $lang => $path) {
-                            if (!empty($path) && !str_starts_with($path, 'http')) {
+                            if (! empty($path) && ! str_starts_with($path, 'http')) {
                                 $cleanPath = preg_replace('/^\/?storage\//', '', $path);
-                                $processed[$lang] = asset(\Illuminate\Support\Facades\Storage::disk('public')->url($cleanPath));
+                                $processed[$lang] = asset(Storage::disk('public')->url($cleanPath));
                             } else {
                                 $processed[$lang] = $path;
                             }
                         }
+
                         return json_encode($processed);
-                    } else if (!str_starts_with($value, 'http')) {
+                    } elseif (! str_starts_with($value, 'http')) {
                         // Legacy single string support
                         $cleanValue = preg_replace('/^\/?storage\//', '', $value);
-                        return asset(\Illuminate\Support\Facades\Storage::disk('public')->url($cleanValue));
+
+                        return asset(Storage::disk('public')->url($cleanValue));
                     }
                 }
 

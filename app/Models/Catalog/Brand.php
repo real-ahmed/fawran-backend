@@ -2,6 +2,7 @@
 
 namespace App\Models\Catalog;
 
+use App\Builders\BrandBuilder;
 use App\Models\Product\RetailProductDetail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -36,5 +37,10 @@ class Brand extends Model
     public function vendorSubmission(): HasOne
     {
         return $this->hasOne(VendorBrandSubmission::class, 'brand_id');
+    }
+
+    public function newEloquentBuilder($query): BrandBuilder
+    {
+        return new BrandBuilder($query);
     }
 }

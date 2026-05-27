@@ -12,22 +12,11 @@ class CustomerService
 
     public function listCustomers(Request $request)
     {
-        $query = User::query();
-
-        if ($request->filled('search')) {
-            $search = $request->query('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->has('is_active')) {
-            $query->where('is_active', $request->boolean('is_active'));
-        }
-
-        return $query->latest()->paginate($this->getPerPageLimit());
+        return User::query()
+            ->searchIdentity($request->query('search'))
+            ->active($request->has('is_active') ? $request->boolean('is_active') : null)
+            ->newest()
+            ->paginate($this->getPerPageLimit());
     }
 
     public function getCustomer(User $user): User

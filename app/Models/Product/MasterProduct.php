@@ -2,6 +2,7 @@
 
 namespace App\Models\Product;
 
+use App\Builders\MasterProductBuilder;
 use App\Enums\UnitType;
 use App\Models\Catalog\Category;
 use Illuminate\Database\Eloquent\Model;
@@ -57,5 +58,10 @@ class MasterProduct extends Model
     public function vendorSubmission(): HasOne
     {
         return $this->hasOne(VendorMasterProductSubmission::class, 'master_product_id');
+    }
+
+    public function newEloquentBuilder($query): MasterProductBuilder
+    {
+        return new MasterProductBuilder($query);
     }
 }

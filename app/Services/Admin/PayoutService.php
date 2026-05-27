@@ -13,13 +13,12 @@ class PayoutService
 
     public function listPayoutRequests(Request $request)
     {
-        $query = PayoutRequest::with(['user', 'execution'])->forAdminZones();
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->query('status'));
-        }
-
-        return $query->latest('created_at')->paginate($this->getPerPageLimit());
+        return PayoutRequest::query()
+            ->withListRelations()
+            ->forAdminZones()
+            ->status($request->query('status'))
+            ->newest()
+            ->paginate($this->getPerPageLimit());
     }
 
     public function approvePayoutRequest(PayoutRequest $payoutRequest, Admin $admin): PayoutRequest

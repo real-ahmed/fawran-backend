@@ -2,6 +2,7 @@
 
 namespace App\Models\Payment;
 
+use App\Builders\SettlementBuilder;
 use App\Enums\SettlementStatus;
 use App\Enums\SettlementType;
 use App\Traits\Scopes\AdminZoneScope;
@@ -29,9 +30,9 @@ class Settlement extends Model
                 ->whereExists(function ($sub) use ($zoneIds) {
                     $sub->select(DB::raw(1))
                         ->from('vendors')
-                        ->join('vendordelivery_zones', 'vendors.id', '=', 'vendordelivery_zones.vendor_id')
+                        ->join('vendor_delivery_zones', 'vendors.id', '=', 'vendor_delivery_zones.vendor_id')
                         ->whereColumn('vendors.id', 'settlements.target_id')
-                        ->whereIn('vendordelivery_zones.delivery_zone_id', $zoneIds);
+                        ->whereIn('vendor_delivery_zones.delivery_zone_id', $zoneIds);
                 });
         });
     }
@@ -76,5 +77,10 @@ class Settlement extends Model
     public function note(): HasOne
     {
         return $this->hasOne(SettlementNote::class);
+    }
+
+    public function newEloquentBuilder($query): SettlementBuilder
+    {
+        return new SettlementBuilder($query);
     }
 }

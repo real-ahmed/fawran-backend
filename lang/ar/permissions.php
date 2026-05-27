@@ -58,4 +58,6 @@ return [
     'manage payouts' => 'إدارة المدفوعات',
     'manage refunds' => 'إدارة المسترجعات',
     'manage system settings' => 'إدارة إعدادات النظام',
+    'update couriers' => 'تحديث المندوبين',
+    'delete couriers' => 'حذف المندوبين',
 ];

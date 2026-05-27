@@ -15,15 +15,10 @@ class CategoryService
     public function listCategories(?string $search = null, ?string $approvalStatus = null)
     {
         return Category::query()
-            ->with(['hierarchy', 'icon'])
-            ->when($search, function ($query, $search) {
-                $query->where('name->en', 'like', "%{$search}%")
-                    ->orWhere('name->ar', 'like', "%{$search}%");
-            })
-            ->when($approvalStatus, function ($query, $status) {
-                $query->whereHas('vendorSubmission', fn ($q) => $q->where('status', $status)->forAdminZones());
-            })
-            ->with('vendorSubmission.vendor')
+            ->withListRelations()
+            ->searchName($search)
+            ->approvalStatus($approvalStatus)
+            ->withVendorSubmission()
             ->paginate($this->getPerPageLimit());
     }
 

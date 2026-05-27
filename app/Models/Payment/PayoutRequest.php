@@ -2,6 +2,7 @@
 
 namespace App\Models\Payment;
 
+use App\Builders\PayoutRequestBuilder;
 use App\Enums\PayoutRequestStatus;
 use App\Models\User;
 use App\Traits\Scopes\AdminZoneScope;
@@ -26,9 +27,9 @@ class PayoutRequest extends Model
             })->orWhereExists(function ($sub) use ($zoneIds) {
                 $sub->select(DB::raw(1))
                     ->from('vendors')
-                    ->join('vendordelivery_zones', 'vendors.id', '=', 'vendordelivery_zones.vendor_id')
+                    ->join('vendor_delivery_zones', 'vendors.id', '=', 'vendor_delivery_zones.vendor_id')
                     ->whereColumn('vendors.owner_id', 'payout_requests.user_id')
-                    ->whereIn('vendordelivery_zones.delivery_zone_id', $zoneIds);
+                    ->whereIn('vendor_delivery_zones.delivery_zone_id', $zoneIds);
             });
         });
     }
@@ -60,5 +61,10 @@ class PayoutRequest extends Model
     public function execution(): HasOne
     {
         return $this->hasOne(PayoutExecution::class);
+    }
+
+    public function newEloquentBuilder($query): PayoutRequestBuilder
+    {
+        return new PayoutRequestBuilder($query);
     }
 }

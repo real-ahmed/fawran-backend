@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Builders\UserBuilder;
 use App\Models\Address\UserAddress;
 use App\Models\Auth\LocalAccount;
 use App\Models\Auth\SocialAccount;
@@ -129,5 +130,10 @@ class User extends Authenticatable implements HasLocalePreference, JWTSubject
     public function preferredLocale(): string
     {
         return $this->getSetting('locale', 'en');
+    }
+
+    public function newEloquentBuilder($query): UserBuilder
+    {
+        return new UserBuilder($query);
     }
 }

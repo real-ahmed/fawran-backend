@@ -2,6 +2,7 @@
 
 namespace App\Models\Geo;
 
+use App\Builders\HotZoneBuilder;
 use App\Enums\HotZoneIntensity;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,5 +58,10 @@ class HotZone extends Model
     public function autoHotZone(): HasOne
     {
         return $this->hasOne(AutoHotZone::class);
+    }
+
+    public function newEloquentBuilder($query): HotZoneBuilder
+    {
+        return new HotZoneBuilder($query);
     }
 }

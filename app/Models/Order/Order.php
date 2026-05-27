@@ -2,6 +2,7 @@
 
 namespace App\Models\Order;
 
+use App\Builders\OrderBuilder;
 use App\Enums\OrderStatus;
 use App\Enums\OrderType;
 use App\Models\Media\Rating;
@@ -76,5 +77,10 @@ class Order extends Model
     public function refundRequests(): HasMany
     {
         return $this->hasMany(RefundRequest::class);
+    }
+
+    public function newEloquentBuilder($query): OrderBuilder
+    {
+        return new OrderBuilder($query);
     }
 }

@@ -85,7 +85,6 @@ Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->g
             Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_VENDORS->value);
         });
 
-
     // Categories Management
     Route::controller(CategoryController::class)
         ->prefix('categories')
@@ -138,6 +137,8 @@ Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->g
         ->group(function () {
             Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);
             Route::get('/{courier}', 'show')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);
+            Route::put('/{courier}', 'update')->middleware('can:'.AdminPermission::UPDATE_COURIERS->value);
+            Route::delete('/{courier}', 'destroy')->middleware('can:'.AdminPermission::DELETE_COURIERS->value);
             Route::put('/{courier}/approve', 'approve')->middleware('can:'.AdminPermission::APPROVE_COURIERS->value);
             Route::put('/{courier}/reject', 'reject')->middleware('can:'.AdminPermission::APPROVE_COURIERS->value);
             Route::get('/{courier}/location', 'location')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);

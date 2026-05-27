@@ -41,6 +41,14 @@ return [
     'courier_approved_body' => 'Congratulations :name, your courier application has been approved!',
     'courier_approved_successfully' => 'Courier approved successfully',
     'courier_rejected_successfully' => 'Courier rejected successfully',
+    'edit_courier' => 'Edit Courier',
+    'edit_courier_desc' => 'Update the courier\'s information below.',
+    'courier_details' => 'Courier Details',
+    'view_courier_details_desc' => 'View full information and documents for this courier.',
+    'confirm_delete' => 'Are you sure?',
+    'confirm_delete_message' => 'This action cannot be undone. This will permanently delete the selected item.',
+    'national_id' => 'National ID',
+    'enter_national_id' => 'Enter national ID',
 
     // Catalog Approvals
     'brand_approved_successfully' => 'Brand approved successfully',
@@ -88,6 +96,15 @@ return [
     'print_date' => 'Print Date:',
     'must_print_contract_first' => 'You must print the contract before approving the courier.',
     'print_contract_to_enable' => '⚠️ Please print the contract first to enable approval.',
+    'days' => [
+        'Sunday' => 'Sunday',
+        'Monday' => 'Monday',
+        'Tuesday' => 'Tuesday',
+        'Wednesday' => 'Wednesday',
+        'Thursday' => 'Thursday',
+        'Friday' => 'Friday',
+        'Saturday' => 'Saturday',
+    ],
 
     // Vehicles
     'vehicle_motorcycle' => 'Motorcycle',

@@ -171,8 +171,8 @@ return new class extends Migration
             $table->dropIndex('users_created_at_idx');
         });
 
-        Schema::table('vendordelivery_zones', function (Blueprint $table) {
-            $table->dropIndex('vendordelivery_zones_zone_vendor_idx');
+        Schema::table('vendor_delivery_zones', function (Blueprint $table) {
+            $table->dropIndex('vendor_delivery_zones_zone_vendor_idx');
         });
 
         Schema::table('vendors', function (Blueprint $table) {

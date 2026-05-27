@@ -2,8 +2,8 @@
 
 namespace App\Models\Courier;
 
+use App\Builders\CourierBuilder;
 use App\Enums\VehicleType;
-use App\Models\Geo\DeliveryZone;
 use App\Models\Order\Delivery;
 use App\Models\P2p\P2pAssignment;
 use App\Models\Payment\CourierCashCollection;
@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 
 class Courier extends Model
 {
@@ -23,12 +24,19 @@ class Courier extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->whereIn('delivery_zone_id', $zoneIds);
+        $query->whereHas('location', function ($q) use ($zoneIds) {
+            $q->whereExists(function ($subQuery) use ($zoneIds) {
+                $subQuery->select(DB::raw(1))
+                    ->from('delivery_zones')
+                    ->whereIn('id', $zoneIds)
+                    ->whereRaw("ST_Contains(delivery_zones.polygon, ST_GeomFromText(CONCAT('POINT(', courier_locations.longitude, ' ', courier_locations.latitude, ')')))");
+            });
+        });
     }
 
     protected $fillable = [
         'user_id',
-        'delivery_zone_id',
+        'national_id',
         'vehicle_type',
         'plate_number',
         'is_online',
@@ -67,11 +75,6 @@ class Courier extends Model
         return $this->hasOne(CourierApproval::class);
     }
 
-    public function deliveryZone(): BelongsTo
-    {
-        return $this->belongsTo(DeliveryZone::class);
-    }
-
     public function deliveries(): HasMany
     {
         return $this->hasMany(Delivery::class);
@@ -85,5 +88,10 @@ class Courier extends Model
     public function cashCollections(): HasMany
     {
         return $this->hasMany(CourierCashCollection::class);
+    }
+
+    public function newEloquentBuilder($query): CourierBuilder
+    {
+        return new CourierBuilder($query);
     }
 }

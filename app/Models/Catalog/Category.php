@@ -2,6 +2,7 @@
 
 namespace App\Models\Catalog;
 
+use App\Builders\CategoryBuilder;
 use App\Models\Product\MasterProduct;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -58,5 +59,10 @@ class Category extends Model
     public function vendorSubmission(): HasOne
     {
         return $this->hasOne(VendorCategorySubmission::class, 'category_id');
+    }
+
+    public function newEloquentBuilder($query): CategoryBuilder
+    {
+        return new CategoryBuilder($query);
     }
 }

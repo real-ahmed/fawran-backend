@@ -2,6 +2,7 @@
 
 namespace App\Models\Payment;
 
+use App\Builders\RefundRequestBuilder;
 use App\Enums\RefundRequestStatus;
 use App\Enums\RefundResolution;
 use App\Models\Order\Order;
@@ -55,5 +56,10 @@ class RefundRequest extends Model
     public function items(): HasMany
     {
         return $this->hasMany(RefundItem::class);
+    }
+
+    public function newEloquentBuilder($query): RefundRequestBuilder
+    {
+        return new RefundRequestBuilder($query);
     }
 }
