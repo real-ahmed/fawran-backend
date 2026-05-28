@@ -20,11 +20,7 @@ class DashboardService
      */
     public function getMetrics(): array
     {
-        return Cache::flexible(
-            $this->metricsCacheKey(),
-            [30, 120],
-            fn (): array => $this->buildMetrics()
-        );
+        return $this->buildMetrics();
     }
 
     /**
