@@ -31,7 +31,7 @@ class NotificationService
     public function markAsRead(Authenticatable $user, ?string $id = null): void
     {
         if ($id) {
-            $user->notifications()->where('id', $id)->markAsRead();
+            $user->notifications()->where('id', $id)->update(['read_at' => now()]);
 
             return;
         }
