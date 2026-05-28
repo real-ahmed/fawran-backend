@@ -17,7 +17,7 @@ use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
 
-class Admin extends Authenticatable implements JWTSubject, HasLocalePreference
+class Admin extends Authenticatable implements HasLocalePreference, JWTSubject
 {
     use HasFactory, HasRoles, HasSettings, Notifiable;
 
@@ -96,5 +96,10 @@ class Admin extends Authenticatable implements JWTSubject, HasLocalePreference
     public function preferredLocale(): string
     {
         return $this->getSetting('locale') ?? config('app.locale', 'en');
+    }
+
+    public function receivesBroadcastNotificationsOn(): string
+    {
+        return 'admin.'.$this->id;
     }
 }

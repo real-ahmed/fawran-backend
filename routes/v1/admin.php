@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\V1\Admin\SettlementController;
 use App\Http\Controllers\Api\V1\Admin\SystemSettingController;
 use App\Http\Controllers\Api\V1\Admin\VendorController;
 use App\Http\Controllers\Api\V1\Admin\VendorOwnerController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Middleware\SetAdminTeamId;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,15 @@ Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->g
         ->group(function () {
             Route::get('/metrics', 'metrics');
             Route::get('/pending-approvals', 'pendingApprovals');
+        });
+
+    // Notifications
+    Route::controller(NotificationController::class)
+        ->prefix('notifications')
+        ->group(function () {
+            Route::get('/', 'index');
+            Route::get('/unread', 'unread');
+            Route::post('/mark-as-read', 'markAsRead');
         });
 
     // Delivery Zones

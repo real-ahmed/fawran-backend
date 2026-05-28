@@ -2,7 +2,12 @@
 
 namespace App\Observers\Courier;
 
+use App\Enums\AdminPermission;
+use App\Events\CourierApplicationSubmitted;
+use App\Models\Admin;
 use App\Models\Courier\Courier;
+use App\Notifications\Admin\CourierApplicationSubmittedNotification;
+use App\Services\AdminNotificationService;
 
 class CourierObserver
 {
@@ -13,26 +18,34 @@ class CourierObserver
     {
         $adminsToNotify = collect();
 
-        $superAdmins = \App\Models\Admin::where('id', 1)
-            ->orWhereHas('roles', fn($q) => $q->where('name', 'Super Admin'))
+        $superAdmins = Admin::where('id', 1)
+            ->orWhereHas('roles', fn ($q) => $q->where('name', 'Super Admin'))
             ->get();
-            
+
         $adminsToNotify = $adminsToNotify->merge($superAdmins);
 
         if ($courier->location) {
             $lon = $courier->location->longitude;
             $lat = $courier->location->latitude;
 
-            $zoneAdmins = \App\Models\Admin::whereHas('deliveryZones', function ($q) use ($lon, $lat) {
+            $zoneAdmins = Admin::whereHas('deliveryZones', function ($q) use ($lon, $lat) {
                 $q->whereRaw("ST_Contains(delivery_zones.polygon, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')')))", [$lon, $lat]);
             })->get();
-            
+
             $adminsToNotify = $adminsToNotify->merge($zoneAdmins);
         }
 
-        foreach ($adminsToNotify->unique('id') as $admin) {
-            event(new \App\Events\CourierApplicationSubmitted($courier, $admin));
+        $uniqueAdmins = $adminsToNotify->unique('id');
+
+        foreach ($uniqueAdmins as $admin) {
+            event(new CourierApplicationSubmitted($courier, $admin));
         }
+
+        app(AdminNotificationService::class)->notifyAdminsWithPermission(
+            AdminPermission::APPROVE_COURIERS->value,
+            new CourierApplicationSubmittedNotification($courier->user->name ?? 'Unknown'),
+            $uniqueAdmins
+        );
     }
 
     /**

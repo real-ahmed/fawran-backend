@@ -27,14 +27,22 @@ class NotificationTest extends TestCase
         $this->assertInstanceOf(CursorPaginator::class, (new NotificationService)->listUnread($user));
     }
 
-    private function expectNewestCursorPagination(): MockInterface
+    public function test_notification_pagination_limit_is_capped(): void
+    {
+        $query = $this->expectNewestCursorPagination(100);
+        $user = $this->notificationUser('notifications', $query);
+
+        $this->assertInstanceOf(CursorPaginator::class, (new NotificationService)->list($user, '250'));
+    }
+
+    private function expectNewestCursorPagination(int $perPage = 15): MockInterface
     {
         $query = Mockery::mock();
         $paginator = Mockery::mock(CursorPaginator::class);
 
         $query->shouldReceive('latest')->once()->with('created_at')->ordered()->andReturnSelf();
         $query->shouldReceive('latest')->once()->with('id')->ordered()->andReturnSelf();
-        $query->shouldReceive('cursorPaginate')->once()->with(15)->ordered()->andReturn($paginator);
+        $query->shouldReceive('cursorPaginate')->once()->with($perPage)->ordered()->andReturn($paginator);
 
         return $query;
     }

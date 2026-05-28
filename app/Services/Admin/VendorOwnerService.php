@@ -4,12 +4,15 @@ namespace App\Services\Admin;
 
 use App\Models\User;
 use App\Notifications\Admin\AdminCredentialsGeneratedNotification;
+use App\Traits\Paginatable;
 use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class VendorOwnerService
 {
+    use Paginatable;
+
     /**
      * List users that can be vendor owners.
      */
@@ -18,7 +21,7 @@ class VendorOwnerService
         return User::query()
             ->searchIdentity($filters['search'] ?? null)
             ->newest()
-            ->cursorPaginate(15);
+            ->cursorPaginate($this->getPerPageLimit($filters['per_page'] ?? null));
     }
 
     /**

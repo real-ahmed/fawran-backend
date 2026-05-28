@@ -25,7 +25,7 @@ class VendorOwnerController extends Controller
      */
     public function index(Request $request)
     {
-        $owners = $this->vendorOwnerService->listOwners($request->only('search'));
+        $owners = $this->vendorOwnerService->listOwners($request->only(['search', 'per_page']));
 
         return CustomerResource::collection($owners);
     }

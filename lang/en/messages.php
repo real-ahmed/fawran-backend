@@ -28,6 +28,8 @@ return [
     'catalog_item_approved_title' => ':type Approved',
     'catalog_item_approved_body' => 'Your proposed :type \':name\' has been approved.',
     'new_catalog_submission' => 'New :type submitted: :name',
+    'catalog_submission_received' => 'New :type Submission',
+    'catalog_submission_received_body' => 'A new :type submission for \':name\' has been received and requires your approval.',
 
     // Generic CRUD
     'created_successfully' => 'Created successfully',
@@ -41,6 +43,8 @@ return [
     // Courier
     'courier_approved_title' => 'Application Approved',
     'courier_approved_body' => 'Congratulations :name, your courier application has been approved!',
+    'courier_application_submitted' => 'New Courier Application',
+    'courier_application_submitted_body' => 'A new courier application has been submitted by :name and is pending approval.',
     'courier_approved_successfully' => 'Courier approved successfully',
     'courier_rejected_successfully' => 'Courier rejected successfully',
     'edit_courier' => 'Edit Courier',

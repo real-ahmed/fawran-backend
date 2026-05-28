@@ -28,6 +28,8 @@ return [
     'catalog_item_approved_title' => 'تمت الموافقة على :type',
     'catalog_item_approved_body' => 'تمت الموافقة على :type \':name\' المقترحة.',
     'new_catalog_submission' => 'تم تقديم :type جديد: :name',
+    'catalog_submission_received' => 'تقديم :type جديد',
+    'catalog_submission_received_body' => 'تم استلام مقترح جديد لـ :type باسم \':name\' ويتطلب موافقتك.',
 
     // Generic CRUD
     'created_successfully' => 'تم الإنشاء بنجاح',
@@ -41,6 +43,8 @@ return [
     // Courier
     'courier_approved_title' => 'تمت الموافقة على الطلب',
     'courier_approved_body' => 'مبارك :name، تمت الموافقة على طلب التسجيل كمندوب توصيل!',
+    'courier_application_submitted' => 'طلب مندوب جديد',
+    'courier_application_submitted_body' => 'تم تقديم طلب مندوب جديد بواسطة :name وبانتظار الموافقة.',
     'courier_approved_successfully' => 'تمت الموافقة على المندوب بنجاح',
     'courier_rejected_successfully' => 'تم رفض المندوب بنجاح',
     'edit_courier' => 'تعديل بيانات المندوب',

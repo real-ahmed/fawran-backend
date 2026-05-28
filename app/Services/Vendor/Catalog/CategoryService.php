@@ -2,14 +2,20 @@
 
 namespace App\Services\Vendor\Catalog;
 
+use App\Enums\AdminPermission;
 use App\Events\Catalog\CategorySubmitted;
 use App\Models\Catalog\Category;
 use App\Models\Vendor\Vendor;
+use App\Notifications\Admin\CatalogSubmissionReceivedNotification;
+use App\Services\AdminNotificationService;
 use Illuminate\Support\Facades\DB;
 
 class CategoryService
 {
-    public function __construct(private readonly CatalogSubmissionAdminResolver $adminResolver) {}
+    public function __construct(
+        private readonly CatalogSubmissionAdminResolver $adminResolver,
+        private readonly AdminNotificationService $notificationService
+    ) {}
 
     /**
      * @param  array<string, mixed>  $data
@@ -47,8 +53,16 @@ class CategoryService
 
     private function broadcastSubmission(Category $category, Vendor $vendor): void
     {
-        foreach ($this->adminResolver->forVendor($vendor) as $admin) {
+        $admins = $this->adminResolver->forVendor($vendor);
+
+        foreach ($admins as $admin) {
             event(new CategorySubmitted($category, $admin));
         }
+
+        $this->notificationService->notifyAdminsWithPermission(
+            AdminPermission::APPROVE_CATEGORIES->value,
+            new CatalogSubmissionReceivedNotification($category->name['en'] ?? 'Category', 'Category'),
+            $admins
+        );
     }
 }
