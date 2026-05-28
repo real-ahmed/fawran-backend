@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Order\AssignCourierRequest;
 use App\Http\Requests\Admin\Order\IndexOrderRequest;
+use App\Http\Requests\Admin\Order\UpdateOrderStatusRequest;
 use App\Http\Resources\Admin\OrderResource;
 use App\Models\Order\Order;
 use App\Services\Admin\OrderService;
+use Illuminate\Http\Request;
 
 /**
  * @group Admin - Orders
@@ -56,5 +59,33 @@ class OrderController extends Controller
         $this->orderService->cancelOrder($order);
 
         return $this->successResponse(null, __('messages.order_cancelled_successfully'));
+    }
+
+    public function statusCounts(Request $request)
+    {
+        return $this->successResponse($this->orderService->getOrderStatusCounts($request));
+    }
+
+    public function updateStatus(UpdateOrderStatusRequest $request, Order $order)
+    {
+        try {
+            $this->orderService->updateStatus($order, $request->validated('status'));
+
+            return $this->successResponse(null, __('messages.order_status_updated_successfully'));
+        } catch (\InvalidArgumentException $e) {
+            return $this->errorResponse($e->getMessage(), 422);
+        }
+    }
+
+    public function assignCourier(AssignCourierRequest $request, Order $order)
+    {
+        $this->orderService->assignCourier($order, $request->validated('courier_id'));
+
+        return $this->successResponse(null, __('messages.courier_assigned_successfully'));
+    }
+
+    public function deliveryPath(Order $order)
+    {
+        return $this->successResponse([]); // Mocked until Redis integration is ready
     }
 }

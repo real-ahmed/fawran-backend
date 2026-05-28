@@ -52,6 +52,8 @@ enum AdminPermission: string
 
     case VIEW_ORDERS = 'view orders';
     case CANCEL_ORDERS = 'cancel orders';
+    case ASSIGN_COURIER_TO_ORDER = 'assign courier to order';
+    case UPDATE_ORDER_STATUS = 'update order status';
 
     case VIEW_HOT_ZONES = 'view hot zones';
     case CREATE_HOT_ZONES = 'create hot zones';

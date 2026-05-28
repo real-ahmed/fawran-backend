@@ -79,6 +79,11 @@ class Order extends Model
         return $this->hasMany(RefundRequest::class);
     }
 
+    public function statusLogs(): HasMany
+    {
+        return $this->hasMany(OrderStatusLog::class)->orderBy('created_at', 'desc');
+    }
+
     public function newEloquentBuilder($query): OrderBuilder
     {
         return new OrderBuilder($query);

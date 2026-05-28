@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('public')->group(function () {
     Route::get('/app-config', [AppConfigController::class, 'index']);
 
-    Route::middleware([ValidateApiKey::class])->group(function () {
-        Route::get('/admin-permissions', [AppConfigController::class, 'adminPermissions']);
-        Route::get('/vendor-permissions', [AppConfigController::class, 'vendorPermissions']);
-        Route::get('/admin-enums', [AppConfigController::class, 'enums']);
-    });
+    // Route::group(function () {
+    Route::get('/admin-permissions', [AppConfigController::class, 'adminPermissions']);
+    Route::get('/vendor-permissions', [AppConfigController::class, 'vendorPermissions']);
+    Route::get('/admin-enums', [AppConfigController::class, 'enums']);
+    // });
 });

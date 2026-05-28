@@ -172,9 +172,13 @@ Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->g
     Route::controller(OrderController::class)
         ->prefix('orders')
         ->group(function () {
+            Route::get('/status-counts', 'statusCounts')->middleware('can:'.AdminPermission::VIEW_ORDERS->value);
             Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_ORDERS->value);
             Route::get('/{order}', 'show')->middleware('can:'.AdminPermission::VIEW_ORDERS->value);
             Route::put('/{order}/cancel', 'cancel')->middleware('can:'.AdminPermission::CANCEL_ORDERS->value);
+            Route::put('/{order}/status', 'updateStatus')->middleware('can:'.AdminPermission::UPDATE_ORDER_STATUS->value);
+            Route::post('/{order}/assign-courier', 'assignCourier')->middleware('can:'.AdminPermission::ASSIGN_COURIER_TO_ORDER->value);
+            Route::get('/{order}/delivery-path', 'deliveryPath')->middleware('can:'.AdminPermission::VIEW_ORDERS->value);
         });
 
     // Hot Zones
