@@ -8,7 +8,14 @@ class OrderBuilder extends Builder
 {
     public function withListRelations(): self
     {
-        return $this->with(['customer.customer', 'subOrders.vendor']);
+        return $this->with([
+            'customer.customer',
+            'subOrders.vendor',
+            'subOrders.items.storeItem.masterProduct',
+            'subOrders.items.options.productOption',
+            'subOrders.items.options.productOptionValue',
+            'subOrders.items.note',
+        ]);
     }
 
     public function status(?string $status): self

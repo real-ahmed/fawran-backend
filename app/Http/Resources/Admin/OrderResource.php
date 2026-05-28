@@ -21,7 +21,9 @@ class OrderResource extends JsonResource
             ]),
             'delivery_info' => $this->whenLoaded('orderDelivery', fn () => [
                 'total_delivery_fee' => $this->orderDelivery?->total_delivery_fee,
-                'delivery_zone' => $this->orderDelivery?->deliveryZone?->name,
+                'delivery_zone' => is_array($this->orderDelivery?->deliveryZone?->name) 
+                    ? ($this->orderDelivery->deliveryZone->name[app()->getLocale()] ?? $this->orderDelivery->deliveryZone->name['en'] ?? '') 
+                    : $this->orderDelivery?->deliveryZone?->name,
                 'address' => $this->orderDelivery?->address ? [
                     'formatted_address' => $this->orderDelivery->address->formatted_address,
                     'latitude' => $this->orderDelivery->address->latitude,
@@ -33,19 +35,23 @@ class OrderResource extends JsonResource
             'sub_orders' => $this->whenLoaded('subOrders', fn () => $this->subOrders->map(fn ($sub) => [
                 'id' => $sub->id,
                 'vendor_id' => $sub->vendor_id,
-                'vendor_name' => $sub->vendor?->name,
+                'vendor_name' => is_array($sub->vendor?->name) ? ($sub->vendor->name[app()->getLocale()] ?? $sub->vendor->name['en'] ?? '') : $sub->vendor?->name,
+                'vendor_lat' => $sub->vendor?->latitude,
+                'vendor_lng' => $sub->vendor?->longitude,
                 'sub_total' => $sub->sub_total,
                 'status' => $sub->status,
                 'items' => $sub->items?->map(fn ($item) => [
                     'id' => $item->id,
-                    'name' => $item->storeItem?->masterProduct?->name,
+                    'name' => is_array($item->storeItem?->masterProduct?->name) 
+                        ? ($item->storeItem->masterProduct->name[app()->getLocale()] ?? $item->storeItem->masterProduct->name['en'] ?? '') 
+                        : $item->storeItem?->masterProduct?->name,
                     'quantity' => $item->quantity,
                     'unit_price' => $item->unit_price,
                     'options_price' => $item->options_price,
                     'notes' => $item->note?->notes,
                     'options' => $item->options?->map(fn ($opt) => [
-                        'option' => $opt->productOption?->name,
-                        'value' => $opt->productOptionValue?->name,
+                        'option' => is_array($opt->productOption?->name) ? ($opt->productOption->name[app()->getLocale()] ?? $opt->productOption->name['en'] ?? '') : $opt->productOption?->name,
+                        'value' => is_array($opt->productOptionValue?->name) ? ($opt->productOptionValue->name[app()->getLocale()] ?? $opt->productOptionValue->name['en'] ?? '') : $opt->productOptionValue?->name,
                         'additional_price' => $opt->additional_price,
                     ]),
                 ]),
@@ -56,6 +62,8 @@ class OrderResource extends JsonResource
                 'phone' => $this->delivery->courier?->user?->phone,
                 'vehicle_type' => $this->delivery->courier?->vehicle_type,
                 'status' => $this->delivery->status,
+                'latitude' => $this->delivery->courier?->location?->latitude,
+                'longitude' => $this->delivery->courier?->location?->longitude,
             ] : null),
             'status_logs' => $this->whenLoaded('statusLogs', fn () => $this->statusLogs->map(fn ($log) => [
                 'from_status' => $log->from_status,

@@ -29,6 +29,7 @@ use App\Models\Courier\Courier;
 use App\Models\Geo\DeliveryZone;
 use App\Models\Geo\HotZone;
 use App\Models\Order\Order;
+use App\Models\Order\SubOrder;
 use App\Models\Payment\PayoutRequest;
 use App\Models\Payment\RefundRequest;
 use App\Models\Payment\Settlement;
@@ -38,6 +39,7 @@ use App\Models\Product\VendorMasterProductSubmission;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Vendor\Vendor;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -242,5 +244,20 @@ class CustomBuilderTest extends TestCase
         $this->assertStringContainsString('`status` = ?', $brandQuery->toSql());
         $this->assertStringContainsString('order by', $categoryQuery->toSql());
         $this->assertSame(['pending'], $productQuery->getBindings());
+    }
+
+    public function test_sub_order_exposes_vendor_relationship_for_order_eager_loading(): void
+    {
+        $relation = (new SubOrder)->vendor();
+        $eagerLoads = array_keys(Order::query()->withListRelations()->getEagerLoads());
+
+        $this->assertInstanceOf(BelongsTo::class, $relation);
+        $this->assertInstanceOf(Vendor::class, $relation->getRelated());
+        $this->assertSame('vendor_id', $relation->getForeignKeyName());
+        $this->assertContains('subOrders.vendor', $eagerLoads);
+        $this->assertContains('subOrders.items.storeItem.masterProduct', $eagerLoads);
+        $this->assertContains('subOrders.items.options.productOption', $eagerLoads);
+        $this->assertContains('subOrders.items.options.productOptionValue', $eagerLoads);
+        $this->assertContains('subOrders.items.note', $eagerLoads);
     }
 }
