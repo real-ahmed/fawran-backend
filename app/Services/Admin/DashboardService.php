@@ -56,26 +56,6 @@ class DashboardService
         ];
     }
 
-    private function metricsCacheKey(): string
-    {
-        $admin = auth('api_admin')->user();
-
-        if (! $admin) {
-            return 'admin.dashboard.metrics.guest';
-        }
-
-        if ($admin->hasRole('Super Admin')) {
-            return 'admin.dashboard.metrics.super_admin';
-        }
-
-        $zoneIds = $admin->deliveryZones()
-            ->pluck('delivery_zones.id')
-            ->sort()
-            ->values()
-            ->implode('.');
-
-        return sprintf('admin.dashboard.metrics.admin.%s.zones.%s', $admin->id, $zoneIds ?: 'none');
-    }
 
     /**
      * Get all items pending admin approval.
