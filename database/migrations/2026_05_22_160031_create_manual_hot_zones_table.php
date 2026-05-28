@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('manual_hot_zones', function (Blueprint $table) {
             $table->foreignId('hot_zone_id')->primary()->constrained()->cascadeOnDelete();
             $table->json('name');
+            $table->timestamps();
         });
     }
 

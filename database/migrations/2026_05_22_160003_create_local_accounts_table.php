@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('local_accounts', function (Blueprint $table) {
             $table->foreignId('user_id')->primary()->constrained()->cascadeOnDelete();
             $table->string('password');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

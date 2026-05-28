@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('p2p_descriptions', function (Blueprint $table) {
             $table->foreignId('p2p_delivery_id')->primary()->constrained()->cascadeOnDelete();
             $table->text('description');
+            $table->timestamps();
         });
     }
 

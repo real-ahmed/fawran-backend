@@ -18,9 +18,9 @@ return new class extends Migration
             $table->decimal('total_deductions', 10, 2);
             $table->decimal('total_net_exchange', 10, 2);
             $table->string('status');
-            $table->timestamp('created_at')->useCurrent();
 
             $table->index(['settlement_type', 'target_id']);
+            $table->timestamps();
         });
     }
 

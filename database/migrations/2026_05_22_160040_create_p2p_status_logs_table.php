@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('p2p_delivery_id')->constrained()->cascadeOnDelete();
             $table->string('status');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

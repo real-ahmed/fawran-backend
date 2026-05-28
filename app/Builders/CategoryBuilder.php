@@ -43,4 +43,9 @@ class CategoryBuilder extends Builder
     {
         return $this->with('vendorSubmission.vendor');
     }
+
+    public function newest(): self
+    {
+        return $this->latest();
+    }
 }

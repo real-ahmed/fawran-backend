@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('max_delivery_fee', 8, 2);
 
             $table->unique(['delivery_zone_id', 'vehicle_type']);
+            $table->timestamps();
         });
     }
 

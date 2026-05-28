@@ -14,10 +14,10 @@ return new class extends Migration
             $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->decimal('sub_total', 10, 2);
             $table->string('status');
-            $table->timestamp('created_at')->useCurrent();
 
             $table->index('status');
             $table->unique(['order_id', 'vendor_id']);
+            $table->timestamps();
         });
     }
 

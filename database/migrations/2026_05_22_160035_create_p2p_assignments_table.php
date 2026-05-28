@@ -12,6 +12,7 @@ return new class extends Migration
             $table->foreignId('p2p_delivery_id')->primary()->constrained()->cascadeOnDelete();
             $table->foreignId('courier_id')->constrained()->cascadeOnDelete();
             $table->decimal('fee_share', 8, 2);
+            $table->timestamps();
         });
     }
 

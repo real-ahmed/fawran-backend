@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('payment_gateways', function (Blueprint $table) {
             $table->foreignId('payment_id')->primary()->constrained()->cascadeOnDelete();
             $table->string('gateway_transaction_id');
+            $table->timestamps();
         });
     }
 

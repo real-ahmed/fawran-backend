@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Catalog;
 
 use App\Models\Admin;
+use App\Models\Catalog\Brand;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -10,27 +11,26 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CatalogItemSubmitted implements ShouldBroadcast
+class BrandSubmitted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(
-        public string $itemType,
-        public int $itemId,
-        public array|string $itemName,
-        public Admin $admin,
-    ) {}
+    public function __construct(public Brand $brand, public Admin $admin) {}
 
+    /**
+     * @return array{brand_id: int, resource: string, message: string}
+     */
     public function broadcastWith(): array
     {
         $locale = $this->admin->preferredLocale();
+        $name = $this->displayName($locale);
 
         return [
-            'item_type' => $this->itemType,
-            'item_id' => $this->itemId,
+            'brand_id' => $this->brand->id,
+            'resource' => 'brands',
             'message' => __('messages.new_catalog_submission', [
-                'type' => __("messages.{$this->itemType}", [], $locale),
-                'name' => $this->displayName($locale),
+                'type' => __('messages.Brand', [], $locale),
+                'name' => $name,
             ], $locale),
         ];
     }
@@ -45,17 +45,23 @@ class CatalogItemSubmitted implements ShouldBroadcast
         ];
     }
 
+    public function broadcastAs(): string
+    {
+        return 'BrandSubmitted';
+    }
+
     private function displayName(string $locale): string
     {
-        if (is_string($this->itemName)) {
-            return $this->itemName;
+        $name = $this->brand->name;
+
+        if (is_string($name)) {
+            return $name;
         }
 
-        $name = $this->itemName[$locale]
-            ?? $this->itemName['en']
-            ?? $this->itemName['ar']
-            ?? current($this->itemName);
-
-        return $name ?: __('messages.unknown', [], $locale);
+        return $name[$locale]
+            ?? $name['en']
+            ?? $name['ar']
+            ?? current((array) $name)
+            ?: __('messages.unknown', [], $locale);
     }
 }

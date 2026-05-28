@@ -7,7 +7,7 @@ use App\Models\Courier\Courier;
 use App\Models\Courier\CourierApproval;
 use App\Models\Courier\CourierDocument;
 use App\Models\Platform\SystemSetting;
-use App\Notifications\CourierApproved;
+use App\Notifications\CourierApprovedNotification;
 use App\Traits\Paginatable;
 use Illuminate\Http\Request;
 
@@ -26,7 +26,7 @@ class CourierService
             ->inDeliveryZone($request->query('delivery_zone_id'))
             ->approvalStatus($request->query('approval_status'))
             ->newest()
-            ->paginate($this->getPerPageLimit());
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function getCourier(Courier $courier): Courier
@@ -72,7 +72,7 @@ class CourierService
         ]);
 
         $courierName = $courier->user->name ?? 'Unknown';
-        $courier->user->notify(new CourierApproved($courierName));
+        $courier->user->notify(new CourierApprovedNotification($courierName));
     }
 
     public function rejectCourier(Courier $courier): void

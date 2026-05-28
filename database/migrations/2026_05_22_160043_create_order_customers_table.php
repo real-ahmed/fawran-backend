@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained('users')->cascadeOnDelete();
 
             $table->index('customer_id');
+            $table->timestamps();
         });
     }
 

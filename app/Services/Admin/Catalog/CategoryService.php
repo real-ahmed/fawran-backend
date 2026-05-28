@@ -1,20 +1,18 @@
 <?php
 
-namespace App\Services\Admin;
+namespace App\Services\Admin\Catalog;
 
 use App\Enums\FileType;
 use App\Models\Catalog\Category;
-use App\Models\Vendor\Vendor;
-use App\Notifications\CatalogItemApproved;
+use App\Notifications\Catalog\CategoryApprovedNotification;
 use App\Traits\Paginatable;
+use App\Traits\ResolvesDisplayName;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class CategoryService
 {
-    use Paginatable;
-
-    public function __construct(protected CatalogRealtimeNotifier $catalogRealtimeNotifier) {}
+    use Paginatable, ResolvesDisplayName;
 
     public function listCategories(?string $search = null, ?string $approvalStatus = null, ?bool $isActive = null)
     {
@@ -24,7 +22,8 @@ class CategoryService
             ->approvalStatus($approvalStatus)
             ->active($isActive)
             ->withVendorSubmission()
-            ->paginate($this->getPerPageLimit())
+            ->newest()
+            ->cursorPaginate($this->getPerPageLimit())
             ->withQueryString();
     }
 
@@ -127,56 +126,26 @@ class CategoryService
         });
     }
 
-    public function proposeCategory(array $data, Vendor $vendor): Category
-    {
-        return DB::transaction(function () use ($data, $vendor) {
-            $category = Category::create([
-                'name' => $data['name'],
-                'is_active' => false, // Force inactive
-            ]);
-
-            if (isset($data['parent_category_id'])) {
-                $category->hierarchy()->create([
-                    'parent_category_id' => $data['parent_category_id'],
-                ]);
-            }
-
-            if (! empty($data['icon_class'])) {
-                $category->icon()->create([
-                    'icon_class' => $data['icon_class'],
-                ]);
-            }
-
-            $category->vendorSubmission()->create([
-                'vendor_id' => $vendor->id,
-                'status' => 'pending',
-            ]);
-
-            $this->catalogRealtimeNotifier->notifySubmission('Category', $category->id, $category->name, $vendor);
-
-            return $category->load(['hierarchy', 'icon']);
-        });
-    }
-
     public function approveCategory(Category $category): void
     {
         $category->update(['is_active' => true]);
+        $category->loadMissing('vendorSubmission.vendor.owner');
 
-        if ($submission = $category->vendorSubmission) {
-            $vendor = $submission->vendor;
-            if ($vendor && $vendor->owner) {
-                // Determine name string based on locales, defaulting to 'en'
-                $categoryName = is_array($category->name) ? ($category->name['en'] ?? current($category->name)) : 'Unknown';
-                $vendor->owner->notify(new CatalogItemApproved('Category', $categoryName));
-            }
-            $submission->delete();
+        $submission = $category->vendorSubmission;
+
+        if (! $submission) {
+            return;
         }
+
+        if ($submission->vendor?->owner) {
+            $submission->vendor->owner->notify(new CategoryApprovedNotification($this->displayName($category->name)));
+        }
+
+        $submission->delete();
     }
 
     public function rejectCategory(Category $category): void
     {
-        if ($submission = $category->vendorSubmission) {
-            $submission->update(['status' => 'rejected']);
-        }
+        $category->vendorSubmission()->update(['status' => 'rejected']);
     }
 }

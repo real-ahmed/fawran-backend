@@ -1,21 +1,19 @@
 <?php
 
-namespace App\Services\Admin;
+namespace App\Services\Admin\Catalog;
 
 use App\Enums\FileType;
 use App\Models\Product\MasterProduct;
-use App\Models\Vendor\Vendor;
-use App\Notifications\CatalogItemApproved;
+use App\Notifications\Catalog\MasterProductApprovedNotification;
 use App\Traits\Paginatable;
+use App\Traits\ResolvesDisplayName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MasterProductService
 {
-    use Paginatable;
-
-    public function __construct(protected CatalogRealtimeNotifier $catalogRealtimeNotifier) {}
+    use Paginatable, ResolvesDisplayName;
 
     public function listProducts(Request $request)
     {
@@ -27,7 +25,7 @@ class MasterProductService
             ->active($request->has('is_active') ? $request->boolean('is_active') : null)
             ->searchName($request->query('search'))
             ->newest()
-            ->paginate($this->getPerPageLimit());
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function createProduct(array $data): MasterProduct
@@ -159,62 +157,29 @@ class MasterProductService
         });
     }
 
-    public function proposeProduct(array $data, Vendor $vendor): MasterProduct
-    {
-        return DB::transaction(function () use ($data, $vendor) {
-            $product = MasterProduct::create([
-                'category_id' => $data['category_id'],
-                'name' => $data['name'],
-                'unit_type' => $data['unit_type'],
-                'is_active' => false, // Force inactive until approved
-            ]);
-
-            if (! empty($data['description'])) {
-                $product->description()->create([
-                    'description' => $data['description'],
-                ]);
-            }
-
-            if (! empty($data['brand_id'])) {
-                $product->retailDetail()->create([
-                    'brand_id' => $data['brand_id'],
-                    'sku_barcode' => $data['sku_barcode'] ?? null,
-                ]);
-            }
-
-            $product->vendorSubmission()->create([
-                'vendor_id' => $vendor->id,
-                'status' => 'pending',
-            ]);
-
-            $this->catalogRealtimeNotifier->notifySubmission('Master Product', $product->id, $product->name, $vendor);
-
-            return $product->load(['category', 'description', 'retailDetail']);
-        });
-    }
-
     public function approveProduct(MasterProduct $product): void
     {
         $product->update(['is_active' => true]);
+        $product->loadMissing('vendorSubmission.vendor.owner');
 
-        if ($submission = $product->vendorSubmission) {
-            $vendor = $submission->vendor;
-            if ($vendor && $vendor->owner) {
-                // Determine name string based on locales, defaulting to 'en'
-                $productName = is_array($product->name) ? ($product->name['en'] ?? current($product->name)) : 'Unknown';
-                $vendor->owner->notify(new CatalogItemApproved('Master Product', $productName));
-            }
-            $submission->delete();
+        $submission = $product->vendorSubmission;
+
+        if (! $submission) {
+            return;
         }
+
+        if ($submission->vendor?->owner) {
+            $submission->vendor->owner->notify(new MasterProductApprovedNotification($this->displayName($product->name)));
+        }
+
+        $submission->delete();
     }
 
     public function rejectProduct(MasterProduct $product, ?string $reason = null): void
     {
-        if ($submission = $product->vendorSubmission) {
-            $submission->update([
-                'status' => 'rejected',
-                'reason' => $reason,
-            ]);
-        }
+        $product->vendorSubmission()->update([
+            'status' => 'rejected',
+            'reason' => $reason,
+        ]);
     }
 }

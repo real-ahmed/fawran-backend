@@ -20,7 +20,7 @@ class SettlementService
             ->type($request->query('settlement_type'))
             ->status($request->query('status'))
             ->newest()
-            ->paginate($this->getPerPageLimit());
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function getSettlement(Settlement $settlement): Settlement

@@ -21,7 +21,7 @@ class VendorService
             ->active($request->has('is_active') ? $request->query('is_active') : null)
             ->search($request->query('search'))
             ->newest()
-            ->paginate($this->getPerPageLimit());
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function createVendor(array $data): Vendor

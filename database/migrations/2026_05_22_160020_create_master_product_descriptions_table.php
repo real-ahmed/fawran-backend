@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('master_product_descriptions', function (Blueprint $table) {
             $table->foreignId('master_product_id')->primary()->constrained()->cascadeOnDelete();
             $table->json('description');
+            $table->timestamps();
         });
     }
 

@@ -14,6 +14,7 @@ return new class extends Migration
             $table->foreignId('product_option_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_option_value_id')->constrained()->cascadeOnDelete();
             $table->decimal('additional_price', 8, 2)->default(0);
+            $table->timestamps();
         });
     }
 

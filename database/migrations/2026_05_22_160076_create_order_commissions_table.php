@@ -16,9 +16,9 @@ return new class extends Migration
             $table->decimal('vendorcommission_amount', 10, 2);
             $table->decimal('app_delivery_share', 10, 2);
             $table->decimal('net_platform_profit', 10, 2);
-            $table->timestamp('created_at')->useCurrent();
 
             $table->unique(['order_id', 'vendor_id']);
+            $table->timestamps();
         });
     }
 

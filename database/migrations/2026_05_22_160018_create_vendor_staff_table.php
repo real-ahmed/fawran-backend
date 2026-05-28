@@ -12,9 +12,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->timestamp('created_at')->useCurrent();
 
             $table->unique(['vendor_id', 'user_id']);
+            $table->timestamps();
         });
     }
 

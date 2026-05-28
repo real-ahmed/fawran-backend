@@ -22,7 +22,7 @@ class OrderService
             ->forCustomer($request->query('customer_id'))
             ->forVendor($request->query('vendor_id'))
             ->newest()
-            ->paginate($this->getPerPageLimit());
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function getOrder(Order $order): Order

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->foreignId('address_id')->primary()->constrained('user_addresses')->cascadeOnDelete();
             $table->string('floor_number', 50);
             $table->string('apartment_number', 50);
+            $table->timestamps();
         });
     }
 

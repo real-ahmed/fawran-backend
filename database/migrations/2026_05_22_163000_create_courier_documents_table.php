@@ -12,6 +12,7 @@ return new class extends Migration
             $table->foreignId('courier_id')->primary()->constrained()->cascadeOnDelete();
             $table->string('criminal_record_file');
             $table->string('contract_number')->unique();
+            $table->timestamps();
         });
     }
 

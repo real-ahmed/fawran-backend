@@ -17,7 +17,7 @@ class NotificationController extends Controller
      */
     public function index(Request $request)
     {
-        $notifications = $request->user()->notifications()->paginate($request->query('per_page', 15));
+        $notifications = $request->user()->notifications()->cursorPaginate($request->query('per_page', 15));
 
         return $this->successResponse($notifications);
     }
@@ -27,7 +27,7 @@ class NotificationController extends Controller
      */
     public function unread(Request $request)
     {
-        $notifications = $request->user()->unreadNotifications()->paginate($request->query('per_page', 15));
+        $notifications = $request->user()->unreadNotifications()->cursorPaginate($request->query('per_page', 15));
 
         return $this->successResponse($notifications);
     }

@@ -17,7 +17,7 @@ class RefundService
             ->forAdminZones()
             ->status($request->query('status'))
             ->newest()
-            ->paginate($this->getPerPageLimit());
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function getRefundRequest(RefundRequest $refundRequest): RefundRequest

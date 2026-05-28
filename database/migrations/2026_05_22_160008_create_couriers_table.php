@@ -14,10 +14,10 @@ return new class extends Migration
             $table->string('vehicle_type');
             $table->string('plate_number', 50);
             $table->boolean('is_online')->default(false);
-            $table->timestamp('created_at')->useCurrent();
 
             $table->index('user_id');
             $table->index('is_online');
+            $table->timestamps();
         });
     }
 

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->json('name');
             $table->boolean('is_active')->default(true);
+            $table->timestamps();
         });
     }
 

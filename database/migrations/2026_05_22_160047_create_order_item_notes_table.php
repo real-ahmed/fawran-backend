@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('order_item_notes', function (Blueprint $table) {
             $table->foreignId('order_item_id')->primary()->constrained()->cascadeOnDelete();
             $table->text('notes');
+            $table->timestamps();
         });
     }
 

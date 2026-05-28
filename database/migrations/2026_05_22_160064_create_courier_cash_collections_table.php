@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('amount_owed_to_platform', 10, 2);
             $table->boolean('is_settled')->default(false);
             $table->timestamp('collected_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

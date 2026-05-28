@@ -15,7 +15,7 @@ return new class extends Migration
             $table->decimal('quantity', 10, 3);
             $table->decimal('unit_price', 10, 2);
             $table->decimal('options_price', 10, 2)->default(0);
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

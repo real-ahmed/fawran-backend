@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('order_item_id')->constrained()->cascadeOnDelete();
             $table->decimal('quantity_returned', 10, 3);
             $table->decimal('refund_amount', 10, 2);
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

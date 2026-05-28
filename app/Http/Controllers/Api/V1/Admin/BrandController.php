@@ -8,7 +8,7 @@ use App\Http\Requests\Admin\Brand\StoreBrandRequest;
 use App\Http\Requests\Admin\Brand\UpdateBrandRequest;
 use App\Http\Resources\Admin\BrandResource;
 use App\Models\Catalog\Brand;
-use App\Services\Admin\BrandService;
+use App\Services\Admin\Catalog\BrandService;
 
 /**
  * @group Admin - Brands

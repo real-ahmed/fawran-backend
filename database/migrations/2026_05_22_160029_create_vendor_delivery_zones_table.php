@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('estimated_delivery_time');
 
             $table->unique(['vendor_id', 'delivery_zone_id']);
+            $table->timestamps();
         });
     }
 

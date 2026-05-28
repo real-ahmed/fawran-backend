@@ -19,7 +19,7 @@ class HotZoneService
             ->active($request->has('is_active') ? $request->boolean('is_active') : null)
             ->intensity($request->query('intensity'))
             ->newest()
-            ->paginate($this->getPerPageLimit());
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function createHotZone(array $data): HotZone
@@ -48,8 +48,12 @@ class HotZoneService
     {
         return DB::transaction(function () use ($hotZone, $data) {
             $hotZone->update(collect($data)->only([
-                'center_latitude', 'center_longitude', 'radius_meters',
-                'intensity', 'is_active', 'starts_at',
+                'center_latitude',
+                'center_longitude',
+                'radius_meters',
+                'intensity',
+                'is_active',
+                'starts_at',
             ])->toArray());
 
             if (array_key_exists('name', $data)) {

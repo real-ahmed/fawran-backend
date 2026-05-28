@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('restaurant_dish_details', function (Blueprint $table) {
             $table->foreignId('vendor_item_id')->primary()->constrained()->cascadeOnDelete();
             $table->integer('preparation_time');
+            $table->timestamps();
         });
     }
 

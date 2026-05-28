@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('address_id')->constrained('user_addresses')->cascadeOnDelete();
             $table->foreignId('delivery_zone_id')->nullable()->constrained()->nullOnDelete();
             $table->decimal('total_delivery_fee', 8, 2);
+            $table->timestamps();
         });
     }
 

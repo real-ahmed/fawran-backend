@@ -8,7 +8,7 @@ use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Http\Resources\Admin\CategoryResource;
 use App\Models\Catalog\Category;
-use App\Services\Admin\CategoryService;
+use App\Services\Admin\Catalog\CategoryService;
 
 /**
  * @group Admin - Categories

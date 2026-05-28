@@ -8,7 +8,7 @@ use App\Http\Requests\Admin\MasterProduct\StoreMasterProductRequest;
 use App\Http\Requests\Admin\MasterProduct\UpdateMasterProductRequest;
 use App\Http\Resources\Admin\MasterProductResource;
 use App\Models\Product\MasterProduct;
-use App\Services\Admin\MasterProductService;
+use App\Services\Admin\Catalog\MasterProductService;
 
 /**
  * @group Admin - Master Products

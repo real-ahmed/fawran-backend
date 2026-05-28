@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->decimal('total_revenue', 12, 2)->default(0);
             $table->decimal('current_balance', 12, 2)->default(0);
-            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamps();
         });
     }
 

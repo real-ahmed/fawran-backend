@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->decimal('total_cost', 10, 2);
             $table->string('status');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

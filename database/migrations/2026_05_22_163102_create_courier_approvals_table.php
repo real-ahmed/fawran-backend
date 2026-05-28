@@ -12,6 +12,7 @@ return new class extends Migration
             $table->foreignId('courier_id')->primary()->constrained()->cascadeOnDelete();
             $table->foreignId('admin_id')->constrained()->restrictOnDelete();
             $table->timestamp('approved_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('stock_movement_notes', function (Blueprint $table) {
             $table->foreignId('stock_movement_id')->primary()->constrained()->cascadeOnDelete();
             $table->text('notes');
+            $table->timestamps();
         });
     }
 

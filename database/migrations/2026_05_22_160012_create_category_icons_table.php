@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('category_icons', function (Blueprint $table) {
             $table->foreignId('category_id')->primary()->constrained()->cascadeOnDelete();
             $table->string('icon_class');
+            $table->timestamps();
         });
     }
 

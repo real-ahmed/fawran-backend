@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('file_type');
             $table->integer('order')->default(0);
             $table->boolean('is_primary')->default(false);
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

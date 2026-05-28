@@ -14,7 +14,7 @@ return new class extends Migration
             $table->morphs('model');
             $table->foreignId('order_id')->nullable()->constrained()->nullOnDelete();
             $table->tinyInteger('rating');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

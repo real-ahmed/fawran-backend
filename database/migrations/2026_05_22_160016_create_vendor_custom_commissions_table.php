@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('vendorcustom_commissions', function (Blueprint $table) {
             $table->foreignId('vendor_id')->primary()->constrained()->cascadeOnDelete();
             $table->decimal('commission_percentage', 5, 2);
+            $table->timestamps();
         });
     }
 

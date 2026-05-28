@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('formatted_address');
             $table->string('building_number', 50);
             $table->string('phone', 20);
-            $table->timestamp('created_at')->useCurrent();
 
             $table->index('user_id');
+            $table->timestamps();
         });
     }
 

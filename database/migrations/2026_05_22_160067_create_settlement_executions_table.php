@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('admin_id')->nullable()->constrained()->nullOnDelete();
             $table->string('execution_method');
             $table->timestamp('executed_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

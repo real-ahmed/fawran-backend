@@ -14,9 +14,9 @@ return new class extends Migration
             $table->foreignId('courier_id')->constrained()->cascadeOnDelete();
             $table->decimal('fee_share', 8, 2);
             $table->string('status');
-            $table->timestamp('created_at')->useCurrent();
 
             $table->unique('order_id');
+            $table->timestamps();
         });
     }
 

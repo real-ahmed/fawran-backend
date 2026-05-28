@@ -25,4 +25,9 @@ class RoleBuilder extends Builder
     {
         return $this->with('permissions');
     }
+
+    public function newest(): self
+    {
+        return $this->latest();
+    }
 }

@@ -12,9 +12,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->morphs('model');
-            $table->timestamp('created_at')->useCurrent();
 
             $table->unique(['user_id', 'model_type', 'model_id']);
+            $table->timestamps();
         });
     }
 

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('is_closed')->default(false);
 
             $table->unique(['vendor_id', 'day_of_week']);
+            $table->timestamps();
         });
     }
 

@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('address_notes', function (Blueprint $table) {
             $table->foreignId('address_id')->primary()->constrained('user_addresses')->cascadeOnDelete();
             $table->text('notes');
+            $table->timestamps();
         });
     }
 

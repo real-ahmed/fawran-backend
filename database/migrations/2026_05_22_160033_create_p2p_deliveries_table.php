@@ -23,9 +23,9 @@ return new class extends Migration
             $table->decimal('distance_km', 8, 3);
             $table->decimal('delivery_fee', 8, 2);
             $table->string('status');
-            $table->timestamp('created_at')->useCurrent();
 
             $table->index('status');
+            $table->timestamps();
         });
     }
 

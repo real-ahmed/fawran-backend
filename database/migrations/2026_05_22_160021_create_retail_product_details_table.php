@@ -12,6 +12,7 @@ return new class extends Migration
             $table->foreignId('master_product_id')->primary()->constrained()->cascadeOnDelete();
             $table->foreignId('brand_id')->constrained()->cascadeOnDelete();
             $table->string('sku_barcode')->nullable()->unique();
+            $table->timestamps();
         });
     }
 

@@ -14,6 +14,7 @@ return new class extends Migration
             $table->json('name');
             $table->boolean('is_required')->default(false);
             $table->integer('max_selections')->default(1);
+            $table->timestamps();
         });
     }
 

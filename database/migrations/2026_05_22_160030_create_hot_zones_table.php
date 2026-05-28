@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('starts_at');
 
             $table->index('is_active');
+            $table->timestamps();
         });
     }
 

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('reason');
             $table->string('resolution');
             $table->string('status');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

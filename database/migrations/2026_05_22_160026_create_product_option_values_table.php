@@ -14,6 +14,7 @@ return new class extends Migration
             $table->json('name');
             $table->decimal('additional_price', 8, 2)->default(0);
             $table->boolean('is_available')->default(true);
+            $table->timestamps();
         });
     }
 

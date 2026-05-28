@@ -4,7 +4,7 @@ namespace App\Services\Admin;
 
 use App\Models\Admin;
 use App\Models\Role;
-use App\Notifications\Admin\AdminCredentialsGenerated;
+use App\Notifications\Admin\AdminCredentialsGeneratedNotification;
 use App\Traits\Paginatable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -21,7 +21,7 @@ class AdminUserService
             ->withRoles()
             ->searchIdentity($search)
             ->newest()
-            ->paginate($this->getPerPageLimit());
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function createAdmin(array $data): Admin
@@ -47,7 +47,7 @@ class AdminUserService
 
         $admin->load('roles', 'deliveryZones');
 
-        $admin->notify(new AdminCredentialsGenerated($plainPassword));
+        $admin->notify(new AdminCredentialsGeneratedNotification($plainPassword));
 
         return $admin;
     }

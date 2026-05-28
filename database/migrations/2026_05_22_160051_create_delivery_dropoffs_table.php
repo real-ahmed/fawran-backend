@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('delivery_dropoffs', function (Blueprint $table) {
             $table->foreignId('delivery_id')->primary()->constrained()->cascadeOnDelete();
             $table->timestamp('delivered_at');
+            $table->timestamps();
         });
     }
 

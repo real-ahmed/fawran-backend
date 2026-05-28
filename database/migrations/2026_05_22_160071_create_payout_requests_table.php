@@ -14,7 +14,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->text('bank_details');
             $table->string('status');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

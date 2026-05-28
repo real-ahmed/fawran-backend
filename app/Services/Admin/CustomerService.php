@@ -16,7 +16,7 @@ class CustomerService
             ->searchIdentity($request->query('search'))
             ->active($request->has('is_active') ? $request->boolean('is_active') : null)
             ->newest()
-            ->paginate($this->getPerPageLimit());
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function getCustomer(User $user): User

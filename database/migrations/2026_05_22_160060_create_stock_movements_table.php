@@ -15,7 +15,7 @@ return new class extends Migration
             $table->decimal('quantity', 10, 3);
             $table->string('type');
             $table->morphs('reference');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('vendor_item_id')->constrained()->cascadeOnDelete();
             $table->decimal('quantity', 10, 3);
             $table->decimal('cost_price', 10, 2);
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

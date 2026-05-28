@@ -17,6 +17,7 @@ return new class extends Migration
 
             $table->index('category_id');
             $table->index('is_active');
+            $table->timestamps();
         });
     }
 

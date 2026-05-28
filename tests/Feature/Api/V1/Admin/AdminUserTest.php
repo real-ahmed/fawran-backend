@@ -5,7 +5,7 @@ namespace Tests\Feature\Api\V1\Admin;
 use App\Enums\AdminPermission;
 use App\Models\Admin;
 use App\Models\Role;
-use App\Notifications\Admin\AdminCredentialsGenerated;
+use App\Notifications\Admin\AdminCredentialsGeneratedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\Queue;
@@ -75,7 +75,7 @@ class AdminUserTest extends TestCase
         Queue::assertPushedOn(
             'notifications',
             SendQueuedNotifications::class,
-            fn (SendQueuedNotifications $job): bool => $job->notification instanceof AdminCredentialsGenerated
+            fn (SendQueuedNotifications $job): bool => $job->notification instanceof AdminCredentialsGeneratedNotification
                 && $job->channels === ['mail']
                 && $job->notifiables->first() instanceof Admin
                 && $job->notifiables->first()->is($createdAdmin)

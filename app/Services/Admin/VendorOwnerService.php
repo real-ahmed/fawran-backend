@@ -3,7 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\User;
-use App\Notifications\Admin\AdminCredentialsGenerated;
+use App\Notifications\Admin\AdminCredentialsGeneratedNotification;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -18,7 +18,7 @@ class VendorOwnerService
         return User::query()
             ->searchIdentity($filters['search'] ?? null)
             ->newest()
-            ->paginate(15);
+            ->cursorPaginate(15);
     }
 
     /**
@@ -32,7 +32,7 @@ class VendorOwnerService
         $user = User::create($data);
 
         // Notify the user with their auto-generated credentials
-        $user->notify(new AdminCredentialsGenerated($plainPassword));
+        $user->notify(new AdminCredentialsGeneratedNotification($plainPassword));
 
         return $user;
     }

@@ -17,7 +17,8 @@ class VendorRoleService
             ->vendor($vendorId)
             ->withPermissions()
             ->searchName($filters['search'] ?? null)
-            ->paginate($this->getPerPageLimit($filters['per_page'] ?? null));
+            ->newest()
+            ->cursorPaginate($this->getPerPageLimit($filters['per_page'] ?? null));
     }
 
     public function getRoleById(int $vendorId, $id): Role

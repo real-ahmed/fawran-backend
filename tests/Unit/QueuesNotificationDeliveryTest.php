@@ -5,10 +5,12 @@ namespace Tests\Unit;
 use App\Broadcasting\FcmChannel;
 use App\Broadcasting\SmsChannel;
 use App\Models\User;
-use App\Notifications\Admin\AdminCredentialsGenerated;
+use App\Notifications\Admin\AdminCredentialsGeneratedNotification;
 use App\Notifications\Auth\SendPasswordResetOtp;
-use App\Notifications\CatalogItemApproved;
-use App\Notifications\CourierApproved;
+use App\Notifications\Catalog\BrandApprovedNotification;
+use App\Notifications\Catalog\CategoryApprovedNotification;
+use App\Notifications\Catalog\MasterProductApprovedNotification;
+use App\Notifications\CourierApprovedNotification;
 use App\Notifications\TestNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -55,19 +57,27 @@ class QueuesNotificationDeliveryTest extends TestCase
     {
         return [
             'admin credentials' => [
-                'notificationClass' => AdminCredentialsGenerated::class,
+                'notificationClass' => AdminCredentialsGeneratedNotification::class,
                 'arguments' => ['plain-password'],
             ],
             'password reset otp' => [
                 'notificationClass' => SendPasswordResetOtp::class,
                 'arguments' => ['123456'],
             ],
-            'catalog item approved' => [
-                'notificationClass' => CatalogItemApproved::class,
-                'arguments' => ['Brand', 'Acme'],
+            'brand approved' => [
+                'notificationClass' => BrandApprovedNotification::class,
+                'arguments' => ['Acme'],
+            ],
+            'category approved' => [
+                'notificationClass' => CategoryApprovedNotification::class,
+                'arguments' => ['Groceries'],
+            ],
+            'master product approved' => [
+                'notificationClass' => MasterProductApprovedNotification::class,
+                'arguments' => ['Apples'],
             ],
             'courier approved' => [
-                'notificationClass' => CourierApproved::class,
+                'notificationClass' => CourierApprovedNotification::class,
                 'arguments' => ['Courier Name'],
             ],
             'test notification' => [

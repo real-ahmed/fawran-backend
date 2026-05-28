@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('p2p_status_log_notes', function (Blueprint $table) {
             $table->foreignId('p2p_status_log_id')->primary()->constrained()->cascadeOnDelete();
             $table->text('note');
+            $table->timestamps();
         });
     }
 

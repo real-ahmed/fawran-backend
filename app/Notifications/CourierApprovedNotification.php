@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
-class CourierApproved extends Notification implements ShouldQueue
+class CourierApprovedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     use QueuesNotificationDelivery;

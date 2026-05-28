@@ -18,7 +18,8 @@ class RoleService
             ->guard('api_admin')
             ->withPermissions()
             ->searchName($filters['search'] ?? null)
-            ->paginate($this->getPerPageLimit($filters['per_page'] ?? null));
+            ->newest()
+            ->cursorPaginate($this->getPerPageLimit($filters['per_page'] ?? null));
     }
 
     public function getRoleById($id): Role

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->foreignId('hot_zone_id')->primary()->constrained()->cascadeOnDelete();
             $table->integer('order_count');
             $table->timestamp('expires_at');
+            $table->timestamps();
         });
     }
 

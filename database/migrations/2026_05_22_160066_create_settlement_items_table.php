@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('settlement_id')->constrained()->cascadeOnDelete();
             $table->morphs('reference');
             $table->decimal('amount', 10, 2);
+            $table->timestamps();
         });
     }
 

@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('parent_category_id')->constrained('categories')->cascadeOnDelete();
 
             $table->index('parent_category_id');
+            $table->timestamps();
         });
     }
 
