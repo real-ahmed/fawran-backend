@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Vendor extends Model
 {
-    use AdminZoneScope, \App\Traits\HasPrimaryImage;
+    use AdminZoneScope, \App\Traits\HasImages;
 
     public $timestamps = true;
 

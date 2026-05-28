@@ -16,6 +16,7 @@ class IndexBrandRequest extends FormRequest
         return [
             'search' => 'sometimes|string|max:255',
             'approval_status' => 'sometimes|string|in:pending,approved,rejected',
+            'is_active' => 'sometimes|boolean',
         ];
     }
 }

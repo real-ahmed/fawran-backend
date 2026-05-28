@@ -8,7 +8,7 @@ class CategoryBuilder extends Builder
 {
     public function withListRelations(): self
     {
-        return $this->with(['hierarchy', 'icon']);
+        return $this->with(['hierarchy', 'icon', 'media']);
     }
 
     public function searchName(?string $search): self
@@ -24,8 +24,19 @@ class CategoryBuilder extends Builder
     public function approvalStatus(?string $status): self
     {
         return $this->when($status, function (self $query, string $status): void {
-            $query->whereHas('vendorSubmission', fn (Builder $query): Builder => $query->where('status', $status)->forAdminZones());
+            match ($status) {
+                'approved' => $query->where('is_active', true)->whereDoesntHave('vendorSubmission'),
+                default => $query->whereHas(
+                    'vendorSubmission',
+                    fn (Builder $query): Builder => $query->where('status', $status)->forAdminZones()
+                ),
+            };
         });
+    }
+
+    public function active(?bool $isActive): self
+    {
+        return $this->when($isActive !== null, fn (self $query): self => $query->where('is_active', $isActive));
     }
 
     public function withVendorSubmission(): self

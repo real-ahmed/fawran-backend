@@ -67,13 +67,20 @@ class CourierService
             'approved_at' => now(),
         ]);
 
+        $courier->update([
+            'rejected_at' => null,
+        ]);
+
         $courierName = $courier->user->name ?? 'Unknown';
         $courier->user->notify(new CourierApproved($courierName));
     }
 
     public function rejectCourier(Courier $courier): void
     {
-        $courier->update(['is_online' => false]);
+        $courier->update([
+            'is_online' => false,
+            'rejected_at' => now(),
+        ]);
     }
 
     public function ensureContractDocument(Courier $courier): CourierDocument

@@ -20,6 +20,7 @@ class CategoryResource extends JsonResource
             'is_active' => $this->is_active,
             'parent_category_id' => $this->whenLoaded('hierarchy', fn () => $this->hierarchy?->parent_category_id),
             'icon_class' => $this->whenLoaded('icon', fn () => $this->icon?->icon_class),
+            'image' => $this->whenLoaded('media', fn () => $this->image, null),
         ];
     }
 }

@@ -2,24 +2,30 @@
 
 namespace App\Services\Admin;
 
+use App\Enums\FileType;
 use App\Models\Catalog\Category;
 use App\Models\Vendor\Vendor;
 use App\Notifications\CatalogItemApproved;
 use App\Traits\Paginatable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryService
 {
     use Paginatable;
 
-    public function listCategories(?string $search = null, ?string $approvalStatus = null)
+    public function __construct(protected CatalogRealtimeNotifier $catalogRealtimeNotifier) {}
+
+    public function listCategories(?string $search = null, ?string $approvalStatus = null, ?bool $isActive = null)
     {
         return Category::query()
             ->withListRelations()
             ->searchName($search)
             ->approvalStatus($approvalStatus)
+            ->active($isActive)
             ->withVendorSubmission()
-            ->paginate($this->getPerPageLimit());
+            ->paginate($this->getPerPageLimit())
+            ->withQueryString();
     }
 
     public function createCategory(array $data): Category
@@ -42,7 +48,17 @@ class CategoryService
                 ]);
             }
 
-            return $category->load(['hierarchy', 'icon']);
+            $image = $data['image'] ?? null;
+            if ($image) {
+                $path = $image->store('categories', 'public');
+                $category->media()->create([
+                    'file_path' => $path,
+                    'file_type' => FileType::Image,
+                    'is_primary' => true,
+                ]);
+            }
+
+            return $category->load(['hierarchy', 'icon', 'media']);
         });
     }
 
@@ -76,13 +92,35 @@ class CategoryService
                 }
             }
 
-            return $category->refresh()->load(['hierarchy', 'icon']);
+            $image = $data['image'] ?? null;
+            if ($image) {
+                $path = $image->store('categories', 'public');
+
+                $oldMedia = $category->media()->where('is_primary', true)->first();
+                if ($oldMedia) {
+                    Storage::disk('public')->delete($oldMedia->file_path);
+                    $oldMedia->delete();
+                }
+
+                $category->media()->create([
+                    'file_path' => $path,
+                    'file_type' => FileType::Image,
+                    'is_primary' => true,
+                ]);
+            }
+
+            return $category->refresh()->load(['hierarchy', 'icon', 'media']);
         });
     }
 
     public function deleteCategory(Category $category): void
     {
         DB::transaction(function () use ($category) {
+            $media = $category->media()->get();
+            foreach ($media as $item) {
+                Storage::disk('public')->delete($item->file_path);
+                $item->delete();
+            }
             $category->hierarchy()->delete();
             $category->icon()->delete();
             $category->delete();
@@ -113,6 +151,8 @@ class CategoryService
                 'vendor_id' => $vendor->id,
                 'status' => 'pending',
             ]);
+
+            $this->catalogRealtimeNotifier->notifySubmission('Category', $category->id, $category->name, $vendor);
 
             return $category->load(['hierarchy', 'icon']);
         });

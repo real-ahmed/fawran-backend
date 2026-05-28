@@ -13,7 +13,7 @@ class SavedItem extends Model
 
     protected $fillable = [
         'user_id',
-        'vendoritem_id',
+        'vendor_item_id',
     ];
 
     protected function casts(): array

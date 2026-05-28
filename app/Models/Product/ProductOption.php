@@ -11,7 +11,7 @@ class ProductOption extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'vendoritem_id',
+        'vendor_item_id',
         'name',
         'is_required',
         'max_selections',

@@ -4,12 +4,15 @@ namespace App\Models\Catalog;
 
 use App\Builders\BrandBuilder;
 use App\Models\Product\RetailProductDetail;
+use App\Traits\HasImages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Brand extends Model
 {
+    use HasImages;
+
     public $timestamps = false;
 
     protected $fillable = [

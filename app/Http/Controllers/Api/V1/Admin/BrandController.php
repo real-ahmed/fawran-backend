@@ -28,7 +28,8 @@ class BrandController extends Controller
     {
         return BrandResource::collection($this->brandService->listBrands(
             $request->validated('search'),
-            $request->validated('approval_status')
+            $request->validated('approval_status'),
+            $request->has('is_active') ? $request->boolean('is_active') : null
         ));
     }
 

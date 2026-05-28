@@ -18,6 +18,7 @@ class BrandResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'is_active' => $this->is_active,
+            'image' => $this->whenLoaded('media', fn () => $this->image, null),
         ];
     }
 }

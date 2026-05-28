@@ -28,6 +28,7 @@ class UpdateCategoryRequest extends FormRequest
             'is_active' => ['sometimes', 'boolean'],
             'parent_category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'icon_class' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

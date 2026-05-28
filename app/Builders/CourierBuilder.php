@@ -53,8 +53,9 @@ class CourierBuilder extends Builder
     public function approvalStatus(?string $approvalStatus): self
     {
         return match ($approvalStatus) {
-            'pending' => $this->whereDoesntHave('approval'),
+            'pending' => $this->whereDoesntHave('approval')->whereNull('rejected_at'),
             'approved' => $this->whereHas('approval'),
+            'rejected' => $this->whereDoesntHave('approval')->whereNotNull('rejected_at'),
             default => $this,
         };
     }

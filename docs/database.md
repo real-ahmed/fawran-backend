@@ -50,7 +50,7 @@ This document outlines the complete database architecture. **Architectural Rule:
 | :--- | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc | |
 | `user_id` | BIGINT | FK → users.id | |
-| `vendoritem_id` | BIGINT | FK → vendoritems.id | |
+| `vendor_item_id` | BIGINT | FK → vendor_items.id | |
 | `created_at` | TIMESTAMP | | |
 
 ---
@@ -283,7 +283,7 @@ Manages vendor proposals for new global master products.
 | `brand_id` | BIGINT | FK → brands.id |
 | `sku_barcode` | VARCHAR(100) | UNIQUE |
 
-**`vendoritems` Table**
+**`vendor_items` Table**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
@@ -292,24 +292,24 @@ Manages vendor proposals for new global master products.
 | `price` | DECIMAL(10,2) | |
 | `is_available` | BOOLEAN | Default: true |
 
-**`vendoritem_inventory` Table (Retail Only)**
+**`vendor_item_inventory` Table (Retail Only)**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
-| `vendoritem_id` | BIGINT | PK, FK → vendoritems.id |
+| `vendor_item_id` | BIGINT | PK, FK → vendor_items.id |
 | `current_stock` | DECIMAL(10,3) | |
 | `low_stock_threshold` | DECIMAL(10,3) | |
 
 **`restaurant_dish_details` Table (Restaurants Only)**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
-| `vendoritem_id` | BIGINT | PK, FK → vendoritems.id |
+| `vendor_item_id` | BIGINT | PK, FK → vendor_items.id |
 | `preparation_time` | SMALLINT | In minutes |
 
 **`product_options` Table**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
-| `vendoritem_id` | BIGINT | FK → vendoritems.id |
+| `vendor_item_id` | BIGINT | FK → vendor_items.id |
 | `name` | JSON | |
 | `is_required` | BOOLEAN | Default: false |
 | `max_selections` | TINYINT | Default: 1 |
@@ -505,7 +505,7 @@ Manages vendor proposals for new global master products.
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
 | `sub_order_id` | BIGINT | FK → sub_orders.id |
-| `vendoritem_id` | BIGINT | FK → vendoritems.id |
+| `vendor_item_id` | BIGINT | FK → vendor_items.id |
 | `quantity` | DECIMAL(10,3) | |
 | `unit_price` | DECIMAL(10,2) | |
 | `options_price` | DECIMAL(10,2) | Default: 0.00 |
@@ -567,7 +567,7 @@ Manages vendor proposals for new global master products.
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
 | `purchase_order_id`| BIGINT | FK → purchase_orders.id |
-| `vendoritem_id` | BIGINT | FK → vendoritems.id |
+| `vendor_item_id` | BIGINT | FK → vendor_items.id |
 | `quantity` | DECIMAL(10,3) | |
 | `cost_price` | DECIMAL(10,2) | |
 | `created_at` | TIMESTAMP | |
@@ -577,7 +577,7 @@ Manages vendor proposals for new global master products.
 | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc |
 | `vendor_id` | BIGINT | FK → vendors.id |
-| `vendoritem_id` | BIGINT | FK → vendoritems.id |
+| `vendor_item_id` | BIGINT | FK → vendor_items.id |
 | `quantity` | DECIMAL(10,3) | |
 | `type` | ENUM | `'sale'`, `'purchase'`, `'return'`, `'adjustment'` |
 | `reference_type` | VARCHAR(255) | Polymorphic |

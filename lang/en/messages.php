@@ -24,8 +24,10 @@ return [
     // Catalog Approvals
     'Brand' => 'Brand',
     'Category' => 'Category',
+    'Master Product' => 'Master Product',
     'catalog_item_approved_title' => ':type Approved',
     'catalog_item_approved_body' => 'Your proposed :type \':name\' has been approved.',
+    'new_catalog_submission' => 'New :type submitted: :name',
 
     // Generic CRUD
     'created_successfully' => 'Created successfully',
@@ -57,6 +59,8 @@ return [
     'brand_rejected_successfully' => 'Brand rejected successfully',
     'category_approved_successfully' => 'Category approved successfully',
     'category_rejected_successfully' => 'Category rejected successfully',
+    'master_product_approved_successfully' => 'Master product approved successfully',
+    'master_product_rejected_successfully' => 'Master product rejected successfully',
 
     // Orders
     'order_cancelled_successfully' => 'Order cancelled successfully',

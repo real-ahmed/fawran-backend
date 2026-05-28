@@ -24,8 +24,10 @@ return [
     // Catalog Approvals
     'Brand' => 'العلامة التجارية',
     'Category' => 'الفئة',
+    'Master Product' => 'المنتج الرئيسي',
     'catalog_item_approved_title' => 'تمت الموافقة على :type',
     'catalog_item_approved_body' => 'تمت الموافقة على :type \':name\' المقترحة.',
+    'new_catalog_submission' => 'تم تقديم :type جديد: :name',
 
     // Generic CRUD
     'created_successfully' => 'تم الإنشاء بنجاح',
@@ -57,6 +59,8 @@ return [
     'brand_rejected_successfully' => 'تم رفض العلامة التجارية بنجاح',
     'category_approved_successfully' => 'تمت الموافقة على الفئة بنجاح',
     'category_rejected_successfully' => 'تم رفض الفئة بنجاح',
+    'master_product_approved_successfully' => 'تمت الموافقة على المنتج الرئيسي بنجاح',
+    'master_product_rejected_successfully' => 'تم رفض المنتج الرئيسي بنجاح',
 
     // Orders
     'order_cancelled_successfully' => 'تم إلغاء الطلب بنجاح',

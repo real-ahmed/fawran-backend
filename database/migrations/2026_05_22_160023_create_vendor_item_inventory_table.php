@@ -8,8 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('vendoritem_inventory', function (Blueprint $table) {
-            $table->foreignId('vendoritem_id')->primary()->constrained()->cascadeOnDelete();
+        Schema::create('vendor_item_inventory', function (Blueprint $table) {
+            $table->foreignId('vendor_item_id')->primary()->constrained()->cascadeOnDelete();
             $table->decimal('current_stock', 10, 3)->default(0);
             $table->decimal('low_stock_threshold', 10, 3)->default(0);
         });
@@ -17,6 +17,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('vendoritem_inventory');
+        Schema::dropIfExists('vendor_item_inventory');
     }
 };

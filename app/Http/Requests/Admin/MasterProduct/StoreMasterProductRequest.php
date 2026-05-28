@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Admin\MasterProduct;
 
+use App\Enums\UnitType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMasterProductRequest extends FormRequest
 {
@@ -30,11 +32,13 @@ class StoreMasterProductRequest extends FormRequest
             'description.en' => 'required|string',
             'description.ar' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'required|exists:brands,id',
-            'barcode' => 'nullable|string|unique:master_products,barcode',
-            'sku' => 'required|string|unique:master_products,sku',
+            'unit_type' => ['required', Rule::enum(UnitType::class)],
+            'brand_id' => 'nullable|exists:brands,id',
+            'sku_barcode' => 'nullable|string|unique:retail_product_details,sku_barcode',
             'is_active' => 'sometimes|boolean',
-            'image_path' => 'nullable|string',
+            'image' => ['nullable', 'image', 'max:2048'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'max:2048'],
         ];
     }
 }

@@ -93,10 +93,46 @@ class CustomBuilderTest extends TestCase
         $this->assertSame(['user', 'document', 'approval'], array_keys($query->getEagerLoads()));
         $this->assertStringContainsString('plate_number', $query->toSql());
         $this->assertStringContainsString('not exists', $query->toSql());
+        $this->assertStringContainsString('`rejected_at` is null', $query->toSql());
         $this->assertContains('%ahmed%', $query->getBindings());
         $this->assertContains(true, $query->getBindings());
         $this->assertContains('motorcycle', $query->getBindings());
         $this->assertContains(5, $query->getBindings());
+    }
+
+    public function test_courier_builder_applies_rejected_status_filter(): void
+    {
+        $query = Courier::query()->approvalStatus('rejected');
+
+        $this->assertStringContainsString('not exists', $query->toSql());
+        $this->assertStringContainsString('`rejected_at` is not null', $query->toSql());
+    }
+
+    public function test_brand_builder_approved_status_means_active_without_vendor_submission(): void
+    {
+        $query = Brand::query()
+            ->withListRelations()
+            ->approvalStatus('approved')
+            ->active(true);
+
+        $this->assertContains('media', array_keys($query->getEagerLoads()));
+        $this->assertContains('vendorSubmission.vendor', array_keys($query->getEagerLoads()));
+        $this->assertStringContainsString('`is_active` = ?', $query->toSql());
+        $this->assertStringContainsString('not exists', $query->toSql());
+        $this->assertSame([true, true], $query->getBindings());
+    }
+
+    public function test_category_and_master_product_builders_eager_load_media_for_image_resources(): void
+    {
+        $categoryQuery = Category::query()->withListRelations();
+        $productQuery = MasterProduct::query()
+            ->withListRelations()
+            ->newest();
+
+        $this->assertContains('media', array_keys($categoryQuery->getEagerLoads()));
+        $this->assertContains('media', array_keys($productQuery->getEagerLoads()));
+        $this->assertStringContainsString('order by `id` desc', $productQuery->toSql());
+        $this->assertStringNotContainsString('created_at', $productQuery->toSql());
     }
 
     public function test_user_builder_applies_identity_search_and_active_filter(): void

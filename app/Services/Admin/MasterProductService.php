@@ -2,16 +2,20 @@
 
 namespace App\Services\Admin;
 
+use App\Enums\FileType;
 use App\Models\Product\MasterProduct;
 use App\Models\Vendor\Vendor;
 use App\Notifications\CatalogItemApproved;
 use App\Traits\Paginatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class MasterProductService
 {
     use Paginatable;
+
+    public function __construct(protected CatalogRealtimeNotifier $catalogRealtimeNotifier) {}
 
     public function listProducts(Request $request)
     {
@@ -42,14 +46,36 @@ class MasterProductService
                 ]);
             }
 
-            if (! empty($data['brand_id']) && ! empty($data['sku_barcode'])) {
+            if (! empty($data['brand_id']) || ! empty($data['sku_barcode'])) {
                 $product->retailDetail()->create([
-                    'brand_id' => $data['brand_id'],
-                    'sku_barcode' => $data['sku_barcode'],
+                    'brand_id' => $data['brand_id'] ?? null,
+                    'sku_barcode' => $data['sku_barcode'] ?? null,
                 ]);
             }
 
-            return $product->load(['category', 'description', 'retailDetail']);
+            $image = $data['image'] ?? null;
+            if ($image) {
+                $path = $image->store('master-products', 'public');
+                $product->media()->create([
+                    'file_path' => $path,
+                    'file_type' => FileType::Image,
+                    'is_primary' => true,
+                ]);
+            }
+
+            $images = $data['images'] ?? [];
+            if (! empty($images)) {
+                foreach ($images as $img) {
+                    $path = $img->store('master-products', 'public');
+                    $product->media()->create([
+                        'file_path' => $path,
+                        'file_type' => FileType::Image,
+                        'is_primary' => false,
+                    ]);
+                }
+            }
+
+            return $product->load(['category', 'description', 'retailDetail', 'media']);
         });
     }
 
@@ -67,23 +93,65 @@ class MasterProductService
             }
 
             if (array_key_exists('brand_id', $data) || array_key_exists('sku_barcode', $data)) {
-                if (! empty($data['brand_id']) && ! empty($data['sku_barcode'])) {
+                if (! empty($data['brand_id'])) {
                     $product->retailDetail()->updateOrCreate([], [
                         'brand_id' => $data['brand_id'],
-                        'sku_barcode' => $data['sku_barcode'],
+                        'sku_barcode' => $data['sku_barcode'] ?? null,
                     ]);
                 } else {
                     $product->retailDetail()->delete();
                 }
             }
 
-            return $product->load(['category', 'description', 'retailDetail']);
+            $image = $data['image'] ?? null;
+            if ($image) {
+                $path = $image->store('master-products', 'public');
+
+                $oldMedia = $product->media()->where('is_primary', true)->first();
+                if ($oldMedia) {
+                    Storage::disk('public')->delete($oldMedia->file_path);
+                    $oldMedia->delete();
+                }
+
+                $product->media()->create([
+                    'file_path' => $path,
+                    'file_type' => FileType::Image,
+                    'is_primary' => true,
+                ]);
+            }
+
+            $images = $data['images'] ?? null;
+            if ($images !== null) {
+                // Delete old non-primary images
+                $oldImages = $product->media()->where('is_primary', false)->get();
+                foreach ($oldImages as $oldImg) {
+                    Storage::disk('public')->delete($oldImg->file_path);
+                    $oldImg->delete();
+                }
+
+                // Create new ones
+                foreach ($images as $img) {
+                    $path = $img->store('master-products', 'public');
+                    $product->media()->create([
+                        'file_path' => $path,
+                        'file_type' => FileType::Image,
+                        'is_primary' => false,
+                    ]);
+                }
+            }
+
+            return $product->refresh()->load(['category', 'description', 'retailDetail', 'media']);
         });
     }
 
     public function deleteProduct(MasterProduct $product): void
     {
         DB::transaction(function () use ($product) {
+            $media = $product->media()->get();
+            foreach ($media as $item) {
+                Storage::disk('public')->delete($item->file_path);
+                $item->delete();
+            }
             $product->description()->delete();
             $product->retailDetail()->delete();
             $product->vendorSubmission()->delete();
@@ -107,10 +175,10 @@ class MasterProductService
                 ]);
             }
 
-            if (! empty($data['brand_id']) && ! empty($data['sku_barcode'])) {
+            if (! empty($data['brand_id'])) {
                 $product->retailDetail()->create([
                     'brand_id' => $data['brand_id'],
-                    'sku_barcode' => $data['sku_barcode'],
+                    'sku_barcode' => $data['sku_barcode'] ?? null,
                 ]);
             }
 
@@ -118,6 +186,8 @@ class MasterProductService
                 'vendor_id' => $vendor->id,
                 'status' => 'pending',
             ]);
+
+            $this->catalogRealtimeNotifier->notifySubmission('Master Product', $product->id, $product->name, $vendor);
 
             return $product->load(['category', 'description', 'retailDetail']);
         });

@@ -40,6 +40,7 @@ class Courier extends Model
         'vehicle_type',
         'plate_number',
         'is_online',
+        'rejected_at',
     ];
 
     protected $attributes = [
@@ -51,6 +52,7 @@ class Courier extends Model
         return [
             'vehicle_type' => VehicleType::class,
             'is_online' => 'boolean',
+            'rejected_at' => 'datetime',
             'created_at' => 'datetime',
         ];
     }

@@ -9,12 +9,12 @@ class RestaurantDishDetail extends Model
 {
     public $timestamps = false;
 
-    protected $primaryKey = 'vendoritem_id';
+    protected $primaryKey = 'vendor_item_id';
 
     public $incrementing = false;
 
     protected $fillable = [
-        'vendoritem_id',
+        'vendor_item_id',
         'preparation_time',
     ];
 

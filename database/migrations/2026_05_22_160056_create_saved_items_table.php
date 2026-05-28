@@ -11,10 +11,10 @@ return new class extends Migration
         Schema::create('saved_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('vendoritem_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vendor_item_id')->constrained()->cascadeOnDelete();
             $table->timestamp('created_at')->useCurrent();
 
-            $table->unique(['user_id', 'vendoritem_id']);
+            $table->unique(['user_id', 'vendor_item_id']);
         });
     }
 

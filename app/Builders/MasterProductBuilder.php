@@ -8,14 +8,19 @@ class MasterProductBuilder extends Builder
 {
     public function withListRelations(): self
     {
-        return $this->with(['category', 'description', 'retailDetail']);
+        return $this->with(['category', 'description', 'retailDetail', 'media']);
     }
 
     public function approvalStatus(?string $status): self
     {
         return $this->when($status, function (self $query, string $status): void {
-            $query->whereHas('vendorSubmission', fn (Builder $query): Builder => $query->where('status', $status)->forAdminZones())
-                ->with('vendorSubmission.vendor');
+            match ($status) {
+                'approved' => $query->where('is_active', true)->whereDoesntHave('vendorSubmission'),
+                default => $query->whereHas(
+                    'vendorSubmission',
+                    fn (Builder $query): Builder => $query->where('status', $status)->forAdminZones()
+                )->with('vendorSubmission.vendor'),
+            };
         });
     }
 
@@ -41,6 +46,6 @@ class MasterProductBuilder extends Builder
 
     public function newest(): self
     {
-        return $this->latest('created_at');
+        return $this->latest('id');
     }
 }

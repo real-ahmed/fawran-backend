@@ -28,6 +28,7 @@ class StoreCategoryRequest extends FormRequest
             'is_active' => ['boolean'],
             'parent_category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'icon_class' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

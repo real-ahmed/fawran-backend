@@ -5,6 +5,7 @@ namespace App\Models\Product;
 use App\Builders\MasterProductBuilder;
 use App\Enums\UnitType;
 use App\Models\Catalog\Category;
+use App\Traits\HasImages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class MasterProduct extends Model
 {
+    use HasImages;
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -31,7 +34,6 @@ class MasterProduct extends Model
             'name' => 'array',
             'unit_type' => UnitType::class,
             'is_active' => 'boolean',
-            'created_at' => 'datetime',
         ];
     }
 

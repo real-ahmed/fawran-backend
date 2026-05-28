@@ -28,7 +28,8 @@ class CategoryController extends Controller
     {
         return CategoryResource::collection($this->categoryService->listCategories(
             $request->validated('search'),
-            $request->validated('approval_status')
+            $request->validated('approval_status'),
+            $request->has('is_active') ? $request->boolean('is_active') : null
         ));
     }
 

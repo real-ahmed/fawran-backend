@@ -23,7 +23,8 @@ class MasterProductResource extends JsonResource
                 'brand_id' => $this->retailDetail->brand_id,
                 'sku_barcode' => $this->retailDetail->sku_barcode,
             ] : null),
-            'created_at' => $this->created_at,
+            'image' => $this->whenLoaded('media', fn () => $this->image, null),
+            'images' => $this->whenLoaded('media', fn () => $this->images, []),
         ];
     }
 }

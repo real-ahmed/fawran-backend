@@ -26,6 +26,7 @@ class StoreBrandRequest extends FormRequest
             'name' => ['required', 'array'],
             'name.*' => ['required', 'string', 'max:255'],
             'is_active' => ['boolean'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }
