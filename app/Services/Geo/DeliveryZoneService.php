@@ -74,6 +74,11 @@ class DeliveryZoneService
         return $this->getZoneById($zone->id);
     }
 
+    public function deleteZone(DeliveryZone $zone): void
+    {
+        $zone->delete();
+    }
+
     /**
      * Convert an array of ['lat' => x, 'lng' => y] coordinates into a WKT Polygon string.
      * Automatically ensures the polygon is mathematically closed.

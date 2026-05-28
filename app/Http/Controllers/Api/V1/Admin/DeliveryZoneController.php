@@ -57,7 +57,7 @@ class DeliveryZoneController extends Controller
 
     public function destroy(DeliveryZone $deliveryZone)
     {
-        $deliveryZone->delete();
+        $this->deliveryZoneService->deleteZone($deliveryZone);
 
         return $this->successResponse(null, __('messages.delivery_zone_deleted_successfully'));
     }

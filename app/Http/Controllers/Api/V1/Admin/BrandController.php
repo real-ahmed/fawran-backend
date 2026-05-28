@@ -26,11 +26,7 @@ class BrandController extends Controller
      */
     public function index(IndexBrandRequest $request)
     {
-        return BrandResource::collection($this->brandService->listBrands(
-            $request->validated('search'),
-            $request->validated('approval_status'),
-            $request->has('is_active') ? $request->boolean('is_active') : null
-        ));
+        return BrandResource::collection($this->brandService->listBrands($request));
     }
 
     /**

@@ -2,8 +2,10 @@
 
 namespace App\Models\Catalog;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryIcon extends Model
 {
@@ -15,11 +17,18 @@ class CategoryIcon extends Model
 
     protected $fillable = [
         'category_id',
-        'icon_class',
+        'icon_path',
     ];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    protected function iconUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->icon_path ? asset(Storage::disk('public')->url($this->icon_path)) : null
+        );
     }
 }

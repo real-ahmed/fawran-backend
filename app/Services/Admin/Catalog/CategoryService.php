@@ -3,10 +3,12 @@
 namespace App\Services\Admin\Catalog;
 
 use App\Enums\FileType;
+use App\Http\Requests\Admin\Category\IndexCategoryRequest;
 use App\Models\Catalog\Category;
 use App\Notifications\Catalog\CategoryApprovedNotification;
 use App\Traits\Paginatable;
 use App\Traits\ResolvesDisplayName;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,13 +16,13 @@ class CategoryService
 {
     use Paginatable, ResolvesDisplayName;
 
-    public function listCategories(?string $search = null, ?string $approvalStatus = null, ?bool $isActive = null)
+    public function listCategories(IndexCategoryRequest $request)
     {
         return Category::query()
             ->withListRelations()
-            ->searchName($search)
-            ->approvalStatus($approvalStatus)
-            ->active($isActive)
+            ->searchName($request->validated('search'))
+            ->approvalStatus($request->validated('approval_status'))
+            ->active($request->has('is_active') ? $request->boolean('is_active') : null)
             ->withVendorSubmission()
             ->newest()
             ->cursorPaginate($this->getPerPageLimit())
@@ -41,9 +43,11 @@ class CategoryService
                 ]);
             }
 
-            if (! empty($data['icon_class'])) {
+            $icon = $data['icon'] ?? null;
+            if ($icon instanceof UploadedFile) {
+                $path = $icon->store('category-icons', 'public');
                 $category->icon()->create([
-                    'icon_class' => $data['icon_class'],
+                    'icon_path' => $path,
                 ]);
             }
 
@@ -59,6 +63,11 @@ class CategoryService
 
             return $category->load(['hierarchy', 'icon', 'media']);
         });
+    }
+
+    public function getCategory(Category $category): Category
+    {
+        return $category->load(['hierarchy', 'icon']);
     }
 
     public function updateCategory(Category $category, array $data): Category
@@ -80,14 +89,22 @@ class CategoryService
                 }
             }
 
-            if (array_key_exists('icon_class', $data)) {
-                if (empty($data['icon_class'])) {
-                    $category->icon()->delete();
-                } else {
-                    $category->icon()->updateOrCreate(
-                        ['category_id' => $category->id],
-                        ['icon_class' => $data['icon_class']]
-                    );
+            $icon = $data['icon'] ?? null;
+            if ($icon instanceof UploadedFile) {
+                $path = $icon->store('category-icons', 'public');
+                $oldIcon = $category->icon;
+                if ($oldIcon && $oldIcon->icon_path) {
+                    Storage::disk('public')->delete($oldIcon->icon_path);
+                }
+                $category->icon()->updateOrCreate(
+                    ['category_id' => $category->id],
+                    ['icon_path' => $path]
+                );
+            } elseif (array_key_exists('icon', $data) && is_null($data['icon'])) {
+                $oldIcon = $category->icon;
+                if ($oldIcon && $oldIcon->icon_path) {
+                    Storage::disk('public')->delete($oldIcon->icon_path);
+                    $oldIcon->delete();
                 }
             }
 

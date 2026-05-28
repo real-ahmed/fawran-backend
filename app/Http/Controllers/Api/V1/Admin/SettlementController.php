@@ -53,8 +53,7 @@ class SettlementController extends Controller
      */
     public function execute(ExecuteSettlementRequest $request, Settlement $settlement)
     {
-        $admin = auth('api_admin')->user();
-        $settlement = $this->settlementService->executeSettlement($settlement, $admin, $request->validated());
+        $settlement = $this->settlementService->executeSettlement($settlement, $request->validated());
 
         return $this->successResponse(
             new SettlementResource($settlement),

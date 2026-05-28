@@ -65,7 +65,7 @@ class MasterProductController extends Controller
     public function show(MasterProduct $masterProduct)
     {
         return $this->successResponse(
-            new MasterProductResource($masterProduct->load(['category', 'description', 'retailDetail']))
+            new MasterProductResource($this->masterProductService->getProduct($masterProduct))
         );
     }
 

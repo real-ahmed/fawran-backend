@@ -52,6 +52,11 @@ class AdminUserService
         return $admin;
     }
 
+    public function getAdmin(Admin $admin): Admin
+    {
+        return $admin->load('roles');
+    }
+
     public function updateAdmin(Admin $admin, array $data): Admin
     {
         $this->ensureSuperAdminRolesCanBeSynced($admin, $data);

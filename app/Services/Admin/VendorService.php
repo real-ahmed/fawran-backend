@@ -54,6 +54,11 @@ class VendorService
         return $vendor->load(['media', 'workingHours', 'deliveryZones']);
     }
 
+    public function getVendor(Vendor $vendor): Vendor
+    {
+        return $vendor->load(['media', 'workingHours', 'deliveryZones', 'owner']);
+    }
+
     public function updateVendor(Vendor $vendor, array $data): Vendor
     {
         $hasWorkingHours = array_key_exists('working_hours', $data);

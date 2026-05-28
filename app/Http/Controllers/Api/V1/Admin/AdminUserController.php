@@ -49,9 +49,7 @@ class AdminUserController extends Controller
      */
     public function show(Admin $adminUser)
     {
-        $adminUser->load('roles');
-
-        return $this->successResponse(new AdminResource($adminUser));
+        return $this->successResponse(new AdminResource($this->adminUserService->getAdmin($adminUser)));
     }
 
     /**

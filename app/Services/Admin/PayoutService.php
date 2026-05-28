@@ -21,10 +21,12 @@ class PayoutService
             ->cursorPaginate($this->getPerPageLimit());
     }
 
-    public function approvePayoutRequest(PayoutRequest $payoutRequest, Admin $admin): PayoutRequest
+    public function approvePayoutRequest(PayoutRequest $payoutRequest, ?Admin $admin = null): PayoutRequest
     {
+        $admin ??= auth('api_admin')->user();
+
         $payoutRequest->execution()->create([
-            'admin_id' => $admin->id,
+            'admin_id' => $admin?->id,
             'executed_at' => now(),
         ]);
 

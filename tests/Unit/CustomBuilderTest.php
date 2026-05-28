@@ -80,6 +80,44 @@ class CustomBuilderTest extends TestCase
         ];
     }
 
+    /**
+     * @param  class-string  $model
+     */
+    #[DataProvider('newestModelProvider')]
+    public function test_list_builders_order_models_newest_first(string $model): void
+    {
+        $query = $model::query()->newest();
+
+        $this->assertStringContainsString('order by', $query->toSql());
+        $this->assertStringContainsString(' desc', $query->toSql());
+    }
+
+    /**
+     * @return array<string, array{model: class-string}>
+     */
+    public static function newestModelProvider(): array
+    {
+        return [
+            'admin' => ['model' => Admin::class],
+            'brand' => ['model' => Brand::class],
+            'category' => ['model' => Category::class],
+            'courier' => ['model' => Courier::class],
+            'delivery zone' => ['model' => DeliveryZone::class],
+            'hot zone' => ['model' => HotZone::class],
+            'master product' => ['model' => MasterProduct::class],
+            'order' => ['model' => Order::class],
+            'payout request' => ['model' => PayoutRequest::class],
+            'refund request' => ['model' => RefundRequest::class],
+            'role' => ['model' => Role::class],
+            'settlement' => ['model' => Settlement::class],
+            'user' => ['model' => User::class],
+            'vendor' => ['model' => Vendor::class],
+            'vendor brand submission' => ['model' => VendorBrandSubmission::class],
+            'vendor category submission' => ['model' => VendorCategorySubmission::class],
+            'vendor master product submission' => ['model' => VendorMasterProductSubmission::class],
+        ];
+    }
+
     public function test_courier_builder_applies_search_filters_and_list_relations(): void
     {
         $query = Courier::query()

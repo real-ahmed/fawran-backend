@@ -24,6 +24,8 @@ class UserBuilder extends Builder
 
     public function newest(): self
     {
-        return $this->latest();
+        $column = $this->model->usesTimestamps() ? $this->model->getCreatedAtColumn() : $this->model->getKeyName();
+
+        return $this->latest($column);
     }
 }

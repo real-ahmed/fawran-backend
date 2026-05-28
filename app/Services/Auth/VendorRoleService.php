@@ -5,11 +5,20 @@ namespace App\Services\Auth;
 use App\Enums\VendorPermission;
 use App\Models\Role;
 use App\Traits\Paginatable;
+use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 
 class VendorRoleService
 {
     use Paginatable;
+
+    public function resolveVendorId(Request $request): int
+    {
+        $vendorId = $request->header('X-VENDOR-ID') ?? $request->query('vendor_id');
+        abort_if(! $vendorId, 400, 'Vendor ID is required in header or query parameter.');
+
+        return (int) $vendorId;
+    }
 
     public function getRoles(int $vendorId, array $filters)
     {

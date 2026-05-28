@@ -77,6 +77,11 @@ class MasterProductService
         });
     }
 
+    public function getProduct(MasterProduct $product): MasterProduct
+    {
+        return $product->load(['category', 'description', 'retailDetail']);
+    }
+
     public function updateProduct(MasterProduct $product, array $data): MasterProduct
     {
         return DB::transaction(function () use ($product, $data) {

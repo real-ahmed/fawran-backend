@@ -27,7 +27,7 @@ class UpdateCategoryRequest extends FormRequest
             'name.*' => ['required_with:name', 'string', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
             'parent_category_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'icon_class' => ['nullable', 'string', 'max:255'],
+            'icon' => ['nullable', 'file', 'mimes:svg', 'max:2048'],
             'image' => ['nullable', 'image', 'max:2048'],
         ];
     }

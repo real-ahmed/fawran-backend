@@ -26,11 +26,7 @@ class CategoryController extends Controller
      */
     public function index(IndexCategoryRequest $request)
     {
-        return CategoryResource::collection($this->categoryService->listCategories(
-            $request->validated('search'),
-            $request->validated('approval_status'),
-            $request->has('is_active') ? $request->boolean('is_active') : null
-        ));
+        return CategoryResource::collection($this->categoryService->listCategories($request));
     }
 
     /**
@@ -56,9 +52,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        $category->load(['hierarchy', 'icon']);
-
-        return $this->successResponse(new CategoryResource($category));
+        return $this->successResponse(new CategoryResource($this->categoryService->getCategory($category)));
     }
 
     /**

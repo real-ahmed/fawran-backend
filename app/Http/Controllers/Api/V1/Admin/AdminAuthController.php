@@ -3,13 +3,8 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\V1\AdminResource;
-use App\Models\Admin;
-use App\Notifications\Auth\SendPasswordResetOtp;
-use App\Services\Auth\PasswordResetService;
+use App\Services\Auth\AdminAuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 /**
  * @group Admin - Authentication
@@ -18,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
  */
 class AdminAuthController extends Controller
 {
+    public function __construct(protected AdminAuthService $adminAuthService) {}
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -25,73 +22,42 @@ class AdminAuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (! $token = Auth::guard('api_admin')->attempt($credentials)) {
-            return $this->errorResponse(__('auth.failed'), null, 401);
-        }
-
-        return $this->respondWithToken($token);
+        return $this->adminAuthService->login($credentials);
     }
 
     public function me()
     {
-        $user = Auth::guard('api_admin')->user();
-
-        return $this->successResponse(new AdminResource($user), 'Profile retrieved successfully');
+        return $this->adminAuthService->me();
     }
 
     public function logout()
     {
-        Auth::guard('api_admin')->logout();
-
-        return $this->successResponse(null, 'Successfully logged out');
+        return $this->adminAuthService->logout();
     }
 
     public function refresh()
     {
-        return $this->respondWithToken(Auth::guard('api_admin')->refresh());
+        return $this->adminAuthService->refresh();
     }
 
-    protected function respondWithToken($token)
-    {
-        return $this->successResponse([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60,
-        ], 'Token generated successfully');
-    }
-
-    public function forgotPassword(Request $request, PasswordResetService $resetService)
+    public function forgotPassword(Request $request)
     {
         $request->validate(['email' => 'required|email']);
-        $email = $request->input('email');
 
-        $admin = Admin::where('email', $email)->first();
-
-        if (! $admin) {
-            return $this->successResponse(null, 'If the account exists, an OTP has been sent.');
-        }
-
-        $otp = $resetService->generateOtp($email);
-        $admin->notify(new SendPasswordResetOtp($otp));
-
-        return $this->successResponse(null, 'If the account exists, an OTP has been sent.');
+        return $this->adminAuthService->forgotPassword($request->input('email'));
     }
 
-    public function verifyResetOtp(Request $request, PasswordResetService $resetService)
+    public function verifyResetOtp(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
             'otp' => 'required|string',
         ]);
 
-        if (! $resetService->verifyOtp($request->input('email'), $request->input('otp'))) {
-            return $this->errorResponse('Invalid or expired OTP', null, 400);
-        }
-
-        return $this->successResponse(null, 'OTP verified successfully');
+        return $this->adminAuthService->verifyResetOtp($request->input('email'), $request->input('otp'));
     }
 
-    public function resetPassword(Request $request, PasswordResetService $resetService)
+    public function resetPassword(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -99,23 +65,10 @@ class AdminAuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $email = $request->input('email');
-
-        if (! $resetService->verifyOtp($email, $request->input('otp'))) {
-            return $this->errorResponse('Invalid or expired OTP', null, 400);
-        }
-
-        $admin = Admin::where('email', $email)->first();
-
-        if ($admin) {
-            $admin->update([
-                'password' => Hash::make($request->input('password')),
-            ]);
-            $resetService->clearOtp($email);
-
-            return $this->successResponse(null, 'Password has been reset successfully');
-        }
-
-        return $this->errorResponse('Account not found', null, 404);
+        return $this->adminAuthService->resetPassword(
+            $request->input('email'),
+            $request->input('otp'),
+            $request->input('password')
+        );
     }
 }

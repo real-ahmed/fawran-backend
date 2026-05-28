@@ -44,6 +44,11 @@ class HotZoneService
         });
     }
 
+    public function getHotZone(HotZone $hotZone): HotZone
+    {
+        return $hotZone->load(['manualHotZone', 'autoHotZone']);
+    }
+
     public function updateHotZone(HotZone $hotZone, array $data): HotZone
     {
         return DB::transaction(function () use ($hotZone, $data) {

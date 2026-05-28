@@ -80,16 +80,7 @@ class CourierController extends Controller
      */
     public function approve(Courier $courier)
     {
-        $admin = auth('api_admin')->user();
-
-        $document = $courier->document;
-        if (! $document || ! $document->contract_number) {
-            return response()->json([
-                'message' => __('messages.must_print_contract_first'),
-            ], 400);
-        }
-
-        $this->courierService->approveCourier($courier, $admin);
+        $this->courierService->approveCourier($courier);
 
         return $this->successResponse(null, __('messages.courier_approved_successfully'));
     }
@@ -125,12 +116,6 @@ class CourierController extends Controller
      */
     public function printContract(Courier $courier)
     {
-        $contract = $this->courierService->getContractViewData($courier);
-
-        if (! $contract) {
-            return response('Contract template not found in settings.', 404);
-        }
-
-        return view('admin.couriers.contract', $contract);
+        return view('admin.couriers.contract', $this->courierService->getRequiredContractViewData($courier));
     }
 }

@@ -4,7 +4,7 @@ namespace App\Services\Admin;
 
 use App\Models\User;
 use App\Notifications\Admin\AdminCredentialsGeneratedNotification;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class VendorOwnerService
     /**
      * List users that can be vendor owners.
      */
-    public function listOwners(array $filters = []): LengthAwarePaginator
+    public function listOwners(array $filters = []): CursorPaginator
     {
         return User::query()
             ->searchIdentity($filters['search'] ?? null)

@@ -27,11 +27,7 @@ class VendorRoleController extends Controller
 
     protected function getVendorId(Request $request): int
     {
-        // Fallback for store identification
-        $vendorId = $request->header('X-VENDOR-ID') ?? $request->query('vendor_id');
-        abort_if(! $vendorId, 400, 'Vendor ID is required in header or query parameter.');
-
-        return (int) $vendorId;
+        return $this->vendorRoleService->resolveVendorId($request);
     }
 
     public function index(IndexVendorRoleRequest $request)

@@ -8,7 +8,7 @@ class CategoryBuilder extends Builder
 {
     public function withListRelations(): self
     {
-        return $this->with(['hierarchy', 'icon', 'media']);
+        return $this->with(['hierarchy.parent', 'icon', 'media']);
     }
 
     public function searchName(?string $search): self
@@ -46,6 +46,8 @@ class CategoryBuilder extends Builder
 
     public function newest(): self
     {
-        return $this->latest();
+        $column = $this->model->usesTimestamps() ? $this->model->getCreatedAtColumn() : $this->model->getKeyName();
+
+        return $this->latest($column);
     }
 }

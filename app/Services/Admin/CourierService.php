@@ -10,6 +10,7 @@ use App\Models\Platform\SystemSetting;
 use App\Notifications\CourierApprovedNotification;
 use App\Traits\Paginatable;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CourierService
 {
@@ -59,11 +60,18 @@ class CourierService
         $courier->delete();
     }
 
-    public function approveCourier(Courier $courier, Admin $admin): void
+    public function approveCourier(Courier $courier, ?Admin $admin = null): void
     {
+        $admin ??= auth('api_admin')->user();
+        $document = $courier->document;
+
+        if (! $document || ! $document->contract_number) {
+            throw new HttpException(400, __('messages.must_print_contract_first'));
+        }
+
         CourierApproval::create([
             'courier_id' => $courier->id,
-            'admin_id' => $admin->id,
+            'admin_id' => $admin?->id,
             'approved_at' => now(),
         ]);
 
@@ -136,6 +144,20 @@ class CourierService
             'appName' => $this->localizedSystemSetting('app_name', '{"ar":"منصة فورا - Fawran","en":"Fawran"}') ?? 'منصة فورا - Fawran',
             'appLogo' => $this->localizedSystemSetting('app_logo'),
         ];
+    }
+
+    /**
+     * @return array{html: string, courier: Courier, contractNumber: string, appName: string, appLogo: ?string}
+     */
+    public function getRequiredContractViewData(Courier $courier): array
+    {
+        $contract = $this->getContractViewData($courier);
+
+        if (! $contract) {
+            throw new HttpException(404, 'Contract template not found in settings.');
+        }
+
+        return $contract;
     }
 
     public function getLiveLocation(Courier $courier): ?object

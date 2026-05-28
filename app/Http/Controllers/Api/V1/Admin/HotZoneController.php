@@ -62,7 +62,7 @@ class HotZoneController extends Controller
     public function show(HotZone $hotZone)
     {
         return $this->successResponse(
-            new HotZoneResource($hotZone->load(['manualHotZone', 'autoHotZone']))
+            new HotZoneResource($this->hotZoneService->getHotZone($hotZone))
         );
     }
 

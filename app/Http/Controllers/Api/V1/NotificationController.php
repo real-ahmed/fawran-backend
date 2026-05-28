@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 /**
@@ -12,14 +13,16 @@ use Illuminate\Http\Request;
  */
 class NotificationController extends Controller
 {
+    public function __construct(protected NotificationService $notificationService) {}
+
     /**
      * List all notifications
      */
     public function index(Request $request)
     {
-        $notifications = $request->user()->notifications()->cursorPaginate($request->query('per_page', 15));
-
-        return $this->successResponse($notifications);
+        return $this->successResponse(
+            $this->notificationService->list($request->user(), $request->query('per_page', 15))
+        );
     }
 
     /**
@@ -27,9 +30,9 @@ class NotificationController extends Controller
      */
     public function unread(Request $request)
     {
-        $notifications = $request->user()->unreadNotifications()->cursorPaginate($request->query('per_page', 15));
-
-        return $this->successResponse($notifications);
+        return $this->successResponse(
+            $this->notificationService->listUnread($request->user(), $request->query('per_page', 15))
+        );
     }
 
     /**
@@ -41,13 +44,7 @@ class NotificationController extends Controller
      */
     public function markAsRead(Request $request)
     {
-        $id = $request->input('id');
-
-        if ($id) {
-            $request->user()->notifications()->where('id', $id)->markAsRead();
-        } else {
-            $request->user()->unreadNotifications->markAsRead();
-        }
+        $this->notificationService->markAsRead($request->user(), $request->input('id'));
 
         return $this->successResponse(null, 'Notifications marked as read');
     }

@@ -28,11 +28,13 @@ class SettlementService
         return $settlement->load(['items', 'execution', 'note']);
     }
 
-    public function executeSettlement(Settlement $settlement, Admin $admin, array $data): Settlement
+    public function executeSettlement(Settlement $settlement, array $data, ?Admin $admin = null): Settlement
     {
+        $admin ??= auth('api_admin')->user();
+
         return DB::transaction(function () use ($settlement, $admin, $data) {
             $settlement->execution()->create([
-                'admin_id' => $admin->id,
+                'admin_id' => $admin?->id,
                 'execution_method' => $data['execution_method'],
                 'executed_at' => now(),
             ]);

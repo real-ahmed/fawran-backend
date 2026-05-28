@@ -7,7 +7,6 @@ use App\Http\Requests\Admin\PayoutRequest\IndexPayoutRequest;
 use App\Http\Resources\Admin\PayoutRequestResource;
 use App\Models\Payment\PayoutRequest;
 use App\Services\Admin\PayoutService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Payout Requests
@@ -37,8 +36,7 @@ class PayoutRequestController extends Controller
      */
     public function approve(PayoutRequest $payoutRequest)
     {
-        $admin = auth('api_admin')->user();
-        $payoutRequest = $this->payoutService->approvePayoutRequest($payoutRequest, $admin);
+        $payoutRequest = $this->payoutService->approvePayoutRequest($payoutRequest);
 
         return $this->successResponse(
             new PayoutRequestResource($payoutRequest),

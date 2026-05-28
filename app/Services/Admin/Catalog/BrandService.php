@@ -3,6 +3,7 @@
 namespace App\Services\Admin\Catalog;
 
 use App\Enums\FileType;
+use App\Http\Requests\Admin\Brand\IndexBrandRequest;
 use App\Models\Catalog\Brand;
 use App\Notifications\Catalog\BrandApprovedNotification;
 use App\Traits\Paginatable;
@@ -13,13 +14,13 @@ class BrandService
 {
     use Paginatable, ResolvesDisplayName;
 
-    public function listBrands(?string $search = null, ?string $approvalStatus = null, ?bool $isActive = null)
+    public function listBrands(IndexBrandRequest $request)
     {
         return Brand::query()
             ->withListRelations()
-            ->searchName($search)
-            ->approvalStatus($approvalStatus)
-            ->active($isActive)
+            ->searchName($request->validated('search'))
+            ->approvalStatus($request->validated('approval_status'))
+            ->active($request->has('is_active') ? $request->boolean('is_active') : null)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit())
             ->withQueryString();
