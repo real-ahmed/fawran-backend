@@ -28,12 +28,12 @@ class CourierBuilder extends Builder
 
     public function online(?bool $isOnline): self
     {
-        return $this->when($isOnline !== null, fn (self $query): self => $query->where('is_online', $isOnline));
+        return $this->when($isOnline !== null, fn(self $query): self => $query->where('is_online', $isOnline));
     }
 
     public function vehicleType(?string $vehicleType): self
     {
-        return $this->when($vehicleType, fn (self $query, string $vehicleType): self => $query->where('vehicle_type', $vehicleType));
+        return $this->when($vehicleType, fn(self $query, string $vehicleType): self => $query->where('vehicle_type', $vehicleType));
     }
 
     public function inDeliveryZone(null|int|string $deliveryZoneId): self
@@ -62,6 +62,6 @@ class CourierBuilder extends Builder
 
     public function newest(): self
     {
-        return $this->latest('created_at');
+        return $this->latest('id');
     }
 }
