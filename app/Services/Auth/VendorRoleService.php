@@ -2,6 +2,8 @@
 
 namespace App\Services\Auth;
 
+use App\DTOs\Auth\VendorRole\VendorRoleDataDTO;
+use App\DTOs\Auth\VendorRole\VendorRoleFilterDTO;
 use App\Enums\VendorPermission;
 use App\Models\Role;
 use App\Traits\Paginatable;
@@ -20,14 +22,14 @@ class VendorRoleService
         return (int) $vendorId;
     }
 
-    public function getRoles(int $vendorId, array $filters)
+    public function getRoles(int $vendorId, VendorRoleFilterDTO $filters)
     {
         return Role::query()
             ->vendor($vendorId)
             ->withPermissions()
-            ->searchName($filters['search'] ?? null)
+            ->searchName($filters->search)
             ->newest()
-            ->cursorPaginate($this->getPerPageLimit($filters['per_page'] ?? null));
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function getRoleById(int $vendorId, $id): Role
@@ -38,17 +40,17 @@ class VendorRoleService
             ->findOrFail($id);
     }
 
-    public function createRole(int $vendorId, array $data): Role
+    public function createRole(int $vendorId, VendorRoleDataDTO $dto): Role
     {
         $role = Role::create([
-            'name' => $data['name'],
+            'name' => $dto->name,
             'guard_name' => 'api', // Default guard for store users
             'vendor_id' => $vendorId,
         ]);
 
-        if (isset($data['permissions'])) {
+        if ($dto->permissions !== null) {
             // Filter only valid store permissions
-            $validPermissions = array_intersect($data['permissions'], VendorPermission::values());
+            $validPermissions = array_intersect($dto->permissions, VendorPermission::values());
 
             // Ensure permissions exist in DB for vendor_id 0 (global definition)
             $permissionIds = [];
@@ -63,19 +65,19 @@ class VendorRoleService
         return $role->load('permissions');
     }
 
-    public function updateRole(int $vendorId, Role $role, array $data): Role
+    public function updateRole(int $vendorId, Role $role, VendorRoleDataDTO $dto): Role
     {
         if ($role->vendor_id !== $vendorId) {
             abort(403, 'Unauthorized action.');
         }
 
-        if (isset($data['name'])) {
-            $role->name = $data['name'];
+        if ($dto->name !== null) {
+            $role->name = $dto->name;
             $role->save();
         }
 
-        if (isset($data['permissions'])) {
-            $validPermissions = array_intersect($data['permissions'], VendorPermission::values());
+        if ($dto->permissions !== null) {
+            $validPermissions = array_intersect($dto->permissions, VendorPermission::values());
 
             $permissionIds = [];
             foreach ($validPermissions as $permName) {

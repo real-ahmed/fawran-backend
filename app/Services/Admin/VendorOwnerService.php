@@ -2,6 +2,8 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\Vendor\VendorOwnerDataDTO;
+use App\DTOs\Admin\Vendor\VendorOwnerFilterDTO;
 use App\Models\User;
 use App\Notifications\Admin\AdminCredentialsGeneratedNotification;
 use App\Traits\Paginatable;
@@ -16,21 +18,31 @@ class VendorOwnerService
     /**
      * List users that can be vendor owners.
      */
-    public function listOwners(array $filters = []): CursorPaginator
+    public function listOwners(VendorOwnerFilterDTO $filters): CursorPaginator
     {
         return User::query()
-            ->searchIdentity($filters['search'] ?? null)
+            ->searchIdentity($filters->search)
             ->newest()
-            ->cursorPaginate($this->getPerPageLimit($filters['per_page'] ?? null));
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     /**
      * Create a new vendor owner (user).
      */
-    public function createOwner(array $data): User
+    public function createOwner(VendorOwnerDataDTO $dto): User
     {
         $plainPassword = Str::password(10);
-        $data['password'] = Hash::make($plainPassword);
+
+        $data = [
+            'name' => $dto->name,
+            'email' => $dto->email,
+            'phone' => $dto->phone,
+            'password' => Hash::make($plainPassword),
+        ];
+
+        if ($dto->is_active !== null) {
+            $data['is_active'] = $dto->is_active;
+        }
 
         $user = User::create($data);
 

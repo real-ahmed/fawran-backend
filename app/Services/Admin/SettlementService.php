@@ -2,23 +2,24 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\Settlement\SettlementDataDTO;
+use App\DTOs\Admin\Settlement\SettlementFilterDTO;
 use App\Models\Admin;
 use App\Models\Payment\Settlement;
 use App\Traits\Paginatable;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SettlementService
 {
     use Paginatable;
 
-    public function listSettlements(Request $request)
+    public function listSettlements(SettlementFilterDTO $filters)
     {
         return Settlement::query()
             ->withListRelations()
             ->forAdminZones()
-            ->type($request->query('settlement_type'))
-            ->status($request->query('status'))
+            ->type($filters->settlement_type)
+            ->status($filters->status)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }
@@ -28,19 +29,19 @@ class SettlementService
         return $settlement->load(['items', 'execution', 'note']);
     }
 
-    public function executeSettlement(Settlement $settlement, array $data, ?Admin $admin = null): Settlement
+    public function executeSettlement(Settlement $settlement, SettlementDataDTO $dto, ?Admin $admin = null): Settlement
     {
         $admin ??= auth('api_admin')->user();
 
-        return DB::transaction(function () use ($settlement, $admin, $data) {
+        return DB::transaction(function () use ($settlement, $admin, $dto) {
             $settlement->execution()->create([
                 'admin_id' => $admin?->id,
-                'execution_method' => $data['execution_method'],
+                'execution_method' => $dto->execution_method,
                 'executed_at' => now(),
             ]);
 
-            if (! empty($data['notes'])) {
-                $settlement->note()->updateOrCreate([], ['notes' => $data['notes']]);
+            if (! empty($dto->notes)) {
+                $settlement->note()->updateOrCreate([], ['notes' => $dto->notes]);
             }
 
             $settlement->update(['status' => 'completed']);

@@ -2,6 +2,7 @@
 
 namespace App\Services\Vendor\Catalog;
 
+use App\DTOs\Vendor\Catalog\MasterProduct\MasterProductSubmissionDTO;
 use App\Enums\AdminPermission;
 use App\Events\Catalog\MasterProductSubmitted;
 use App\Models\Product\MasterProduct;
@@ -17,29 +18,26 @@ class MasterProductService
         private readonly AdminNotificationService $notificationService
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function submit(array $data, Vendor $vendor): MasterProduct
+    public function submit(MasterProductSubmissionDTO $dto, Vendor $vendor): MasterProduct
     {
-        return DB::transaction(function () use ($data, $vendor): MasterProduct {
+        return DB::transaction(function () use ($dto, $vendor): MasterProduct {
             $product = MasterProduct::create([
-                'category_id' => $data['category_id'],
-                'name' => $data['name'],
-                'unit_type' => $data['unit_type'],
+                'category_id' => $dto->category_id,
+                'name' => $dto->name,
+                'unit_type' => $dto->unit_type,
                 'is_active' => false,
             ]);
 
-            if (! empty($data['description'])) {
+            if (! empty($dto->description)) {
                 $product->description()->create([
-                    'description' => $data['description'],
+                    'description' => $dto->description,
                 ]);
             }
 
-            if (! empty($data['brand_id'])) {
+            if (! empty($dto->brand_id)) {
                 $product->retailDetail()->create([
-                    'brand_id' => $data['brand_id'],
-                    'sku_barcode' => $data['sku_barcode'] ?? null,
+                    'brand_id' => $dto->brand_id,
+                    'sku_barcode' => $dto->sku_barcode,
                 ]);
             }
 

@@ -2,6 +2,7 @@
 
 namespace App\Services\Vendor\Catalog;
 
+use App\DTOs\Vendor\Catalog\Category\CategorySubmissionDTO;
 use App\Enums\AdminPermission;
 use App\Events\Catalog\CategorySubmitted;
 use App\Models\Catalog\Category;
@@ -17,26 +18,23 @@ class CategoryService
         private readonly AdminNotificationService $notificationService
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function submit(array $data, Vendor $vendor): Category
+    public function submit(CategorySubmissionDTO $dto, Vendor $vendor): Category
     {
-        return DB::transaction(function () use ($data, $vendor): Category {
+        return DB::transaction(function () use ($dto, $vendor): Category {
             $category = Category::create([
-                'name' => $data['name'],
+                'name' => $dto->name,
                 'is_active' => false,
             ]);
 
-            if (isset($data['parent_category_id'])) {
+            if ($dto->parent_category_id !== null) {
                 $category->hierarchy()->create([
-                    'parent_category_id' => $data['parent_category_id'],
+                    'parent_category_id' => $dto->parent_category_id,
                 ]);
             }
 
-            if (! empty($data['icon_class'])) {
+            if (! empty($dto->icon_class)) {
                 $category->icon()->create([
-                    'icon_class' => $data['icon_class'],
+                    'icon_class' => $dto->icon_class,
                 ]);
             }
 

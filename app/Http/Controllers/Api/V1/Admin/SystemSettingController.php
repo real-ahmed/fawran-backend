@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\SystemSetting\SystemSettingDataDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\SystemSetting\IndexSystemSettingRequest;
-use App\Http\Requests\Admin\SystemSetting\UpdateSystemSettingRequest;
-use App\Http\Resources\Admin\SystemSettingResource;
+use App\Http\Requests\V1\Admin\SystemSetting\IndexSystemSettingRequest;
+use App\Http\Requests\V1\Admin\SystemSetting\UpdateSystemSettingRequest;
+use App\Http\Resources\V1\Admin\SystemSettingResource;
 use App\Services\Admin\SystemSettingService;
 
 /**
@@ -42,7 +43,8 @@ class SystemSettingController extends Controller
      */
     public function update(UpdateSystemSettingRequest $request)
     {
-        $this->systemSettingService->updateSettings($request->validated('settings'));
+        $dto = SystemSettingDataDTO::fromRequest($request);
+        $this->systemSettingService->updateSettings($dto);
 
         return $this->successResponse(null, __('messages.settings_updated_successfully'));
     }

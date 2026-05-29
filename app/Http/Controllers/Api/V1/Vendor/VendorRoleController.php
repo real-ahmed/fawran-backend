@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Vendor;
 
+use App\DTOs\Auth\VendorRole\VendorRoleDataDTO;
+use App\DTOs\Auth\VendorRole\VendorRoleFilterDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Vendor\Role\IndexVendorRoleRequest;
 use App\Http\Requests\V1\Vendor\Role\StoreVendorRoleRequest;
@@ -33,7 +35,8 @@ class VendorRoleController extends Controller
     public function index(IndexVendorRoleRequest $request)
     {
         $vendorId = $this->getVendorId($request);
-        $roles = $this->vendorRoleService->getRoles($vendorId, $request->validated());
+        $dto = VendorRoleFilterDTO::fromRequest($request);
+        $roles = $this->vendorRoleService->getRoles($vendorId, $dto);
 
         return VendorRoleResource::collection($roles)->additional([
             'success' => true,
@@ -44,7 +47,8 @@ class VendorRoleController extends Controller
     public function store(StoreVendorRoleRequest $request)
     {
         $vendorId = $this->getVendorId($request);
-        $role = $this->vendorRoleService->createRole($vendorId, $request->validated());
+        $dto = VendorRoleDataDTO::fromRequest($request);
+        $role = $this->vendorRoleService->createRole($vendorId, $dto);
 
         return $this->successResponse(new VendorRoleResource($role), __('messages.vendor_role_created_successfully'), 201);
     }
@@ -60,7 +64,8 @@ class VendorRoleController extends Controller
     public function update(UpdateVendorRoleRequest $request, Role $role)
     {
         $vendorId = $this->getVendorId($request);
-        $updatedRole = $this->vendorRoleService->updateRole($vendorId, $role, $request->validated());
+        $dto = VendorRoleDataDTO::fromRequest($request);
+        $updatedRole = $this->vendorRoleService->updateRole($vendorId, $role, $dto);
 
         return $this->successResponse(new VendorRoleResource($updatedRole), __('messages.vendor_role_updated_successfully'));
     }

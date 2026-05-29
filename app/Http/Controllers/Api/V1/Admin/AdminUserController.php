@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\AdminUserDataDTO;
+use App\DTOs\Admin\AdminUserFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\AdminUser\IndexAdminUserRequest;
+use App\Http\Requests\V1\Admin\AdminUser\IndexAdminUserRequest;
+use App\Http\Requests\V1\Admin\AdminUser\StoreAdminRequest;
 use App\Http\Requests\V1\Admin\AdminUser\UpdateAdminRequest;
 use App\Http\Resources\V1\AdminResource;
 use App\Models\Admin;
@@ -25,7 +28,9 @@ class AdminUserController extends Controller
      */
     public function index(IndexAdminUserRequest $request)
     {
-        return AdminResource::collection($this->adminUserService->listAdmins($request->validated('search')));
+        $dto = AdminUserFilterDTO::fromRequest($request);
+
+        return AdminResource::collection($this->adminUserService->listAdmins($dto));
     }
 
     /**
@@ -33,9 +38,10 @@ class AdminUserController extends Controller
      *
      * Create a new system admin and assign roles.
      */
-    public function store(AdminRequest $request)
+    public function store(StoreAdminRequest $request)
     {
-        $admin = $this->adminUserService->createAdmin($request->validated());
+        $dto = AdminUserDataDTO::fromRequest($request);
+        $admin = $this->adminUserService->createAdmin($dto);
 
         return $this->successResponse(
             new AdminResource($admin),
@@ -59,7 +65,8 @@ class AdminUserController extends Controller
      */
     public function update(UpdateAdminRequest $request, Admin $adminUser)
     {
-        $admin = $this->adminUserService->updateAdmin($adminUser, $request->validated());
+        $dto = AdminUserDataDTO::fromRequest($request);
+        $admin = $this->adminUserService->updateAdmin($adminUser, $dto);
 
         return $this->successResponse(
             new AdminResource($admin),

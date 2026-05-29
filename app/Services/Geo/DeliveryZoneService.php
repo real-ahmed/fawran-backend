@@ -2,6 +2,8 @@
 
 namespace App\Services\Geo;
 
+use App\DTOs\Geo\DeliveryZone\DeliveryZoneDataDTO;
+use App\DTOs\Geo\DeliveryZone\DeliveryZoneFilterDTO;
 use App\Models\Geo\DeliveryZone;
 use App\Traits\Paginatable;
 use Illuminate\Support\Facades\DB;
@@ -13,14 +15,14 @@ class DeliveryZoneService
     /**
      * Get paginated delivery zones with optional filters.
      */
-    public function getZones(array $filters)
+    public function getZones(DeliveryZoneFilterDTO $filters)
     {
-        $perPage = $this->getPerPageLimit($filters['per_page'] ?? null);
-
-        return DeliveryZone::filter($filters)
+        return DeliveryZone::query()
+            ->when($filters->search, fn ($q) => $q->searchIdentity($filters->search))
+            ->when($filters->is_active !== null, fn ($q) => $q->where('is_active', $filters->is_active))
             ->withPolygonGeoJson()
             ->newest()
-            ->cursorPaginate($perPage);
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     /**
@@ -35,16 +37,14 @@ class DeliveryZoneService
 
     /**
      * Create a new Delivery Zone.
-     *
-     * @param  array  $data  Expected format: ['name' => [...], 'coordinates' => [['lat' => X, 'lng' => Y], ...], 'is_active' => true]
      */
-    public function createZone(array $data): DeliveryZone
+    public function createZone(DeliveryZoneDataDTO $dto): DeliveryZone
     {
-        $polygonWkt = $this->formatCoordinatesToWkt($data['coordinates']);
+        $polygonWkt = $this->formatCoordinatesToWkt($dto->coordinates);
 
         $zone = new DeliveryZone;
-        $zone->name = $data['name'];
-        $zone->is_active = $data['is_active'] ?? true;
+        $zone->name = $dto->name;
+        $zone->is_active = $dto->is_active ?? true;
         $zone->polygon = DB::raw("ST_GeomFromText('{$polygonWkt}')");
         $zone->save();
 
@@ -54,18 +54,18 @@ class DeliveryZoneService
     /**
      * Update an existing Delivery Zone.
      */
-    public function updateZone(DeliveryZone $zone, array $data): DeliveryZone
+    public function updateZone(DeliveryZone $zone, DeliveryZoneDataDTO $dto): DeliveryZone
     {
-        if (isset($data['name'])) {
-            $zone->name = $data['name'];
+        if ($dto->name !== null) {
+            $zone->name = $dto->name;
         }
 
-        if (isset($data['is_active'])) {
-            $zone->is_active = $data['is_active'];
+        if ($dto->is_active !== null) {
+            $zone->is_active = $dto->is_active;
         }
 
-        if (isset($data['coordinates'])) {
-            $polygonWkt = $this->formatCoordinatesToWkt($data['coordinates']);
+        if ($dto->coordinates !== null) {
+            $polygonWkt = $this->formatCoordinatesToWkt($dto->coordinates);
             $zone->polygon = DB::raw("ST_GeomFromText('{$polygonWkt}')");
         }
 

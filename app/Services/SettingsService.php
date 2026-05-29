@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\General\Settings\UserSettingsDTO;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -9,25 +10,23 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class SettingsService
 {
     /**
-     * @param  array<int, array{key: string, value: mixed}>  $settings
      * @return Collection<int, object>
      */
-    public function updateCurrentUserSettings(array $settings): Collection
+    public function updateCurrentUserSettings(UserSettingsDTO $dto): Collection
     {
-        return $this->updateFor(auth()->user() ?? auth('api_admin')->user(), $settings);
+        return $this->updateFor(auth()->user() ?? auth('api_admin')->user(), $dto);
     }
 
     /**
-     * @param  array<int, array{key: string, value: mixed}>  $settings
      * @return Collection<int, object>
      */
-    public function updateFor(?Authenticatable $user, array $settings): Collection
+    public function updateFor(?Authenticatable $user, UserSettingsDTO $dto): Collection
     {
         if (! $user || ! method_exists($user, 'setSetting')) {
             throw new HttpException(403, __('messages.settings_cannot_be_updated'));
         }
 
-        foreach ($settings as $setting) {
+        foreach ($dto->settings as $setting) {
             $user->setSetting($setting['key'], $setting['value']);
         }
 

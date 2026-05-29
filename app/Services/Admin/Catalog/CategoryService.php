@@ -2,8 +2,9 @@
 
 namespace App\Services\Admin\Catalog;
 
+use App\DTOs\Admin\Catalog\CategoryDataDTO;
+use App\DTOs\Admin\Catalog\CategoryFilterDTO;
 use App\Enums\FileType;
-use App\Http\Requests\Admin\Category\IndexCategoryRequest;
 use App\Models\Catalog\Category;
 use App\Notifications\Catalog\CategoryApprovedNotification;
 use App\Traits\Paginatable;
@@ -16,44 +17,42 @@ class CategoryService
 {
     use Paginatable, ResolvesDisplayName;
 
-    public function listCategories(IndexCategoryRequest $request)
+    public function listCategories(CategoryFilterDTO $filters)
     {
         return Category::query()
             ->withListRelations()
-            ->searchName($request->validated('search'))
-            ->approvalStatus($request->validated('approval_status'))
-            ->active($request->has('is_active') ? $request->boolean('is_active') : null)
+            ->searchName($filters->search)
+            ->approvalStatus($filters->approval_status)
+            ->active($filters->is_active)
             ->withVendorSubmission()
             ->newest()
             ->cursorPaginate($this->getPerPageLimit())
             ->withQueryString();
     }
 
-    public function createCategory(array $data): Category
+    public function createCategory(CategoryDataDTO $dto): Category
     {
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($dto) {
             $category = Category::create([
-                'name' => $data['name'],
-                'is_active' => $data['is_active'] ?? true,
+                'name' => $dto->name,
+                'is_active' => $dto->is_active ?? true,
             ]);
 
-            if (isset($data['parent_category_id'])) {
+            if ($dto->has_parent_category_id && ! is_null($dto->parent_category_id)) {
                 $category->hierarchy()->create([
-                    'parent_category_id' => $data['parent_category_id'],
+                    'parent_category_id' => $dto->parent_category_id,
                 ]);
             }
 
-            $icon = $data['icon'] ?? null;
-            if ($icon instanceof UploadedFile) {
-                $path = $icon->store('category-icons', 'public');
+            if ($dto->icon instanceof UploadedFile) {
+                $path = $dto->icon->store('category-icons', 'public');
                 $category->icon()->create([
                     'icon_path' => $path,
                 ]);
             }
 
-            $image = $data['image'] ?? null;
-            if ($image) {
-                $path = $image->store('categories', 'public');
+            if ($dto->image) {
+                $path = $dto->image->store('categories', 'public');
                 $category->media()->create([
                     'file_path' => $path,
                     'file_type' => FileType::Image,
@@ -70,28 +69,34 @@ class CategoryService
         return $category->load(['hierarchy', 'icon']);
     }
 
-    public function updateCategory(Category $category, array $data): Category
+    public function updateCategory(Category $category, CategoryDataDTO $dto): Category
     {
-        return DB::transaction(function () use ($data, $category) {
-            $updateData = collect($data)->only(['name', 'is_active'])->toArray();
+        return DB::transaction(function () use ($dto, $category) {
+            $updateData = [];
+            if ($dto->name !== null) {
+                $updateData['name'] = $dto->name;
+            }
+            if ($dto->is_active !== null) {
+                $updateData['is_active'] = $dto->is_active;
+            }
+
             if (! empty($updateData)) {
                 $category->update($updateData);
             }
 
-            if (array_key_exists('parent_category_id', $data)) {
-                if (is_null($data['parent_category_id'])) {
+            if ($dto->has_parent_category_id) {
+                if (is_null($dto->parent_category_id)) {
                     $category->hierarchy()->delete();
                 } else {
                     $category->hierarchy()->updateOrCreate(
                         ['child_category_id' => $category->id],
-                        ['parent_category_id' => $data['parent_category_id']]
+                        ['parent_category_id' => $dto->parent_category_id]
                     );
                 }
             }
 
-            $icon = $data['icon'] ?? null;
-            if ($icon instanceof UploadedFile) {
-                $path = $icon->store('category-icons', 'public');
+            if ($dto->icon instanceof UploadedFile) {
+                $path = $dto->icon->store('category-icons', 'public');
                 $oldIcon = $category->icon;
                 if ($oldIcon && $oldIcon->icon_path) {
                     Storage::disk('public')->delete($oldIcon->icon_path);
@@ -100,7 +105,7 @@ class CategoryService
                     ['category_id' => $category->id],
                     ['icon_path' => $path]
                 );
-            } elseif (array_key_exists('icon', $data) && is_null($data['icon'])) {
+            } elseif ($dto->has_icon && is_null($dto->icon)) {
                 $oldIcon = $category->icon;
                 if ($oldIcon && $oldIcon->icon_path) {
                     Storage::disk('public')->delete($oldIcon->icon_path);
@@ -108,9 +113,8 @@ class CategoryService
                 }
             }
 
-            $image = $data['image'] ?? null;
-            if ($image) {
-                $path = $image->store('categories', 'public');
+            if ($dto->image) {
+                $path = $dto->image->store('categories', 'public');
 
                 $oldMedia = $category->media()->where('is_primary', true)->first();
                 if ($oldMedia) {

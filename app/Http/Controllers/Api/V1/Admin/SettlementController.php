@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\Settlement\SettlementDataDTO;
+use App\DTOs\Admin\Settlement\SettlementFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Settlement\ExecuteSettlementRequest;
-use App\Http\Requests\Admin\Settlement\IndexSettlementRequest;
-use App\Http\Resources\Admin\SettlementResource;
+use App\Http\Requests\V1\Admin\Settlement\ExecuteSettlementRequest;
+use App\Http\Requests\V1\Admin\Settlement\IndexSettlementRequest;
+use App\Http\Resources\V1\Admin\SettlementResource;
 use App\Models\Payment\Settlement;
 use App\Services\Admin\SettlementService;
 
@@ -28,7 +30,9 @@ class SettlementController extends Controller
      */
     public function index(IndexSettlementRequest $request)
     {
-        return SettlementResource::collection($this->settlementService->listSettlements($request));
+        $dto = SettlementFilterDTO::fromRequest($request);
+
+        return SettlementResource::collection($this->settlementService->listSettlements($dto));
     }
 
     /**
@@ -53,7 +57,8 @@ class SettlementController extends Controller
      */
     public function execute(ExecuteSettlementRequest $request, Settlement $settlement)
     {
-        $settlement = $this->settlementService->executeSettlement($settlement, $request->validated());
+        $dto = SettlementDataDTO::fromRequest($request);
+        $settlement = $this->settlementService->executeSettlement($settlement, $dto);
 
         return $this->successResponse(
             new SettlementResource($settlement),

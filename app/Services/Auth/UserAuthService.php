@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\DTOs\Auth\Login\LoginDTO;
 use App\Models\User;
 use App\Models\Vendor\Vendor;
 use App\Notifications\Auth\SendPasswordResetOtp;
@@ -16,14 +17,11 @@ class UserAuthService
 
     public function __construct(protected PasswordResetService $passwordResetService) {}
 
-    /**
-     * @param  array{login: string, password: string}  $credentials
-     */
-    public function login(array $credentials): JsonResponse
+    public function login(LoginDTO $dto): JsonResponse
     {
-        $user = $this->findUserByLogin($credentials['login']);
+        $user = $this->findUserByLogin($dto->login);
 
-        if (! $user || ! $user->localAccount || ! Hash::check($credentials['password'], $user->localAccount->password)) {
+        if (! $user || ! $user->localAccount || ! Hash::check($dto->password, $user->localAccount->password)) {
             return $this->errorResponse(__('auth.failed'), null, 401);
         }
 

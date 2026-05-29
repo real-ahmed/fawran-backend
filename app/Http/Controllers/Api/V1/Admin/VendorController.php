@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\Vendor\VendorDataDTO;
+use App\DTOs\Admin\Vendor\VendorFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Vendor\IndexVendorRequest;
+use App\Http\Requests\V1\Admin\Vendor\IndexVendorRequest;
 use App\Http\Requests\V1\Admin\Vendor\StoreVendorRequest;
 use App\Http\Requests\V1\Admin\Vendor\UpdateVendorRequest;
 use App\Http\Resources\V1\VendorResource;
@@ -29,7 +31,9 @@ class VendorController extends Controller
      */
     public function index(IndexVendorRequest $request)
     {
-        return VendorResource::collection($this->vendorService->listVendors($request));
+        $dto = VendorFilterDTO::fromRequest($request);
+
+        return VendorResource::collection($this->vendorService->listVendors($dto));
     }
 
     /**
@@ -39,7 +43,8 @@ class VendorController extends Controller
      */
     public function store(StoreVendorRequest $request)
     {
-        $vendor = $this->vendorService->createVendor($request->validated());
+        $dto = VendorDataDTO::fromRequest($request);
+        $vendor = $this->vendorService->createVendor($dto);
 
         return $this->successResponse(
             new VendorResource($vendor),
@@ -65,7 +70,8 @@ class VendorController extends Controller
      */
     public function update(UpdateVendorRequest $request, Vendor $vendor)
     {
-        $vendor = $this->vendorService->updateVendor($vendor, $request->validated());
+        $dto = VendorDataDTO::fromRequest($request);
+        $vendor = $this->vendorService->updateVendor($vendor, $dto);
 
         return $this->successResponse(
             new VendorResource($vendor),

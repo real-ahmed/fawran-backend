@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\RefundRequest\RefundRequestDataDTO;
+use App\DTOs\Admin\RefundRequest\RefundRequestFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\RefundRequest\IndexRefundRequest;
-use App\Http\Requests\Admin\RefundRequest\ResolveRefundRequest;
-use App\Http\Resources\Admin\RefundRequestResource;
+use App\Http\Requests\V1\Admin\RefundRequest\IndexRefundRequest;
+use App\Http\Requests\V1\Admin\RefundRequest\ResolveRefundRequest;
+use App\Http\Resources\V1\Admin\RefundRequestResource;
 use App\Models\Payment\RefundRequest;
 use App\Services\Admin\RefundService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Refund Requests
@@ -28,7 +29,9 @@ class RefundRequestController extends Controller
      */
     public function index(IndexRefundRequest $request)
     {
-        return RefundRequestResource::collection($this->refundService->listRefundRequests($request));
+        $dto = RefundRequestFilterDTO::fromRequest($request);
+
+        return RefundRequestResource::collection($this->refundService->listRefundRequests($dto));
     }
 
     /**
@@ -53,7 +56,8 @@ class RefundRequestController extends Controller
      */
     public function resolve(ResolveRefundRequest $request, RefundRequest $refundRequest)
     {
-        $refundRequest = $this->refundService->resolveRefundRequest($refundRequest, $request->validated());
+        $dto = RefundRequestDataDTO::fromRequest($request);
+        $refundRequest = $this->refundService->resolveRefundRequest($refundRequest, $dto);
 
         return $this->successResponse(
             new RefundRequestResource($refundRequest),

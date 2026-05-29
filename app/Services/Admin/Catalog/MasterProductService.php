@@ -2,12 +2,13 @@
 
 namespace App\Services\Admin\Catalog;
 
+use App\DTOs\Admin\Catalog\MasterProductDataDTO;
+use App\DTOs\Admin\Catalog\MasterProductFilterDTO;
 use App\Enums\FileType;
 use App\Models\Product\MasterProduct;
 use App\Notifications\Catalog\MasterProductApprovedNotification;
 use App\Traits\Paginatable;
 use App\Traits\ResolvesDisplayName;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,45 +16,43 @@ class MasterProductService
 {
     use Paginatable, ResolvesDisplayName;
 
-    public function listProducts(Request $request)
+    public function listProducts(MasterProductFilterDTO $filters)
     {
         return MasterProduct::query()
             ->withListRelations()
-            ->approvalStatus($request->query('approval_status'))
-            ->inCategory($request->query('category_id'))
-            ->unitType($request->query('unit_type'))
-            ->active($request->has('is_active') ? $request->boolean('is_active') : null)
-            ->searchName($request->query('search'))
+            ->approvalStatus($filters->approval_status)
+            ->inCategory($filters->category_id)
+            ->active($filters->is_active)
+            ->searchName($filters->search)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }
 
-    public function createProduct(array $data): MasterProduct
+    public function createProduct(MasterProductDataDTO $dto): MasterProduct
     {
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($dto) {
             $product = MasterProduct::create([
-                'category_id' => $data['category_id'],
-                'name' => $data['name'],
-                'unit_type' => $data['unit_type'],
-                'is_active' => $data['is_active'] ?? true,
+                'category_id' => $dto->category_id,
+                'name' => $dto->name,
+                'unit_type' => $dto->unit_type,
+                'is_active' => $dto->is_active ?? true,
             ]);
 
-            if (! empty($data['description'])) {
+            if (! empty($dto->description)) {
                 $product->description()->create([
-                    'description' => $data['description'],
+                    'description' => $dto->description,
                 ]);
             }
 
-            if (! empty($data['brand_id']) || ! empty($data['sku_barcode'])) {
+            if (! empty($dto->brand_id) || ! empty($dto->sku_barcode)) {
                 $product->retailDetail()->create([
-                    'brand_id' => $data['brand_id'] ?? null,
-                    'sku_barcode' => $data['sku_barcode'] ?? null,
+                    'brand_id' => $dto->brand_id ?? null,
+                    'sku_barcode' => $dto->sku_barcode ?? null,
                 ]);
             }
 
-            $image = $data['image'] ?? null;
-            if ($image) {
-                $path = $image->store('master-products', 'public');
+            if ($dto->image) {
+                $path = $dto->image->store('master-products', 'public');
                 $product->media()->create([
                     'file_path' => $path,
                     'file_type' => FileType::Image,
@@ -61,9 +60,8 @@ class MasterProductService
                 ]);
             }
 
-            $images = $data['images'] ?? [];
-            if (! empty($images)) {
-                foreach ($images as $img) {
+            if (! empty($dto->images)) {
+                foreach ($dto->images as $img) {
                     $path = $img->store('master-products', 'public');
                     $product->media()->create([
                         'file_path' => $path,
@@ -82,33 +80,48 @@ class MasterProductService
         return $product->load(['category', 'description', 'retailDetail']);
     }
 
-    public function updateProduct(MasterProduct $product, array $data): MasterProduct
+    public function updateProduct(MasterProduct $product, MasterProductDataDTO $dto): MasterProduct
     {
-        return DB::transaction(function () use ($product, $data) {
-            $product->update(collect($data)->only(['category_id', 'name', 'unit_type', 'is_active'])->toArray());
+        return DB::transaction(function () use ($product, $dto) {
+            $updateData = [];
+            if ($dto->category_id !== null) {
+                $updateData['category_id'] = $dto->category_id;
+            }
+            if ($dto->name !== null) {
+                $updateData['name'] = $dto->name;
+            }
+            if ($dto->unit_type !== null) {
+                $updateData['unit_type'] = $dto->unit_type;
+            }
+            if ($dto->is_active !== null) {
+                $updateData['is_active'] = $dto->is_active;
+            }
 
-            if (array_key_exists('description', $data)) {
-                if (! empty($data['description'])) {
-                    $product->description()->updateOrCreate([], ['description' => $data['description']]);
+            if (! empty($updateData)) {
+                $product->update($updateData);
+            }
+
+            if ($dto->description !== null) {
+                if (! empty($dto->description)) {
+                    $product->description()->updateOrCreate([], ['description' => $dto->description]);
                 } else {
                     $product->description()->delete();
                 }
             }
 
-            if (array_key_exists('brand_id', $data) || array_key_exists('sku_barcode', $data)) {
-                if (! empty($data['brand_id'])) {
+            if ($dto->has_brand_id || $dto->has_sku_barcode) {
+                if (! empty($dto->brand_id)) {
                     $product->retailDetail()->updateOrCreate([], [
-                        'brand_id' => $data['brand_id'],
-                        'sku_barcode' => $data['sku_barcode'] ?? null,
+                        'brand_id' => $dto->brand_id,
+                        'sku_barcode' => $dto->sku_barcode ?? null,
                     ]);
                 } else {
                     $product->retailDetail()->delete();
                 }
             }
 
-            $image = $data['image'] ?? null;
-            if ($image) {
-                $path = $image->store('master-products', 'public');
+            if ($dto->image) {
+                $path = $dto->image->store('master-products', 'public');
 
                 $oldMedia = $product->media()->where('is_primary', true)->first();
                 if ($oldMedia) {
@@ -123,8 +136,7 @@ class MasterProductService
                 ]);
             }
 
-            $images = $data['images'] ?? null;
-            if ($images !== null) {
+            if ($dto->has_images) {
                 // Delete old non-primary images
                 $oldImages = $product->media()->where('is_primary', false)->get();
                 foreach ($oldImages as $oldImg) {
@@ -132,14 +144,16 @@ class MasterProductService
                     $oldImg->delete();
                 }
 
-                // Create new ones
-                foreach ($images as $img) {
-                    $path = $img->store('master-products', 'public');
-                    $product->media()->create([
-                        'file_path' => $path,
-                        'file_type' => FileType::Image,
-                        'is_primary' => false,
-                    ]);
+                if (! empty($dto->images)) {
+                    // Create new ones
+                    foreach ($dto->images as $img) {
+                        $path = $img->store('master-products', 'public');
+                        $product->media()->create([
+                            'file_path' => $path,
+                            'file_type' => FileType::Image,
+                            'is_primary' => false,
+                        ]);
+                    }
                 }
             }
 

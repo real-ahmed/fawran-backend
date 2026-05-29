@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\DTOs\Auth\Login\AdminLoginDTO;
 use App\Http\Resources\V1\AdminResource;
 use App\Models\Admin;
 use App\Notifications\Auth\SendPasswordResetOtp;
@@ -16,11 +17,13 @@ class AdminAuthService
 
     public function __construct(protected PasswordResetService $passwordResetService) {}
 
-    /**
-     * @param  array{email: string, password: string}  $credentials
-     */
-    public function login(array $credentials): JsonResponse
+    public function login(AdminLoginDTO $dto): JsonResponse
     {
+        $credentials = [
+            'email' => $dto->email,
+            'password' => $dto->password,
+        ];
+
         if (! $token = Auth::guard('api_admin')->attempt($credentials)) {
             return $this->errorResponse(__('auth.failed'), null, 401);
         }

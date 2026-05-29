@@ -2,8 +2,9 @@
 
 namespace App\Services\Admin\Catalog;
 
+use App\DTOs\Admin\Catalog\BrandDataDTO;
+use App\DTOs\Admin\Catalog\BrandFilterDTO;
 use App\Enums\FileType;
-use App\Http\Requests\Admin\Brand\IndexBrandRequest;
 use App\Models\Catalog\Brand;
 use App\Notifications\Catalog\BrandApprovedNotification;
 use App\Traits\Paginatable;
@@ -14,21 +15,22 @@ class BrandService
 {
     use Paginatable, ResolvesDisplayName;
 
-    public function listBrands(IndexBrandRequest $request)
+    public function listBrands(BrandFilterDTO $filters)
     {
         return Brand::query()
             ->withListRelations()
-            ->searchName($request->validated('search'))
-            ->approvalStatus($request->validated('approval_status'))
-            ->active($request->has('is_active') ? $request->boolean('is_active') : null)
+            ->searchName($filters->search)
+            ->approvalStatus($filters->approval_status)
+            ->active($filters->is_active)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit())
             ->withQueryString();
     }
 
-    public function createBrand(array $data): Brand
+    public function createBrand(BrandDataDTO $dto): Brand
     {
-        $image = $data['image'] ?? null;
+        $data = $dto->toArray();
+        $image = $dto->image;
         unset($data['image']);
 
         $brand = Brand::create($data);
@@ -45,9 +47,10 @@ class BrandService
         return $brand->load('media');
     }
 
-    public function updateBrand(Brand $brand, array $data): Brand
+    public function updateBrand(Brand $brand, BrandDataDTO $dto): Brand
     {
-        $image = $data['image'] ?? null;
+        $data = $dto->toArray();
+        $image = $dto->image;
         unset($data['image']);
 
         $brand->update($data);

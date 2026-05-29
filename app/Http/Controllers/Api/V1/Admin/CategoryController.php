@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\Catalog\CategoryDataDTO;
+use App\DTOs\Admin\Catalog\CategoryFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Category\IndexCategoryRequest;
-use App\Http\Requests\Admin\Category\StoreCategoryRequest;
-use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
-use App\Http\Resources\Admin\CategoryResource;
+use App\Http\Requests\V1\Admin\Category\IndexCategoryRequest;
+use App\Http\Requests\V1\Admin\Category\StoreCategoryRequest;
+use App\Http\Requests\V1\Admin\Category\UpdateCategoryRequest;
+use App\Http\Resources\V1\Admin\CategoryResource;
 use App\Models\Catalog\Category;
 use App\Services\Admin\Catalog\CategoryService;
 
@@ -26,7 +28,9 @@ class CategoryController extends Controller
      */
     public function index(IndexCategoryRequest $request)
     {
-        return CategoryResource::collection($this->categoryService->listCategories($request));
+        $dto = CategoryFilterDTO::fromRequest($request);
+
+        return CategoryResource::collection($this->categoryService->listCategories($dto));
     }
 
     /**
@@ -36,7 +40,8 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $category = $this->categoryService->createCategory($request->validated());
+        $dto = CategoryDataDTO::fromRequest($request);
+        $category = $this->categoryService->createCategory($dto);
 
         return $this->successResponse(
             new CategoryResource($category),
@@ -62,7 +67,8 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $category = $this->categoryService->updateCategory($category, $request->validated());
+        $dto = CategoryDataDTO::fromRequest($request);
+        $category = $this->categoryService->updateCategory($category, $dto);
 
         return $this->successResponse(
             new CategoryResource($category),

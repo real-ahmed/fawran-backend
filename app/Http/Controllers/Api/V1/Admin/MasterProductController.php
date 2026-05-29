@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\Catalog\MasterProductDataDTO;
+use App\DTOs\Admin\Catalog\MasterProductFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\MasterProduct\IndexMasterProductRequest;
-use App\Http\Requests\Admin\MasterProduct\StoreMasterProductRequest;
-use App\Http\Requests\Admin\MasterProduct\UpdateMasterProductRequest;
-use App\Http\Resources\Admin\MasterProductResource;
+use App\Http\Requests\V1\Admin\MasterProduct\IndexMasterProductRequest;
+use App\Http\Requests\V1\Admin\MasterProduct\RejectMasterProductRequest;
+use App\Http\Requests\V1\Admin\MasterProduct\StoreMasterProductRequest;
+use App\Http\Requests\V1\Admin\MasterProduct\UpdateMasterProductRequest;
+use App\Http\Resources\V1\Admin\MasterProductResource;
 use App\Models\Product\MasterProduct;
 use App\Services\Admin\Catalog\MasterProductService;
 
@@ -31,7 +34,9 @@ class MasterProductController extends Controller
      */
     public function index(IndexMasterProductRequest $request)
     {
-        return MasterProductResource::collection($this->masterProductService->listProducts($request));
+        $dto = MasterProductFilterDTO::fromRequest($request);
+
+        return MasterProductResource::collection($this->masterProductService->listProducts($dto));
     }
 
     /**
@@ -48,7 +53,8 @@ class MasterProductController extends Controller
      */
     public function store(StoreMasterProductRequest $request)
     {
-        $product = $this->masterProductService->createProduct($request->validated());
+        $dto = MasterProductDataDTO::fromRequest($request);
+        $product = $this->masterProductService->createProduct($dto);
 
         return $this->successResponse(
             new MasterProductResource($product),
@@ -76,7 +82,8 @@ class MasterProductController extends Controller
      */
     public function update(UpdateMasterProductRequest $request, MasterProduct $masterProduct)
     {
-        $product = $this->masterProductService->updateProduct($masterProduct, $request->validated());
+        $dto = MasterProductDataDTO::fromRequest($request);
+        $product = $this->masterProductService->updateProduct($masterProduct, $dto);
 
         return $this->successResponse(
             new MasterProductResource($product),
@@ -115,11 +122,11 @@ class MasterProductController extends Controller
      *
      * @bodyParam reason string optional Reason for rejection. Example: Incomplete description
      */
-    public function reject(Request $request, MasterProduct $masterProduct)
+    public function reject(RejectMasterProductRequest $request, MasterProduct $masterProduct)
     {
-        $request->validate(['reason' => 'sometimes|string|max:255']);
+        $data = $request->validated();
 
-        $this->masterProductService->rejectProduct($masterProduct, $request->reason);
+        $this->masterProductService->rejectProduct($masterProduct, $data['reason'] ?? null);
 
         return $this->successResponse(null, __('messages.master_product_rejected_successfully'));
     }

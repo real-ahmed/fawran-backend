@@ -2,6 +2,8 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\Courier\CourierDataDTO;
+use App\DTOs\Admin\Courier\CourierFilterDTO;
 use App\Models\Admin;
 use App\Models\Courier\Courier;
 use App\Models\Courier\CourierApproval;
@@ -9,23 +11,22 @@ use App\Models\Courier\CourierDocument;
 use App\Models\Platform\SystemSetting;
 use App\Notifications\CourierApprovedNotification;
 use App\Traits\Paginatable;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CourierService
 {
     use Paginatable;
 
-    public function listCouriers(Request $request)
+    public function listCouriers(CourierFilterDTO $filters)
     {
         return Courier::query()
             ->withListRelations()
             ->forAdminZones()
-            ->search($request->query('search'))
-            ->online($request->has('is_online') ? $request->boolean('is_online') : null)
-            ->vehicleType($request->query('vehicle_type'))
-            ->inDeliveryZone($request->query('delivery_zone_id'))
-            ->approvalStatus($request->query('approval_status'))
+            ->search($filters->search)
+            ->online($filters->is_online)
+            ->vehicleType($filters->vehicle_type)
+            ->inDeliveryZone($filters->delivery_zone_id)
+            ->approvalStatus($filters->approval_status)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }
@@ -35,22 +36,36 @@ class CourierService
         return $courier->load(['user', 'document', 'approval', 'location']);
     }
 
-    public function updateCourier(Courier $courier, array $data): Courier
+    public function updateCourier(Courier $courier, CourierDataDTO $dto): Courier
     {
         // Update User
-        $userData = [
-            'name' => $data['name'],
-            'phone' => $data['phone'],
-        ];
-        $courier->user->update($userData);
+        $userData = [];
+        if ($dto->name !== null) {
+            $userData['name'] = $dto->name;
+        }
+        if ($dto->phone !== null) {
+            $userData['phone'] = $dto->phone;
+        }
+
+        if (! empty($userData)) {
+            $courier->user->update($userData);
+        }
 
         // Update Courier
-        $courierData = [
-            'national_id' => $data['national_id'],
-            'vehicle_type' => $data['vehicle_type'],
-            'plate_number' => $data['plate_number'] ?? null,
-        ];
-        $courier->update($courierData);
+        $courierData = [];
+        if ($dto->national_id !== null) {
+            $courierData['national_id'] = $dto->national_id;
+        }
+        if ($dto->vehicle_type !== null) {
+            $courierData['vehicle_type'] = $dto->vehicle_type;
+        }
+        if ($dto->has_plate_number) {
+            $courierData['plate_number'] = $dto->plate_number;
+        }
+
+        if (! empty($courierData)) {
+            $courier->update($courierData);
+        }
 
         return $this->getCourier($courier);
     }

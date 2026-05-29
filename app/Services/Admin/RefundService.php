@@ -2,20 +2,21 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\RefundRequest\RefundRequestDataDTO;
+use App\DTOs\Admin\RefundRequest\RefundRequestFilterDTO;
 use App\Models\Payment\RefundRequest;
 use App\Traits\Paginatable;
-use Illuminate\Http\Request;
 
 class RefundService
 {
     use Paginatable;
 
-    public function listRefundRequests(Request $request)
+    public function listRefundRequests(RefundRequestFilterDTO $filters)
     {
         return RefundRequest::query()
             ->withListRelations()
             ->forAdminZones()
-            ->status($request->query('status'))
+            ->status($filters->status)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }
@@ -25,11 +26,11 @@ class RefundService
         return $refundRequest->load(['customer', 'order', 'items']);
     }
 
-    public function resolveRefundRequest(RefundRequest $refundRequest, array $data): RefundRequest
+    public function resolveRefundRequest(RefundRequest $refundRequest, RefundRequestDataDTO $dto): RefundRequest
     {
         $refundRequest->update([
-            'status' => $data['status'],
-            'resolution' => $data['resolution'] ?? $refundRequest->resolution,
+            'status' => $dto->status,
+            'resolution' => $dto->resolution ?? $refundRequest->resolution,
         ]);
 
         return $refundRequest;

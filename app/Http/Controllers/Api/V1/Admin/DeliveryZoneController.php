@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Geo\DeliveryZone\DeliveryZoneDataDTO;
+use App\DTOs\Geo\DeliveryZone\DeliveryZoneFilterDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Admin\DeliveryZone\IndexDeliveryZoneRequest;
 use App\Http\Requests\V1\Admin\DeliveryZone\UpdateDeliveryZoneRequest;
@@ -26,7 +28,8 @@ class DeliveryZoneController extends Controller
 
     public function index(IndexDeliveryZoneRequest $request)
     {
-        $zones = $this->deliveryZoneService->getZones($request->validated());
+        $dto = DeliveryZoneFilterDTO::fromRequest($request);
+        $zones = $this->deliveryZoneService->getZones($dto);
 
         return DeliveryZoneResource::collection($zones)->additional([
             'success' => true,
@@ -36,7 +39,8 @@ class DeliveryZoneController extends Controller
 
     public function store(VendorDeliveryZoneRequest $request)
     {
-        $zone = $this->deliveryZoneService->createZone($request->validated());
+        $dto = DeliveryZoneDataDTO::fromRequest($request);
+        $zone = $this->deliveryZoneService->createZone($dto);
 
         return $this->successResponse(new DeliveryZoneResource($zone), __('messages.delivery_zone_created_successfully'), 201);
     }
@@ -50,7 +54,8 @@ class DeliveryZoneController extends Controller
 
     public function update(UpdateDeliveryZoneRequest $request, DeliveryZone $deliveryZone)
     {
-        $zone = $this->deliveryZoneService->updateZone($deliveryZone, $request->validated());
+        $dto = DeliveryZoneDataDTO::fromRequest($request);
+        $zone = $this->deliveryZoneService->updateZone($deliveryZone, $dto);
 
         return $this->successResponse(new DeliveryZoneResource($zone), __('messages.delivery_zone_updated_successfully'));
     }

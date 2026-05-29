@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\SystemSetting\SystemSettingDataDTO;
 use App\Models\Platform\SystemSetting;
 use Illuminate\Http\UploadedFile;
 
@@ -15,8 +16,9 @@ class SystemSettingService
             ->get();
     }
 
-    public function updateSettings(array $settings): void
+    public function updateSettings(SystemSettingDataDTO $dto): void
     {
+        $settings = $dto->settings;
         $updatedKeys = [];
         $mergedJsonKeys = ['app_logo', 'app_logo_white', 'app_icon', 'favicon'];
         $pendingMerges = [];

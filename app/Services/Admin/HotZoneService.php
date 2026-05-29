@@ -2,41 +2,42 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\HotZone\HotZoneDataDTO;
+use App\DTOs\Admin\HotZone\HotZoneFilterDTO;
 use App\Models\Geo\HotZone;
 use App\Traits\Paginatable;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class HotZoneService
 {
     use Paginatable;
 
-    public function listHotZones(Request $request)
+    public function listHotZones(HotZoneFilterDTO $filters)
     {
         return HotZone::query()
             ->withListRelations()
             ->forAdminZones()
-            ->active($request->has('is_active') ? $request->boolean('is_active') : null)
-            ->intensity($request->query('intensity'))
+            ->active($filters->is_active)
+            ->intensity($filters->intensity)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }
 
-    public function createHotZone(array $data): HotZone
+    public function createHotZone(HotZoneDataDTO $dto): HotZone
     {
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($dto) {
             $hotZone = HotZone::create([
-                'center_latitude' => $data['center_latitude'],
-                'center_longitude' => $data['center_longitude'],
-                'radius_meters' => $data['radius_meters'],
-                'intensity' => $data['intensity'],
-                'is_active' => $data['is_active'] ?? true,
-                'starts_at' => $data['starts_at'] ?? now(),
+                'center_latitude' => $dto->center_latitude,
+                'center_longitude' => $dto->center_longitude,
+                'radius_meters' => $dto->radius_meters,
+                'intensity' => $dto->intensity,
+                'is_active' => $dto->is_active ?? true,
+                'starts_at' => $dto->starts_at ?? now(),
             ]);
 
-            if (! empty($data['name'])) {
+            if (! empty($dto->name)) {
                 $hotZone->manualHotZone()->create([
-                    'name' => $data['name'],
+                    'name' => $dto->name,
                 ]);
             }
 
@@ -49,21 +50,36 @@ class HotZoneService
         return $hotZone->load(['manualHotZone', 'autoHotZone']);
     }
 
-    public function updateHotZone(HotZone $hotZone, array $data): HotZone
+    public function updateHotZone(HotZone $hotZone, HotZoneDataDTO $dto): HotZone
     {
-        return DB::transaction(function () use ($hotZone, $data) {
-            $hotZone->update(collect($data)->only([
-                'center_latitude',
-                'center_longitude',
-                'radius_meters',
-                'intensity',
-                'is_active',
-                'starts_at',
-            ])->toArray());
+        return DB::transaction(function () use ($hotZone, $dto) {
+            $updateData = [];
+            if ($dto->center_latitude !== null) {
+                $updateData['center_latitude'] = $dto->center_latitude;
+            }
+            if ($dto->center_longitude !== null) {
+                $updateData['center_longitude'] = $dto->center_longitude;
+            }
+            if ($dto->radius_meters !== null) {
+                $updateData['radius_meters'] = $dto->radius_meters;
+            }
+            if ($dto->intensity !== null) {
+                $updateData['intensity'] = $dto->intensity;
+            }
+            if ($dto->is_active !== null) {
+                $updateData['is_active'] = $dto->is_active;
+            }
+            if ($dto->starts_at !== null) {
+                $updateData['starts_at'] = $dto->starts_at;
+            }
 
-            if (array_key_exists('name', $data)) {
-                if (! empty($data['name'])) {
-                    $hotZone->manualHotZone()->updateOrCreate([], ['name' => $data['name']]);
+            if (! empty($updateData)) {
+                $hotZone->update($updateData);
+            }
+
+            if ($dto->has_name) {
+                if (! empty($dto->name)) {
+                    $hotZone->manualHotZone()->updateOrCreate([], ['name' => $dto->name]);
                 } else {
                     $hotZone->manualHotZone()->delete();
                 }

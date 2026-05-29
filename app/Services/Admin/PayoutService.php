@@ -2,21 +2,21 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\PayoutRequest\PayoutRequestFilterDTO;
 use App\Models\Admin;
 use App\Models\Payment\PayoutRequest;
 use App\Traits\Paginatable;
-use Illuminate\Http\Request;
 
 class PayoutService
 {
     use Paginatable;
 
-    public function listPayoutRequests(Request $request)
+    public function listPayoutRequests(PayoutRequestFilterDTO $filters)
     {
         return PayoutRequest::query()
             ->withListRelations()
             ->forAdminZones()
-            ->status($request->query('status'))
+            ->status($filters->status)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }

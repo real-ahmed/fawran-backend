@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Auth\Login\AdminLoginDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\Admin\Auth\ForgotPasswordRequest;
+use App\Http\Requests\V1\Admin\Auth\LoginRequest;
+use App\Http\Requests\V1\Admin\Auth\ResetPasswordRequest;
+use App\Http\Requests\V1\Admin\Auth\VerifyResetOtpRequest;
 use App\Services\Auth\AdminAuthService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Authentication
@@ -15,14 +19,11 @@ class AdminAuthController extends Controller
 {
     public function __construct(protected AdminAuthService $adminAuthService) {}
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
+        $dto = AdminLoginDTO::fromRequest($request);
 
-        return $this->adminAuthService->login($credentials);
+        return $this->adminAuthService->login($dto);
     }
 
     public function me()
@@ -40,35 +41,28 @@ class AdminAuthController extends Controller
         return $this->adminAuthService->refresh();
     }
 
-    public function forgotPassword(Request $request)
+    public function forgotPassword(ForgotPasswordRequest $request)
     {
-        $request->validate(['email' => 'required|email']);
+        $data = $request->validated();
 
-        return $this->adminAuthService->forgotPassword($request->input('email'));
+        return $this->adminAuthService->forgotPassword($data['email']);
     }
 
-    public function verifyResetOtp(Request $request)
+    public function verifyResetOtp(VerifyResetOtpRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required|string',
-        ]);
+        $data = $request->validated();
 
-        return $this->adminAuthService->verifyResetOtp($request->input('email'), $request->input('otp'));
+        return $this->adminAuthService->verifyResetOtp($data['email'], $data['otp']);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        $data = $request->validated();
 
         return $this->adminAuthService->resetPassword(
-            $request->input('email'),
-            $request->input('otp'),
-            $request->input('password')
+            $data['email'],
+            $data['otp'],
+            $data['password']
         );
     }
 }

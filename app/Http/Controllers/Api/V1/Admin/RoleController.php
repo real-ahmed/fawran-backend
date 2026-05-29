@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Auth\Role\RoleDataDTO;
+use App\DTOs\Auth\Role\RoleFilterDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Admin\Role\IndexRoleRequest;
 use App\Http\Requests\V1\Admin\Role\StoreRoleRequest;
@@ -26,7 +28,8 @@ class RoleController extends Controller
 
     public function index(IndexRoleRequest $request)
     {
-        $roles = $this->roleService->getRoles($request->validated());
+        $dto = RoleFilterDTO::fromRequest($request);
+        $roles = $this->roleService->getRoles($dto);
 
         return RoleResource::collection($roles)->additional([
             'success' => true,
@@ -36,7 +39,8 @@ class RoleController extends Controller
 
     public function store(StoreRoleRequest $request)
     {
-        $role = $this->roleService->createRole($request->validated());
+        $dto = RoleDataDTO::fromRequest($request);
+        $role = $this->roleService->createRole($dto);
 
         return $this->successResponse(new RoleResource($role), __('messages.role_created_successfully'), 201);
     }
@@ -50,7 +54,8 @@ class RoleController extends Controller
 
     public function update(UpdateRoleRequest $request, Role $role)
     {
-        $role = $this->roleService->updateRole($role, $request->validated());
+        $dto = RoleDataDTO::fromRequest($request);
+        $role = $this->roleService->updateRole($role, $dto);
 
         return $this->successResponse(new RoleResource($role), __('messages.role_updated_successfully'));
     }

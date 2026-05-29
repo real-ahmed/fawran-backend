@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\DTOs\General\Settings\UserSettingsDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Profile\UpdateSettingsRequest;
 use App\Services\SettingsService;
@@ -17,10 +18,12 @@ class SettingsController extends Controller
 
     public function update(UpdateSettingsRequest $request)
     {
+        $dto = UserSettingsDTO::fromRequest($request);
+
         return response()->json([
             'success' => true,
             'message' => __('messages.settings_updated_successfully'),
-            'data' => $this->settingsService->updateCurrentUserSettings($request->validated('settings')),
+            'data' => $this->settingsService->updateCurrentUserSettings($dto),
         ]);
     }
 }

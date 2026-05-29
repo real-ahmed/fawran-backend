@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\DTOs\Auth\Login\LoginDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\Auth\ForgotPasswordRequest;
+use App\Http\Requests\V1\Auth\LoginRequest;
+use App\Http\Requests\V1\Auth\ResetPasswordRequest;
+use App\Http\Requests\V1\Auth\VerifyResetOtpRequest;
 use App\Services\Auth\UserAuthService;
-use Illuminate\Http\Request;
 
 /**
  * @group Shared - Customer / Vendor / Courier Authentication
@@ -15,14 +19,11 @@ class UserAuthController extends Controller
 {
     public function __construct(protected UserAuthService $userAuthService) {}
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'login' => 'required|string', // can be email or phone
-            'password' => 'required|string',
-        ]);
+        $dto = LoginDTO::fromRequest($request);
 
-        return $this->userAuthService->login($credentials);
+        return $this->userAuthService->login($dto);
     }
 
     public function me()
@@ -40,35 +41,28 @@ class UserAuthController extends Controller
         return $this->userAuthService->refresh();
     }
 
-    public function forgotPassword(Request $request)
+    public function forgotPassword(ForgotPasswordRequest $request)
     {
-        $request->validate(['login' => 'required|string']);
+        $data = $request->validated();
 
-        return $this->userAuthService->forgotPassword($request->input('login'));
+        return $this->userAuthService->forgotPassword($data['login']);
     }
 
-    public function verifyResetOtp(Request $request)
+    public function verifyResetOtp(VerifyResetOtpRequest $request)
     {
-        $request->validate([
-            'login' => 'required|string',
-            'otp' => 'required|string',
-        ]);
+        $data = $request->validated();
 
-        return $this->userAuthService->verifyResetOtp($request->input('login'), $request->input('otp'));
+        return $this->userAuthService->verifyResetOtp($data['login'], $data['otp']);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request)
     {
-        $request->validate([
-            'login' => 'required|string',
-            'otp' => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        $data = $request->validated();
 
         return $this->userAuthService->resetPassword(
-            $request->input('login'),
-            $request->input('otp'),
-            $request->input('password')
+            $data['login'],
+            $data['otp'],
+            $data['password']
         );
     }
 }

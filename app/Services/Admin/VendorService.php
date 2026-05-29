@@ -2,40 +2,67 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\Vendor\VendorDataDTO;
+use App\DTOs\Admin\Vendor\VendorFilterDTO;
 use App\Enums\FileType;
 use App\Models\Vendor\Vendor;
 use App\Traits\Paginatable;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class VendorService
 {
     use Paginatable;
 
-    public function listVendors(Request $request)
+    public function listVendors(VendorFilterDTO $filters)
     {
         return Vendor::query()
             ->withListRelations()
             ->forAdminZones()
-            ->type($request->query('type'))
-            ->active($request->has('is_active') ? $request->query('is_active') : null)
-            ->search($request->query('search'))
+            ->type($filters->type)
+            ->active($filters->is_active)
+            ->search($filters->search)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }
 
-    public function createVendor(array $data): Vendor
+    public function createVendor(VendorDataDTO $dto): Vendor
     {
-        $image = $data['image'] ?? null;
-        $workingHours = $data['working_hours'] ?? [];
-        $deliveryZones = $data['delivery_zones'] ?? [];
-
-        unset($data['image'], $data['working_hours'], $data['delivery_zones']);
+        $data = [];
+        if ($dto->owner_id !== null) {
+            $data['owner_id'] = $dto->owner_id;
+        }
+        if ($dto->name !== null) {
+            $data['name'] = $dto->name;
+        }
+        if ($dto->email !== null) {
+            $data['email'] = $dto->email;
+        }
+        if ($dto->phone !== null) {
+            $data['phone'] = $dto->phone;
+        }
+        if ($dto->formatted_address !== null) {
+            $data['formatted_address'] = $dto->formatted_address;
+        }
+        if ($dto->type !== null) {
+            $data['type'] = $dto->type;
+        }
+        if ($dto->latitude !== null) {
+            $data['latitude'] = $dto->latitude;
+        }
+        if ($dto->longitude !== null) {
+            $data['longitude'] = $dto->longitude;
+        }
+        if ($dto->is_active !== null) {
+            $data['is_active'] = $dto->is_active;
+        }
+        if ($dto->status !== null) {
+            $data['status'] = $dto->status;
+        }
 
         $vendor = Vendor::create($data);
 
-        if ($image) {
-            $path = $image->store('vendors', 'public');
+        if ($dto->has_image && $dto->image) {
+            $path = $dto->image->store('vendors', 'public');
             $vendor->media()->create([
                 'file_path' => $path,
                 'file_type' => FileType::Image,
@@ -43,12 +70,12 @@ class VendorService
             ]);
         }
 
-        if (! empty($workingHours)) {
-            $vendor->workingHours()->createMany($workingHours);
+        if ($dto->has_working_hours && ! empty($dto->working_hours)) {
+            $vendor->workingHours()->createMany($dto->working_hours);
         }
 
-        if (! empty($deliveryZones)) {
-            $vendor->deliveryZones()->createMany($deliveryZones);
+        if ($dto->has_delivery_zones && ! empty($dto->delivery_zones)) {
+            $vendor->deliveryZones()->createMany($dto->delivery_zones);
         }
 
         return $vendor->load(['media', 'workingHours', 'deliveryZones']);
@@ -59,21 +86,46 @@ class VendorService
         return $vendor->load(['media', 'workingHours', 'deliveryZones', 'owner']);
     }
 
-    public function updateVendor(Vendor $vendor, array $data): Vendor
+    public function updateVendor(Vendor $vendor, VendorDataDTO $dto): Vendor
     {
-        $hasWorkingHours = array_key_exists('working_hours', $data);
-        $hasDeliveryZones = array_key_exists('delivery_zones', $data);
+        $data = [];
+        if ($dto->owner_id !== null) {
+            $data['owner_id'] = $dto->owner_id;
+        }
+        if ($dto->name !== null) {
+            $data['name'] = $dto->name;
+        }
+        if ($dto->email !== null) {
+            $data['email'] = $dto->email;
+        }
+        if ($dto->phone !== null) {
+            $data['phone'] = $dto->phone;
+        }
+        if ($dto->formatted_address !== null) {
+            $data['formatted_address'] = $dto->formatted_address;
+        }
+        if ($dto->type !== null) {
+            $data['type'] = $dto->type;
+        }
+        if ($dto->latitude !== null) {
+            $data['latitude'] = $dto->latitude;
+        }
+        if ($dto->longitude !== null) {
+            $data['longitude'] = $dto->longitude;
+        }
+        if ($dto->is_active !== null) {
+            $data['is_active'] = $dto->is_active;
+        }
+        if ($dto->status !== null) {
+            $data['status'] = $dto->status;
+        }
 
-        $image = $data['image'] ?? null;
-        $workingHours = $data['working_hours'] ?? [];
-        $deliveryZones = $data['delivery_zones'] ?? [];
+        if (! empty($data)) {
+            $vendor->update($data);
+        }
 
-        unset($data['image'], $data['working_hours'], $data['delivery_zones']);
-
-        $vendor->update($data);
-
-        if ($image) {
-            $path = $image->store('vendors', 'public');
+        if ($dto->has_image && $dto->image) {
+            $path = $dto->image->store('vendors', 'public');
 
             // Delete old primary media if exists
             $oldMedia = $vendor->media()->where('is_primary', true)->first();
@@ -89,17 +141,17 @@ class VendorService
             ]);
         }
 
-        if ($hasWorkingHours) {
+        if ($dto->has_working_hours) {
             $vendor->workingHours()->delete();
-            if (! empty($workingHours)) {
-                $vendor->workingHours()->createMany($workingHours);
+            if (! empty($dto->working_hours)) {
+                $vendor->workingHours()->createMany($dto->working_hours);
             }
         }
 
-        if ($hasDeliveryZones) {
+        if ($dto->has_delivery_zones) {
             $vendor->deliveryZones()->delete();
-            if (! empty($deliveryZones)) {
-                $vendor->deliveryZones()->createMany($deliveryZones);
+            if (! empty($dto->delivery_zones)) {
+                $vendor->deliveryZones()->createMany($dto->delivery_zones);
             }
         }
 

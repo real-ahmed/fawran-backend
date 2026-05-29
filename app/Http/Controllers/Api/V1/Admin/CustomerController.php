@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\Customer\CustomerFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Customer\ToggleCustomerStatusRequest;
-use App\Http\Resources\Admin\CustomerResource;
+use App\Http\Requests\V1\Admin\Customer\IndexCustomerRequest;
+use App\Http\Requests\V1\Admin\Customer\ToggleCustomerStatusRequest;
+use App\Http\Resources\V1\Admin\CustomerResource;
 use App\Models\User;
 use App\Services\Admin\CustomerService;
-use Illuminate\Http\Request;
 
 /**
  * @group Admin - Customers
@@ -26,9 +27,11 @@ class CustomerController extends Controller
      * @queryParam search string Search by name, email, or phone. Example: ahmed
      * @queryParam is_active boolean Filter by active status. Example: 1
      */
-    public function index(Request $request)
+    public function index(IndexCustomerRequest $request)
     {
-        return CustomerResource::collection($this->customerService->listCustomers($request));
+        $dto = CustomerFilterDTO::fromRequest($request);
+
+        return CustomerResource::collection($this->customerService->listCustomers($dto));
     }
 
     /**

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\Catalog\BrandDataDTO;
+use App\DTOs\Admin\Catalog\BrandFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Brand\IndexBrandRequest;
-use App\Http\Requests\Admin\Brand\StoreBrandRequest;
-use App\Http\Requests\Admin\Brand\UpdateBrandRequest;
-use App\Http\Resources\Admin\BrandResource;
+use App\Http\Requests\V1\Admin\Brand\IndexBrandRequest;
+use App\Http\Requests\V1\Admin\Brand\StoreBrandRequest;
+use App\Http\Requests\V1\Admin\Brand\UpdateBrandRequest;
+use App\Http\Resources\V1\Admin\BrandResource;
 use App\Models\Catalog\Brand;
 use App\Services\Admin\Catalog\BrandService;
 
@@ -26,7 +28,9 @@ class BrandController extends Controller
      */
     public function index(IndexBrandRequest $request)
     {
-        return BrandResource::collection($this->brandService->listBrands($request));
+        $dto = BrandFilterDTO::fromRequest($request);
+
+        return BrandResource::collection($this->brandService->listBrands($dto));
     }
 
     /**
@@ -36,7 +40,8 @@ class BrandController extends Controller
      */
     public function store(StoreBrandRequest $request)
     {
-        $brand = $this->brandService->createBrand($request->validated());
+        $dto = BrandDataDTO::fromRequest($request);
+        $brand = $this->brandService->createBrand($dto);
 
         return $this->successResponse(
             new BrandResource($brand),
@@ -62,7 +67,8 @@ class BrandController extends Controller
      */
     public function update(UpdateBrandRequest $request, Brand $brand)
     {
-        $brand = $this->brandService->updateBrand($brand, $request->validated());
+        $dto = BrandDataDTO::fromRequest($request);
+        $brand = $this->brandService->updateBrand($brand, $dto);
 
         return $this->successResponse(
             new BrandResource($brand),

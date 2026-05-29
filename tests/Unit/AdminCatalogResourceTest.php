@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Http\Resources\Admin\BrandResource;
-use App\Http\Resources\Admin\CategoryResource;
-use App\Http\Resources\Admin\MasterProductResource;
+use App\Http\Resources\V1\Admin\BrandResource;
+use App\Http\Resources\V1\Admin\CategoryResource;
+use App\Http\Resources\V1\Admin\MasterProductResource;
 use App\Models\Catalog\Brand;
 use App\Models\Catalog\Category;
 use App\Models\Product\MasterProduct;

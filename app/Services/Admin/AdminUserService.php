@@ -2,6 +2,8 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\AdminUserDataDTO;
+use App\DTOs\Admin\AdminUserFilterDTO;
 use App\Models\Admin;
 use App\Models\Role;
 use App\Notifications\Admin\AdminCredentialsGeneratedNotification;
@@ -15,34 +17,36 @@ class AdminUserService
 {
     use Paginatable;
 
-    public function listAdmins(?string $search = null)
+    public function listAdmins(AdminUserFilterDTO $filters)
     {
         return Admin::query()
             ->withRoles()
-            ->searchIdentity($search)
+            ->searchIdentity($filters->search)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }
 
-    public function createAdmin(array $data): Admin
+    public function createAdmin(AdminUserDataDTO $dto): Admin
     {
-        if (isset($data['roles']) && $this->containsSuperAdminRole($data['roles'])) {
+        if (! is_null($dto->roles) && $this->containsSuperAdminRole($dto->roles)) {
             throw ValidationException::withMessages([
                 'roles' => __('messages.cannot_assign_super_admin_role'),
             ]);
         }
 
         $plainPassword = Str::password(10);
+
+        $data = $dto->toArray();
         $data['password'] = Hash::make($plainPassword);
 
         $admin = Admin::create($data);
 
-        if (isset($data['roles'])) {
-            $admin->syncRoles($data['roles']);
+        if (! is_null($dto->roles)) {
+            $admin->syncRoles($dto->roles);
         }
 
-        if (isset($data['delivery_zones'])) {
-            $admin->deliveryZones()->sync($data['delivery_zones']);
+        if (! is_null($dto->delivery_zones)) {
+            $admin->deliveryZones()->sync($dto->delivery_zones);
         }
 
         $admin->load('roles', 'deliveryZones');
@@ -57,22 +61,23 @@ class AdminUserService
         return $admin->load('roles');
     }
 
-    public function updateAdmin(Admin $admin, array $data): Admin
+    public function updateAdmin(Admin $admin, AdminUserDataDTO $dto): Admin
     {
-        $this->ensureSuperAdminRolesCanBeSynced($admin, $data);
+        $this->ensureSuperAdminRolesCanBeSynced($admin, $dto->roles);
 
+        $data = $dto->toArray();
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         }
 
         $admin->update($data);
 
-        if (isset($data['roles'])) {
-            $admin->syncRoles($data['roles']);
+        if (! is_null($dto->roles)) {
+            $admin->syncRoles($dto->roles);
         }
 
-        if (isset($data['delivery_zones'])) {
-            $admin->deliveryZones()->sync($data['delivery_zones']);
+        if (! is_null($dto->delivery_zones)) {
+            $admin->deliveryZones()->sync($dto->delivery_zones);
         }
 
         $admin->load('roles', 'deliveryZones');
@@ -89,19 +94,19 @@ class AdminUserService
         $admin->delete();
     }
 
-    private function ensureSuperAdminRolesCanBeSynced(Admin $admin, array $data): void
+    private function ensureSuperAdminRolesCanBeSynced(Admin $admin, ?array $roles): void
     {
-        if (! isset($data['roles'])) {
+        if (is_null($roles)) {
             return;
         }
 
-        if ($admin->isSuperAdmin() && ! $this->containsOnlySuperAdminRole($data['roles'])) {
+        if ($admin->isSuperAdmin() && ! $this->containsOnlySuperAdminRole($roles)) {
             throw ValidationException::withMessages([
                 'roles' => __('messages.cannot_change_super_admin_account_role'),
             ]);
         }
 
-        if (! $admin->isSuperAdmin() && $this->containsSuperAdminRole($data['roles'])) {
+        if (! $admin->isSuperAdmin() && $this->containsSuperAdminRole($roles)) {
             throw ValidationException::withMessages([
                 'roles' => __('messages.cannot_assign_super_admin_role'),
             ]);

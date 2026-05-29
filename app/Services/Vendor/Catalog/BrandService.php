@@ -2,6 +2,7 @@
 
 namespace App\Services\Vendor\Catalog;
 
+use App\DTOs\Vendor\Catalog\Brand\BrandSubmissionDTO;
 use App\Enums\AdminPermission;
 use App\Events\Catalog\BrandSubmitted;
 use App\Models\Catalog\Brand;
@@ -16,14 +17,12 @@ class BrandService
         private readonly AdminNotificationService $notificationService
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function submit(array $data, Vendor $vendor): Brand
+    public function submit(BrandSubmissionDTO $dto, Vendor $vendor): Brand
     {
-        $data['is_active'] = false;
-
-        $brand = Brand::create($data);
+        $brand = Brand::create([
+            'name' => $dto->name,
+            'is_active' => false,
+        ]);
 
         $brand->vendorSubmission()->create([
             'vendor_id' => $vendor->id,

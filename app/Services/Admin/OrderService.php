@@ -2,13 +2,13 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\Order\OrderFilterDTO;
 use App\Enums\OrderStatus;
 use App\Enums\OrderStatusTransition;
 use App\Models\Order\Delivery;
 use App\Models\Order\Order;
 use App\Models\Order\OrderStatusLog;
 use App\Traits\Paginatable;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -16,17 +16,17 @@ class OrderService
 {
     use Paginatable;
 
-    public function listOrders(Request $request)
+    public function listOrders(OrderFilterDTO $filters)
     {
         return Order::query()
             ->withListRelations()
             ->forAdminZones()
-            ->status($request->query('status'))
-            ->type($request->query('order_type'))
-            ->dateFrom($request->query('date_from'))
-            ->dateTo($request->query('date_to'))
-            ->forCustomer($request->query('customer_id'))
-            ->forVendor($request->query('vendor_id'))
+            ->status($filters->status)
+            ->type($filters->order_type)
+            ->dateFrom($filters->date_from)
+            ->dateTo($filters->date_to)
+            ->forCustomer($filters->customer_id)
+            ->forVendor($filters->vendor_id)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }
@@ -101,15 +101,15 @@ class OrderService
         });
     }
 
-    public function getOrderStatusCounts(Request $request): array
+    public function getOrderStatusCounts(OrderFilterDTO $filters): array
     {
         $query = Order::query()->forAdminZones();
 
-        if ($request->filled('date_from')) {
-            $query->dateFrom($request->query('date_from'));
+        if ($filters->date_from) {
+            $query->dateFrom($filters->date_from);
         }
-        if ($request->filled('date_to')) {
-            $query->dateTo($request->query('date_to'));
+        if ($filters->date_to) {
+            $query->dateTo($filters->date_to);
         }
 
         $counts = $query->select('status', DB::raw('count(*) as total'))

@@ -2,6 +2,8 @@
 
 namespace App\Services\Auth;
 
+use App\DTOs\Auth\Role\RoleDataDTO;
+use App\DTOs\Auth\Role\RoleFilterDTO;
 use App\Models\Role;
 use App\Traits\Paginatable;
 use Illuminate\Support\Str;
@@ -12,14 +14,14 @@ class RoleService
 {
     use Paginatable;
 
-    public function getRoles(array $filters)
+    public function getRoles(RoleFilterDTO $filters)
     {
         return Role::query()
             ->guard('api_admin')
             ->withPermissions()
-            ->searchName($filters['search'] ?? null)
+            ->searchName($filters->search)
             ->newest()
-            ->cursorPaginate($this->getPerPageLimit($filters['per_page'] ?? null));
+            ->cursorPaginate($this->getPerPageLimit());
     }
 
     public function getRoleById($id): Role
@@ -30,22 +32,22 @@ class RoleService
             ->findOrFail($id);
     }
 
-    public function createRole(array $data): Role
+    public function createRole(RoleDataDTO $dto): Role
     {
         $role = Role::create([
-            'name' => Str::slug($data['display_name']['en'] ?? 'role_'.time(), '_'),
-            'display_name' => $data['display_name'] ?? null,
+            'name' => Str::slug($dto->display_name['en'] ?? 'role_'.time(), '_'),
+            'display_name' => $dto->display_name,
             'guard_name' => 'api_admin',
         ]);
 
-        if (isset($data['permissions'])) {
-            $role->syncPermissions($data['permissions']);
+        if ($dto->permissions !== null) {
+            $role->syncPermissions($dto->permissions);
         }
 
         return $role->load('permissions');
     }
 
-    public function updateRole(Role $role, array $data): Role
+    public function updateRole(Role $role, RoleDataDTO $dto): Role
     {
         if ($role->isSuperAdmin()) {
             throw ValidationException::withMessages([
@@ -53,13 +55,13 @@ class RoleService
             ]);
         }
 
-        if (isset($data['display_name'])) {
-            $role->display_name = $data['display_name'];
+        if (! empty($dto->display_name)) {
+            $role->display_name = $dto->display_name;
             $role->save();
         }
 
-        if (isset($data['permissions'])) {
-            $role->syncPermissions($data['permissions']);
+        if ($dto->permissions !== null) {
+            $role->syncPermissions($dto->permissions);
         }
 
         return $role->load('permissions');

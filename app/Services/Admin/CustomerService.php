@@ -2,19 +2,19 @@
 
 namespace App\Services\Admin;
 
+use App\DTOs\Admin\Customer\CustomerFilterDTO;
 use App\Models\User;
 use App\Traits\Paginatable;
-use Illuminate\Http\Request;
 
 class CustomerService
 {
     use Paginatable;
 
-    public function listCustomers(Request $request)
+    public function listCustomers(CustomerFilterDTO $filters)
     {
         return User::query()
-            ->searchIdentity($request->query('search'))
-            ->active($request->has('is_active') ? $request->boolean('is_active') : null)
+            ->searchIdentity($filters->search)
+            ->active($filters->is_active)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }

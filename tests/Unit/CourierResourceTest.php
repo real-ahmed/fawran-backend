@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Http\Resources\Admin\CourierResource;
+use App\Http\Resources\V1\Admin\CourierResource;
 use App\Models\Courier\Courier;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;

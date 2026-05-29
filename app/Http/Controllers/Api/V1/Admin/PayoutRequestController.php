@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\PayoutRequest\PayoutRequestFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\PayoutRequest\IndexPayoutRequest;
-use App\Http\Resources\Admin\PayoutRequestResource;
+use App\Http\Requests\V1\Admin\PayoutRequest\IndexPayoutRequest;
+use App\Http\Resources\V1\Admin\PayoutRequestResource;
 use App\Models\Payment\PayoutRequest;
 use App\Services\Admin\PayoutService;
 
@@ -26,7 +27,9 @@ class PayoutRequestController extends Controller
      */
     public function index(IndexPayoutRequest $request)
     {
-        return PayoutRequestResource::collection($this->payoutService->listPayoutRequests($request));
+        $dto = PayoutRequestFilterDTO::fromRequest($request);
+
+        return PayoutRequestResource::collection($this->payoutService->listPayoutRequests($dto));
     }
 
     /**

@@ -26,7 +26,7 @@ class OrderNotificationService
             event(new NewOrderCreated($order, $admin));
         }
 
-        $customerName = $order->customer?->customer?->name ?? 'Unknown';
+        $customerName = $order->customer?->customer?->name;
 
         $this->adminNotificationService->notifyAdminsWithPermission(
             AdminPermission::VIEW_ORDERS->value,

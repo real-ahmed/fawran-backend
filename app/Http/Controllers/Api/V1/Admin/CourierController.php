@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\Courier\CourierDataDTO;
+use App\DTOs\Admin\Courier\CourierFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Courier\IndexCourierRequest;
-use App\Http\Requests\Admin\Courier\UpdateCourierRequest;
-use App\Http\Resources\Admin\CourierResource;
+use App\Http\Requests\V1\Admin\Courier\IndexCourierRequest;
+use App\Http\Requests\V1\Admin\Courier\UpdateCourierRequest;
+use App\Http\Resources\V1\Admin\CourierResource;
 use App\Models\Courier\Courier;
 use App\Services\Admin\CourierService;
 
@@ -31,7 +33,9 @@ class CourierController extends Controller
      */
     public function index(IndexCourierRequest $request)
     {
-        return CourierResource::collection($this->courierService->listCouriers($request));
+        $dto = CourierFilterDTO::fromRequest($request);
+
+        return CourierResource::collection($this->courierService->listCouriers($dto));
     }
 
     /**
@@ -53,7 +57,8 @@ class CourierController extends Controller
      */
     public function update(UpdateCourierRequest $request, Courier $courier)
     {
-        $courier = $this->courierService->updateCourier($courier, $request->validated());
+        $dto = CourierDataDTO::fromRequest($request);
+        $courier = $this->courierService->updateCourier($courier, $dto);
 
         return $this->successResponse(
             new CourierResource($courier),

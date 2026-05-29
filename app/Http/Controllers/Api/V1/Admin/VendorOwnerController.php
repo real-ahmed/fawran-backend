@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\Vendor\VendorOwnerDataDTO;
+use App\DTOs\Admin\Vendor\VendorOwnerFilterDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Admin\Vendor\StoreVendorOwnerRequest;
-use App\Http\Resources\Admin\CustomerResource;
+use App\Http\Resources\V1\Admin\CustomerResource;
 use App\Models\User;
 use App\Services\Admin\VendorOwnerService;
 use Illuminate\Http\Request;
@@ -25,7 +27,8 @@ class VendorOwnerController extends Controller
      */
     public function index(Request $request)
     {
-        $owners = $this->vendorOwnerService->listOwners($request->only(['search', 'per_page']));
+        $dto = VendorOwnerFilterDTO::fromRequest($request);
+        $owners = $this->vendorOwnerService->listOwners($dto);
 
         return CustomerResource::collection($owners);
     }
@@ -37,7 +40,8 @@ class VendorOwnerController extends Controller
      */
     public function store(StoreVendorOwnerRequest $request)
     {
-        $user = $this->vendorOwnerService->createOwner($request->validated());
+        $dto = VendorOwnerDataDTO::fromRequest($request);
+        $user = $this->vendorOwnerService->createOwner($dto);
 
         return $this->successResponse(
             new CustomerResource($user),

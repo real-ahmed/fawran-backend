@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\Order\OrderFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Order\AssignCourierRequest;
-use App\Http\Requests\Admin\Order\IndexOrderRequest;
-use App\Http\Requests\Admin\Order\UpdateOrderStatusRequest;
-use App\Http\Resources\Admin\OrderResource;
+use App\Http\Requests\V1\Admin\Order\AssignCourierRequest;
+use App\Http\Requests\V1\Admin\Order\IndexOrderRequest;
+use App\Http\Requests\V1\Admin\Order\UpdateOrderStatusRequest;
+use App\Http\Resources\V1\Admin\OrderResource;
 use App\Models\Order\Order;
 use App\Services\Admin\OrderService;
 use Illuminate\Http\Request;
@@ -34,7 +35,9 @@ class OrderController extends Controller
      */
     public function index(IndexOrderRequest $request)
     {
-        return OrderResource::collection($this->orderService->listOrders($request));
+        $dto = OrderFilterDTO::fromRequest($request);
+
+        return OrderResource::collection($this->orderService->listOrders($dto));
     }
 
     /**
@@ -63,7 +66,9 @@ class OrderController extends Controller
 
     public function statusCounts(Request $request)
     {
-        return $this->successResponse($this->orderService->getOrderStatusCounts($request));
+        $dto = OrderFilterDTO::fromRequest($request);
+
+        return $this->successResponse($this->orderService->getOrderStatusCounts($dto));
     }
 
     public function updateStatus(UpdateOrderStatusRequest $request, Order $order)

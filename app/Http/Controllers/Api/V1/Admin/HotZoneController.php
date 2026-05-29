@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\HotZone\HotZoneDataDTO;
+use App\DTOs\Admin\HotZone\HotZoneFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\HotZone\IndexHotZoneRequest;
-use App\Http\Requests\Admin\HotZone\StoreHotZoneRequest;
-use App\Http\Requests\Admin\HotZone\UpdateHotZoneRequest;
-use App\Http\Resources\Admin\HotZoneResource;
+use App\Http\Requests\V1\Admin\HotZone\IndexHotZoneRequest;
+use App\Http\Requests\V1\Admin\HotZone\StoreHotZoneRequest;
+use App\Http\Requests\V1\Admin\HotZone\UpdateHotZoneRequest;
+use App\Http\Resources\V1\Admin\HotZoneResource;
 use App\Models\Geo\HotZone;
 use App\Services\Admin\HotZoneService;
 
@@ -29,7 +31,9 @@ class HotZoneController extends Controller
      */
     public function index(IndexHotZoneRequest $request)
     {
-        return HotZoneResource::collection($this->hotZoneService->listHotZones($request));
+        $dto = HotZoneFilterDTO::fromRequest($request);
+
+        return HotZoneResource::collection($this->hotZoneService->listHotZones($dto));
     }
 
     /**
@@ -45,7 +49,8 @@ class HotZoneController extends Controller
      */
     public function store(StoreHotZoneRequest $request)
     {
-        $hotZone = $this->hotZoneService->createHotZone($request->validated());
+        $dto = HotZoneDataDTO::fromRequest($request);
+        $hotZone = $this->hotZoneService->createHotZone($dto);
 
         return $this->successResponse(
             new HotZoneResource($hotZone),
@@ -73,7 +78,8 @@ class HotZoneController extends Controller
      */
     public function update(UpdateHotZoneRequest $request, HotZone $hotZone)
     {
-        $hotZone = $this->hotZoneService->updateHotZone($hotZone, $request->validated());
+        $dto = HotZoneDataDTO::fromRequest($request);
+        $hotZone = $this->hotZoneService->updateHotZone($hotZone, $dto);
 
         return $this->successResponse(
             new HotZoneResource($hotZone),
