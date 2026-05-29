@@ -9,6 +9,8 @@ class VendorCustomCommission extends Model
 {
     public $timestamps = false;
 
+    protected $table = 'vendorcustom_commissions';
+
     protected $primaryKey = 'vendor_id';
 
     public $incrementing = false;

@@ -5,6 +5,8 @@ namespace App\Models\Payment;
 use App\Builders\SettlementBuilder;
 use App\Enums\SettlementStatus;
 use App\Enums\SettlementType;
+use App\Models\Courier\Courier;
+use App\Models\Vendor\Vendor;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -77,6 +79,18 @@ class Settlement extends Model
     public function note(): HasOne
     {
         return $this->hasOne(SettlementNote::class);
+    }
+
+    /**
+     * Resolve the target entity (Courier or Vendor) based on settlement_type.
+     */
+    public function getTargetEntityAttribute(): Courier|Vendor|null
+    {
+        return match ($this->settlement_type) {
+            SettlementType::COURIER => Courier::find($this->target_id),
+            SettlementType::STORE => Vendor::find($this->target_id),
+            default => null,
+        };
     }
 
     public function newEloquentBuilder($query): SettlementBuilder

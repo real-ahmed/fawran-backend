@@ -7,6 +7,7 @@ use App\Enums\VehicleType;
 use App\Models\Order\Delivery;
 use App\Models\P2p\P2pAssignment;
 use App\Models\Payment\CourierCashCollection;
+use App\Models\Payment\Wallet;
 use App\Models\User;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,11 +41,13 @@ class Courier extends Model
         'vehicle_type',
         'plate_number',
         'is_online',
+        'cod_blocked',
         'rejected_at',
     ];
 
     protected $attributes = [
         'is_online' => false,
+        'cod_blocked' => false,
     ];
 
     protected function casts(): array
@@ -52,6 +55,7 @@ class Courier extends Model
         return [
             'vehicle_type' => VehicleType::class,
             'is_online' => 'boolean',
+            'cod_blocked' => 'boolean',
             'rejected_at' => 'datetime',
             'created_at' => 'datetime',
         ];
@@ -90,6 +94,14 @@ class Courier extends Model
     public function cashCollections(): HasMany
     {
         return $this->hasMany(CourierCashCollection::class);
+    }
+
+    /**
+     * Get the wallet through the user relationship (convenience accessor).
+     */
+    public function getUserWalletAttribute(): ?Wallet
+    {
+        return $this->user?->wallet;
     }
 
     public function newEloquentBuilder($query): CourierBuilder

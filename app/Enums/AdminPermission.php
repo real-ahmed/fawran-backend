@@ -64,6 +64,8 @@ enum AdminPermission: string
     case MANAGE_SETTLEMENTS = 'manage settlements';
     case MANAGE_PAYOUTS = 'manage payouts';
     case MANAGE_REFUNDS = 'manage refunds';
+    case VIEW_COURIER_CASH = 'view courier cash';
+    case MANAGE_WALLETS = 'manage wallets';
     case MANAGE_SYSTEM_SETTINGS = 'manage system settings';
 
     /**

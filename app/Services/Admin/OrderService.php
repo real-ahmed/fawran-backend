@@ -5,6 +5,8 @@ namespace App\Services\Admin;
 use App\DTOs\Admin\Order\OrderFilterDTO;
 use App\Enums\OrderStatus;
 use App\Enums\OrderStatusTransition;
+use App\Events\OrderConfirmed;
+use App\Events\OrderDelivered;
 use App\Models\Order\Delivery;
 use App\Models\Order\Order;
 use App\Models\Order\OrderStatusLog;
@@ -78,6 +80,18 @@ class OrderService
                 'changed_by_id' => auth()->id(),
             ]);
         });
+
+        // Dispatch financial events after the DB transaction commits
+        if ($newStatus === OrderStatus::Processing->value) {
+            OrderConfirmed::dispatch($order);
+        }
+
+        if ($newStatus === OrderStatus::Delivered->value) {
+            $order->loadMissing('delivery');
+            if ($order->delivery) {
+                OrderDelivered::dispatch($order, $order->delivery);
+            }
+        }
 
         return $order;
     }
