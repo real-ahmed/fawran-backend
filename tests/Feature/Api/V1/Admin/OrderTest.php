@@ -76,6 +76,6 @@ class OrderTest extends TestCase
                 'meta',
             ])
             ->assertJsonPath('data.0.sub_orders.0.vendor_id', $vendor->id)
-            ->assertJsonPath('data.0.sub_orders.0.vendor_name.en', 'Fresh Market');
+            ->assertJsonPath('data.0.sub_orders.0.vendor_name', 'Fresh Market');
     }
 }
