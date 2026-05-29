@@ -26,7 +26,7 @@ class OrderNotificationService
             event(new NewOrderCreated($order, $admin));
         }
 
-        $customerName = $order->customer?->customer?->name ?? "unknown";
+        $customerName = $order->customer?->customer?->name ?? 'unknown';
 
         $this->adminNotificationService->notifyAdminsWithPermission(
             AdminPermission::VIEW_ORDERS->value,
@@ -60,7 +60,7 @@ class OrderNotificationService
         // Super Admins
         $superAdmins = Admin::query()
             ->where('id', 1)
-            ->orWhereHas('roles', fn($q) => $q->where('name', 'Super Admin'))
+            ->orWhereHas('roles', fn ($q) => $q->where('name', 'Super Admin'))
             ->get();
 
         $admins = $admins->merge($superAdmins);

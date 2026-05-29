@@ -9,7 +9,8 @@ use App\Http\Requests\V1\Admin\Order\IndexOrderRequest;
 use App\Http\Requests\V1\Admin\Order\UpdateOrderStatusRequest;
 use App\Http\Resources\V1\Admin\OrderResource;
 use App\Models\Order\Order;
-use App\Services\Admin\OrderService;
+use App\Services\Admin\OrderService as AdminOrderService;
+use App\Services\OrderService as SystemOrderService;
 use Illuminate\Http\Request;
 
 /**
@@ -19,7 +20,10 @@ use Illuminate\Http\Request;
  */
 class OrderController extends Controller
 {
-    public function __construct(protected OrderService $orderService) {}
+    public function __construct(
+        protected AdminOrderService $adminOrderService,
+        protected SystemOrderService $systemOrderService
+    ) {}
 
     /**
      * List Orders
@@ -37,7 +41,7 @@ class OrderController extends Controller
     {
         $dto = OrderFilterDTO::fromRequest($request);
 
-        return OrderResource::collection($this->orderService->listOrders($dto));
+        return OrderResource::collection($this->adminOrderService->listOrders($dto));
     }
 
     /**
@@ -48,7 +52,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         return $this->successResponse(
-            new OrderResource($this->orderService->getOrder($order))
+            new OrderResource($this->adminOrderService->getOrder($order))
         );
     }
 
@@ -59,7 +63,7 @@ class OrderController extends Controller
      */
     public function cancel(Order $order)
     {
-        $this->orderService->cancelOrder($order);
+        $this->systemOrderService->cancelOrder($order);
 
         return $this->successResponse(null, __('messages.order_cancelled_successfully'));
     }
@@ -68,13 +72,13 @@ class OrderController extends Controller
     {
         $dto = OrderFilterDTO::fromRequest($request);
 
-        return $this->successResponse($this->orderService->getOrderStatusCounts($dto));
+        return $this->successResponse($this->adminOrderService->getOrderStatusCounts($dto));
     }
 
     public function updateStatus(UpdateOrderStatusRequest $request, Order $order)
     {
         try {
-            $this->orderService->updateStatus($order, $request->validated('status'));
+            $this->systemOrderService->updateStatus($order, $request->validated('status'));
 
             return $this->successResponse(null, __('messages.order_status_updated_successfully'));
         } catch (\InvalidArgumentException $e) {
@@ -84,7 +88,7 @@ class OrderController extends Controller
 
     public function assignCourier(AssignCourierRequest $request, Order $order)
     {
-        $this->orderService->assignCourier($order, $request->validated('courier_id'));
+        $this->systemOrderService->assignCourier($order, $request->validated('courier_id'));
 
         return $this->successResponse(null, __('messages.courier_assigned_successfully'));
     }
