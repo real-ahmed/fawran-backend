@@ -28,7 +28,7 @@ class Settlement extends Model
                         ->whereColumn('couriers.id', 'settlements.target_id')
                         ->whereIn('couriers.delivery_zone_id', $zoneIds);
                 })
-                ->orWhere('settlement_type', SettlementType::STORE->value)
+                ->orWhere('settlement_type', SettlementType::VENDOR->value)
                 ->whereExists(function ($sub) use ($zoneIds) {
                     $sub->select(DB::raw(1))
                         ->from('vendors')
@@ -88,7 +88,7 @@ class Settlement extends Model
     {
         return match ($this->settlement_type) {
             SettlementType::COURIER => Courier::find($this->target_id),
-            SettlementType::STORE => Vendor::find($this->target_id),
+            SettlementType::VENDOR => Vendor::find($this->target_id),
             default => null,
         };
     }

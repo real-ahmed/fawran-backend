@@ -103,7 +103,7 @@ class ProcessVendorSettlements extends Command
 
                 // Create settlement
                 $settlement = Settlement::create([
-                    'settlement_type' => SettlementType::Store,
+                    'settlement_type' => SettlementType::Vendor,
                     'target_id' => $vendor->id,
                     'period_start' => $periodStart,
                     'period_end' => $periodEnd,
