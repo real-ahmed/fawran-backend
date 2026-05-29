@@ -7,8 +7,8 @@ use App\Http\Requests\V1\Admin\Role\IndexRoleRequest;
 use App\Http\Requests\V1\Admin\Role\StoreRoleRequest;
 use App\Http\Requests\V1\Admin\Role\UpdateRoleRequest;
 use App\Http\Resources\V1\RoleResource;
-use App\Services\Auth\RoleService;
 use App\Models\Role;
+use App\Services\Auth\RoleService;
 
 /**
  * @group Admin - Roles & Permissions

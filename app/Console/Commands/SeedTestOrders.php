@@ -5,15 +5,19 @@ namespace App\Console\Commands;
 use App\Enums\OrderStatus;
 use App\Enums\OrderType;
 use App\Models\Address\UserAddress;
-use App\Models\Product\MasterProduct;
-use App\Models\Product\VendorItem;
+use App\Models\Catalog\Category;
+use App\Models\Courier\Courier;
+use App\Models\Courier\CourierLocation;
 use App\Models\Geo\DeliveryZone;
+use App\Models\Order\Delivery;
 use App\Models\Order\Order;
 use App\Models\Order\OrderCustomer;
 use App\Models\Order\OrderDelivery;
 use App\Models\Order\OrderItem;
 use App\Models\Order\OrderStatusLog;
 use App\Models\Order\SubOrder;
+use App\Models\Product\MasterProduct;
+use App\Models\Product\VendorItem;
 use App\Models\User;
 use App\Models\Vendor\Vendor;
 use Illuminate\Console\Command;
@@ -57,7 +61,7 @@ class SeedTestOrders extends Command
             ['is_active' => true, 'polygon' => DB::raw("ST_GeomFromText('POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))')")]
         );
 
-        $category = \App\Models\Catalog\Category::firstOrCreate(
+        $category = Category::firstOrCreate(
             ['name' => 'Test Category'],
             ['is_active' => true]
         );
@@ -82,12 +86,12 @@ class SeedTestOrders extends Command
             ['name' => 'Ahmed Courier', 'password' => bcrypt('password'), 'phone' => '01222222222', 'is_active' => true]
         );
 
-        $courier = \App\Models\Courier\Courier::firstOrCreate(
+        $courier = Courier::firstOrCreate(
             ['user_id' => $courierUser->id],
             ['national_id' => '29001010101010', 'vehicle_type' => 'motorcycle', 'plate_number' => 'ABC-123', 'is_online' => true]
         );
 
-        \App\Models\Courier\CourierLocation::firstOrCreate(
+        CourierLocation::firstOrCreate(
             ['courier_id' => $courier->id],
             ['latitude' => 30.0400, 'longitude' => 31.2300, 'located_at' => now()]
         );
@@ -127,7 +131,7 @@ class SeedTestOrders extends Command
             'courier_id' => $courier->id,
         ]);
 
-        \App\Models\Order\Delivery::updateOrCreate(
+        Delivery::updateOrCreate(
             ['order_id' => $order1->id],
             ['courier_id' => $courier->id, 'status' => 'heading_to_vendors', 'fee_share' => 20.00]
         );
@@ -232,7 +236,7 @@ class SeedTestOrders extends Command
             'courier_id' => $courier->id,
         ]);
 
-        \App\Models\Order\Delivery::updateOrCreate(
+        Delivery::updateOrCreate(
             ['order_id' => $order3->id],
             ['courier_id' => $courier->id, 'status' => 'heading_to_customer', 'fee_share' => 30.00]
         );

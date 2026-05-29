@@ -2,9 +2,9 @@
 
 namespace App\Models\Courier;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Storage;
 
 class CourierDocument extends Model
@@ -33,7 +33,7 @@ class CourierDocument extends Model
     {
         return Attribute::make(
             get: function (?string $value) {
-                if ($value && !str_starts_with($value, 'http')) {
+                if ($value && ! str_starts_with($value, 'http')) {
                     return asset(Storage::disk('public')->url($value));
                 }
 

@@ -10,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $defaultContractTemplate = <<<HTML
+        $defaultContractTemplate = <<<'HTML'
 <div style="direction: rtl; font-family: 'Amiri', 'Tajawal', sans-serif; line-height: 1.8;">
     <h2 style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px;">عقد عمل مندوب توصيل مستقل</h2>
     <p><strong>رقم العقد:</strong> {contract_number}</p>

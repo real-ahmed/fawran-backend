@@ -17,7 +17,7 @@ class VendorResource extends JsonResource
         return [
             'id' => $this->id,
             'owner_id' => $this->owner_id,
-            'owner_name' => $this->whenLoaded('owner', fn() => $this->owner->name),
+            'owner_name' => $this->whenLoaded('owner', fn () => $this->owner->name),
             'name' => $this->name, // JSON array of translations
             'type' => $this->type?->value, // Enum value
             'status' => $this->status?->value, // Enum value

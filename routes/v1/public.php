@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Public\AppConfigController;
-use App\Http\Middleware\ValidateApiKey;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('public')->group(function () {

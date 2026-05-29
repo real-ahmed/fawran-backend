@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Courier\Courier;
+use App\Models\Order\Order;
+use App\Observers\Courier\CourierObserver;
+use App\Observers\Order\OrderObserver;
 use App\Services\Sms\LogSmsGateway;
 use App\Services\Sms\SmsGatewayContract;
 use App\Services\Sms\SmsMisrGateway;
@@ -38,8 +42,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::preventLazyLoading(! $this->app->isProduction());
-        
-        \App\Models\Courier\Courier::observe(\App\Observers\Courier\CourierObserver::class);
+
+        Courier::observe(CourierObserver::class);
+        Order::observe(OrderObserver::class);
 
         // Implicitly grant "Super Admin" role all permissions
         // This avoids having to sync hundreds of permissions in the database

@@ -9,7 +9,6 @@ use App\Models\Order\Order;
 use App\Models\Platform\PlatformWallet;
 use App\Models\Vendor\Vendor;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Cache;
 
 class DashboardService
 {
@@ -55,7 +54,6 @@ class DashboardService
             ],
         ];
     }
-
 
     /**
      * Get all items pending admin approval.

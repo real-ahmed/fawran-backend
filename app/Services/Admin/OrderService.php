@@ -4,8 +4,6 @@ namespace App\Services\Admin;
 
 use App\Enums\OrderStatus;
 use App\Enums\OrderStatusTransition;
-use App\Events\OrderStatusChanged;
-use App\Models\Admin;
 use App\Models\Order\Delivery;
 use App\Models\Order\Order;
 use App\Models\Order\OrderStatusLog;
@@ -79,11 +77,6 @@ class OrderService
                 'changed_by_type' => auth()->check() ? get_class(auth()->user()) : null,
                 'changed_by_id' => auth()->id(),
             ]);
-        });
-
-        // Broadcast to all admins (or filter by zone)
-        Admin::all()->each(function ($admin) use ($order, $oldStatus, $newStatus) {
-            broadcast(new OrderStatusChanged($order, $admin, $oldStatus, $newStatus));
         });
 
         return $order;
