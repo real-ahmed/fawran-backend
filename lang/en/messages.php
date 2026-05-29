@@ -68,6 +68,10 @@ return [
 
     // Orders
     'order_cancelled_successfully' => 'Order cancelled successfully',
+    'new_order_title' => 'New Order Created',
+    'new_order_created' => 'A new order #:id has been created by :name',
+    'order_status_updated_title' => 'Order Status Updated',
+    'order_status_updated' => 'Order #:id status has been updated to :status',
 
     // Finances
     'finances_retrieved_successfully' => 'Financial overview retrieved successfully',

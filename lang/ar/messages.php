@@ -68,6 +68,10 @@ return [
 
     // Orders
     'order_cancelled_successfully' => 'تم إلغاء الطلب بنجاح',
+    'new_order_title' => 'تم إنشاء طلب جديد',
+    'new_order_created' => 'تم إنشاء طلب جديد برقم #:id بواسطة :name',
+    'order_status_updated_title' => 'تم تحديث حالة الطلب',
+    'order_status_updated' => 'تم تحديث حالة الطلب #:id إلى :status',
 
     // Finances
     'finances_retrieved_successfully' => 'تم استرجاع النظرة المالية بنجاح',
