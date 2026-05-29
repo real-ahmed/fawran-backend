@@ -11,6 +11,8 @@ use App\Services\AdminNotificationService;
 
 class CourierObserver
 {
+    public $afterCommit = true;
+
     /**
      * Handle the Courier "created" event.
      */
@@ -19,7 +21,7 @@ class CourierObserver
         $adminsToNotify = collect();
 
         $superAdmins = Admin::where('id', 1)
-            ->orWhereHas('roles', fn ($q) => $q->where('name', 'Super Admin'))
+            ->orWhereHas('roles', fn($q) => $q->where('name', 'Super Admin'))
             ->get();
 
         $adminsToNotify = $adminsToNotify->merge($superAdmins);

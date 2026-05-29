@@ -7,6 +7,8 @@ use App\Services\Admin\OrderNotificationService;
 
 class OrderObserver
 {
+    public $afterCommit = true;
+
     public function __construct(private OrderNotificationService $notificationService) {}
 
     public function created(Order $order): void
