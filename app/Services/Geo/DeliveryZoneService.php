@@ -49,6 +49,17 @@ class DeliveryZoneService
     }
 
     /**
+     * Check if a specific coordinate is within a specific zone.
+     */
+    public function isCoordinateInZone(DeliveryZone $zone, float $lat, float $lng): bool
+    {
+        return DeliveryZone::query()
+            ->where('id', $zone->id)
+            ->whereRaw("ST_Contains(polygon, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')')))", [$lng, $lat])
+            ->exists();
+    }
+
+    /**
      * Create a new Delivery Zone.
      */
     public function createZone(DeliveryZoneDataDTO $dto): DeliveryZone
@@ -109,6 +120,7 @@ class DeliveryZoneService
                 'vehicle_type' => $fee['vehicle_type'],
                 'base_delivery_fee' => $fee['base_delivery_fee'],
                 'fee_per_km' => $fee['fee_per_km'],
+                'intra_zone_flat_fee' => $fee['intra_zone_flat_fee'] ?? null,
                 'max_delivery_fee' => $fee['max_delivery_fee'] ?? 9999.99,
             ]);
         }

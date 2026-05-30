@@ -15,6 +15,7 @@ class DeliveryZoneVehicleFee extends Model
         'vehicle_type',
         'base_delivery_fee',
         'fee_per_km',
+        'intra_zone_flat_fee',
         'max_delivery_fee',
     ];
 
@@ -24,6 +25,7 @@ class DeliveryZoneVehicleFee extends Model
             'vehicle_type' => VehicleType::class,
             'base_delivery_fee' => 'decimal:2',
             'fee_per_km' => 'decimal:2',
+            'intra_zone_flat_fee' => 'decimal:2',
             'max_delivery_fee' => 'decimal:2',
         ];
     }

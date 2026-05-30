@@ -65,16 +65,34 @@ class CartService
         // 2. Determine Rates
         $zone = $this->deliveryZoneService->findZoneByCoordinates($dto->latitude, $dto->longitude);
         $vehicleFee = null;
+        $isIntraZone = false;
 
         if ($zone) {
+            // Check if ALL vendors are also inside this SAME zone
+            $allVendorsInZone = true;
+            foreach ($vendors as $vendor) {
+                if (!$vendor->latitude || !$vendor->longitude || !$this->deliveryZoneService->isCoordinateInZone($zone, $vendor->latitude, $vendor->longitude)) {
+                    $allVendorsInZone = false;
+                    break;
+                }
+            }
+            $isIntraZone = $allVendorsInZone;
+
             // Defaulting to Motorcycle rate for generic customer pricing
             $vehicleFee = $zone->vehicleFees()->where('vehicle_type', VehicleType::Motorcycle->value)->first();
         }
 
         $baseStart = (float) ($vehicleFee?->base_delivery_fee ?? SystemSetting::cachedValue('courier_base_start', '0.00'));
         $ratePerKm = (float) ($vehicleFee?->fee_per_km ?? SystemSetting::cachedValue('courier_per_km', '0.00'));
+        $intraZoneFlatFee = $vehicleFee?->intra_zone_flat_fee;
 
-        $totalDeliveryFee = $baseStart + ($totalDistanceKm * $ratePerKm);
+        if ($isIntraZone && $intraZoneFlatFee !== null) {
+            // Use Intra-Zone Flat Fee
+            $totalDeliveryFee = (float) $intraZoneFlatFee;
+        } else {
+            // Use Cross-Zone Dynamic Rate (or fallback if intra-zone flat fee is not set)
+            $totalDeliveryFee = $baseStart + ($totalDistanceKm * $ratePerKm);
+        }
 
         return [
             'distance_km' => $totalDistanceKm,

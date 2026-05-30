@@ -36,6 +36,7 @@ class UpdateDeliveryZoneRequest extends FormRequest
             'vehicle_fees.*.vehicle_type' => ['required_with:vehicle_fees', 'string', Rule::enum(VehicleType::class)],
             'vehicle_fees.*.base_delivery_fee' => ['required_with:vehicle_fees', 'numeric', 'min:0'],
             'vehicle_fees.*.fee_per_km' => ['required_with:vehicle_fees', 'numeric', 'min:0'],
+            'vehicle_fees.*.intra_zone_flat_fee' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 }
