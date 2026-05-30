@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 class CourierService
 {
+    public function __construct(private CourierLocationService $locationService) {}
+
     /**
      * Get online couriers within a specific radius of a coordinate.
      *
@@ -14,19 +16,19 @@ class CourierService
      */
     public function getNearbyOnlineCouriers(float $lat, float $lng, float $radiusKm): Collection
     {
-        $radiusMeters = $radiusKm * 1000;
+        // 1. Get nearby courier IDs from Redis
+        $courierIds = $this->locationService->getNearbyCouriers($lat, $lng, $radiusKm);
 
+        if (empty($courierIds)) {
+            return new Collection;
+        }
+
+        // 2. Fetch those couriers from MySQL
         return Courier::query()
+            ->whereIn('id', $courierIds)
             ->where('is_online', true)
             ->where('cod_blocked', false) // Exclude blocked couriers
-            ->whereHas('location', function ($query) use ($lat, $lng, $radiusMeters) {
-                // ST_Distance_Sphere calculates the distance in meters between two points
-                $query->whereRaw('ST_Distance_Sphere(
-                    POINT(longitude, latitude),
-                    POINT(?, ?)
-                ) <= ?', [$lng, $lat, $radiusMeters]);
-            })
-            ->with('location')
+            ->with('location') // Eager load historical DB location if needed elsewhere
             ->get();
     }
 }

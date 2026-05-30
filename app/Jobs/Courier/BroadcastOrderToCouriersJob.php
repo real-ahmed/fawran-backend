@@ -45,7 +45,7 @@ class BroadcastOrderToCouriersJob implements ShouldQueue
             return;
         }
 
-        $radiusKm = (float) SystemSetting::cachedValue('courier_search_radius_km', '25');
+        $radiusKm = (float) SystemSetting::cachedValue('courier_search_radius_km', '5');
 
         $nearbyCouriers = $courierService->getNearbyOnlineCouriers($vendorLat, $vendorLng, $radiusKm);
 

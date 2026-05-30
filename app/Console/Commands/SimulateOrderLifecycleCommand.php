@@ -14,6 +14,7 @@ use App\Models\Courier\Courier;
 use App\Models\Order\Order;
 use App\Models\Product\VendorItem;
 use App\Services\Admin\OrderNotificationService;
+use App\Services\Courier\CourierLocationService;
 use App\Services\Courier\CourierOrderService;
 use App\Services\Customer\OrderService as CustomerOrderService;
 use App\Services\OrderService;
@@ -212,6 +213,8 @@ class SimulateOrderLifecycleCommand extends Command
         float $lng,
         OrderNotificationService $notificationService
     ): void {
+        app(CourierLocationService::class)->updateLocation($courier->id, $lat, $lng);
+
         $courier->location()->updateOrCreate(
             ['courier_id' => $courier->id],
             ['latitude' => $lat, 'longitude' => $lng]
