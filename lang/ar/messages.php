@@ -124,4 +124,15 @@ return [
     'vehicle_motorcycle' => 'دراجة نارية',
     'vehicle_bicycle' => 'دراجة هوائية',
     'vehicle_car' => 'سيارة',
+
+    // Courier Orders
+    'unauthorized_courier' => 'غير مصرح. المستخدم ليس مندوب توصيل.',
+    'order_accepted' => 'تم قبول الطلب بنجاح.',
+    'order_no_longer_available' => 'الطلب لم يعد متاحاً.',
+    'new_delivery_request_title' => 'طلب توصيل جديد',
+    'new_delivery_request_body' => 'طلب توصيل جديد متاح بالقرب منك. الأجرة: :fee ريال',
+
+    // Customer Cart
+    'delivery_fee_calculated' => 'تم حساب رسوم التوصيل بنجاح.',
+    'delivery_fee_calculation_failed' => 'فشل في حساب رسوم التوصيل.',
 ];

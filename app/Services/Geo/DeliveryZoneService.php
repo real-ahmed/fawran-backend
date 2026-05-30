@@ -20,6 +20,7 @@ class DeliveryZoneService
         return DeliveryZone::query()
             ->when($filters->search, fn ($q) => $q->searchIdentity($filters->search))
             ->when($filters->is_active !== null, fn ($q) => $q->where('is_active', $filters->is_active))
+            ->with(['vehicleFees'])
             ->withPolygonGeoJson()
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
@@ -31,8 +32,20 @@ class DeliveryZoneService
     public function getZoneById(int $id): DeliveryZone
     {
         return DeliveryZone::query()
+            ->with(['vehicleFees'])
             ->withPolygonGeoJson()
             ->findOrFail($id);
+    }
+
+    /**
+     * Find the delivery zone that contains the given coordinates.
+     */
+    public function findZoneByCoordinates(float $lat, float $lng): ?DeliveryZone
+    {
+        return DeliveryZone::query()
+            ->where('is_active', true)
+            ->whereRaw("ST_Contains(polygon, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')')))", [$lng, $lat])
+            ->first();
     }
 
     /**
@@ -47,6 +60,10 @@ class DeliveryZoneService
         $zone->is_active = $dto->is_active ?? true;
         $zone->polygon = DB::raw("ST_GeomFromText('{$polygonWkt}')");
         $zone->save();
+
+        if ($dto->vehicle_fees !== null) {
+            $this->syncVehicleFees($zone, $dto->vehicle_fees);
+        }
 
         return $this->getZoneById($zone->id);
     }
@@ -71,12 +88,30 @@ class DeliveryZoneService
 
         $zone->save();
 
+        if ($dto->vehicle_fees !== null) {
+            $this->syncVehicleFees($zone, $dto->vehicle_fees);
+        }
+
         return $this->getZoneById($zone->id);
     }
 
     public function deleteZone(DeliveryZone $zone): void
     {
         $zone->delete();
+    }
+
+    protected function syncVehicleFees(DeliveryZone $zone, array $vehicleFees): void
+    {
+        $zone->vehicleFees()->delete(); // Clear existing fees to replace them
+
+        foreach ($vehicleFees as $fee) {
+            $zone->vehicleFees()->create([
+                'vehicle_type' => $fee['vehicle_type'],
+                'base_delivery_fee' => $fee['base_delivery_fee'],
+                'fee_per_km' => $fee['fee_per_km'],
+                'max_delivery_fee' => $fee['max_delivery_fee'] ?? 9999.99,
+            ]);
+        }
     }
 
     /**

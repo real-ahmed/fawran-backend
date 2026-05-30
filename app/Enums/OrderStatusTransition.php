@@ -13,6 +13,7 @@ class OrderStatusTransition
         return [
             OrderStatus::Pending->value => [
                 OrderStatus::Processing->value,
+                OrderStatus::OutForDelivery->value,
                 OrderStatus::Cancelled->value,
             ],
             OrderStatus::Processing->value => [

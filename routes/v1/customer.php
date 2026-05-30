@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Customer\CartController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Controllers\Api\V1\UserAuthController;
 use Illuminate\Support\Facades\Route;
@@ -14,4 +15,7 @@ Route::middleware('auth:api')->prefix('customer')->group(function () {
     Route::post('logout', [UserAuthController::class, 'logout']);
     Route::get('me', [UserAuthController::class, 'me']);
     Route::put('profile/settings', [SettingsController::class, 'update']);
+
+    // Cart Endpoints
+    Route::post('cart/calculate-delivery-fee', [CartController::class, 'calculateDeliveryFee']);
 });

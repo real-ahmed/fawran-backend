@@ -3,9 +3,11 @@
 namespace App\Services\Admin;
 
 use App\Enums\AdminPermission;
+use App\Events\Courier\CourierLocationUpdated;
 use App\Events\NewOrderCreated;
 use App\Events\OrderStatusChanged;
 use App\Models\Admin;
+use App\Models\Courier\Courier;
 use App\Models\Order\Order;
 use App\Notifications\Admin\NewOrderCreatedNotification;
 use App\Services\AdminNotificationService;
@@ -44,6 +46,25 @@ class OrderNotificationService
 
         foreach ($admins as $admin) {
             event(new OrderStatusChanged($order, $admin, $oldStatus, $newStatus));
+        }
+    }
+
+    /**
+     * Notify relevant admins about courier location changes.
+     */
+    public function notifyCourierLocationChange(Order $order, Courier $courier, ?int $visitedVendorId = null): void
+    {
+        $admins = $this->getTargetAdmins($order);
+
+        foreach ($admins as $admin) {
+            event(new CourierLocationUpdated(
+                $courier->id,
+                $order->id,
+                (float) ($courier->location?->latitude ?? 0),
+                (float) ($courier->location?->longitude ?? 0),
+                $admin,
+                $visitedVendorId
+            ));
         }
     }
 

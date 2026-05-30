@@ -10,6 +10,7 @@ readonly class DeliveryZoneDataDTO
         public ?array $name = null,
         public ?bool $is_active = null,
         public ?array $coordinates = null,
+        public ?array $vehicle_fees = null,
     ) {}
 
     public static function fromRequest(Request $request): self
@@ -20,6 +21,7 @@ readonly class DeliveryZoneDataDTO
             name: $data['name'] ?? null,
             is_active: $data['is_active'] ?? null,
             coordinates: $data['coordinates'] ?? null,
+            vehicle_fees: $data['vehicle_fees'] ?? null,
         );
     }
 }

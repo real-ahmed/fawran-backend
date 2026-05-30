@@ -6,14 +6,21 @@ use App\Enums\OrderStatus;
 use App\Enums\OrderStatusTransition;
 use App\Events\OrderConfirmed;
 use App\Events\OrderDelivered;
+use App\Models\Courier\Courier;
 use App\Models\Order\Delivery;
 use App\Models\Order\Order;
 use App\Models\Order\OrderStatusLog;
+use App\Models\Platform\SystemSetting;
+use App\Services\Geo\GoogleMapsService;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class OrderService
 {
+    public function __construct(
+        protected GoogleMapsService $googleMapsService
+    ) {}
+
     public function cancelOrder(Order $order): Order
     {
         return $this->updateStatus($order, OrderStatus::Cancelled->value);
@@ -58,15 +65,78 @@ class OrderService
         return $order;
     }
 
-    public function assignCourier(Order $order, int $courierId): void
+    public function calculateCourierFeeAndDistance(Order $order, Courier $courier): array
     {
-        DB::transaction(function () use ($order, $courierId) {
+        $order->loadMissing(['subOrders.vendor', 'orderDelivery.address']);
+
+        $totalDistanceKm = 0;
+
+        if ($courier->location && $order->orderDelivery?->address) {
+            $origin = [
+                'lat' => $courier->location->latitude,
+                'lng' => $courier->location->longitude,
+            ];
+
+            $destination = [
+                'lat' => $order->orderDelivery->address->latitude,
+                'lng' => $order->orderDelivery->address->longitude,
+            ];
+
+            $waypoints = [];
+            foreach ($order->subOrders as $subOrder) {
+                if ($subOrder->vendor && $subOrder->vendor->latitude && $subOrder->vendor->longitude) {
+                    $waypoints[] = [
+                        'lat' => $subOrder->vendor->latitude,
+                        'lng' => $subOrder->vendor->longitude,
+                    ];
+                }
+            }
+
+            $totalDistanceKm = $this->googleMapsService->calculateRouteDistance($origin, $destination, $waypoints);
+        }
+
+        $zone = $order->orderDelivery?->deliveryZone;
+        $vehicleFee = null;
+
+        if ($zone) {
+            $vehicleFee = $zone->vehicleFees()->where('vehicle_type', $courier->vehicle_type->value)->first();
+        }
+
+        $baseStart = (float) ($vehicleFee?->base_delivery_fee ?? SystemSetting::cachedValue('courier_base_start', '0.00'));
+        $ratePerKm = (float) ($vehicleFee?->fee_per_km ?? SystemSetting::cachedValue('courier_per_km', '0.00'));
+
+        $grossFee = $baseStart + ($totalDistanceKm * $ratePerKm);
+
+        $platformPercentage = (float) SystemSetting::cachedValue('default_courier_commission', '5.00');
+        $feeShare = round($grossFee * (1 - ($platformPercentage / 100)), 2);
+
+        return [
+            'distance_km' => $totalDistanceKm,
+            'gross_fee' => round($grossFee, 2),
+            'fee_share' => $feeShare,
+        ];
+    }
+
+    public function assignCourier(Order $order, int $courierId, ?float $preCalculatedFeeShare = null, ?float $preCalculatedGrossFee = null): void
+    {
+        $courier = Courier::with('location')->find($courierId);
+
+        if ($preCalculatedFeeShare !== null && $preCalculatedGrossFee !== null) {
+            $feeShare = $preCalculatedFeeShare;
+            $grossFee = $preCalculatedGrossFee;
+        } else {
+            $calculation = $this->calculateCourierFeeAndDistance($order, $courier);
+            $feeShare = $calculation['fee_share'];
+            $grossFee = $calculation['gross_fee'];
+        }
+
+        DB::transaction(function () use ($order, $courierId, $feeShare) {
             Delivery::updateOrCreate(
                 ['order_id' => $order->id],
                 [
                     'courier_id' => $courierId,
                     'status' => 'heading_to_vendors',
-                    'fee_share' => 0, // Should be calculated based on settings
+                    'fee_share' => $feeShare,
                 ]
             );
 

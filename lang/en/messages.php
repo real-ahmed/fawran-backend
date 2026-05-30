@@ -124,4 +124,15 @@ return [
     'vehicle_motorcycle' => 'Motorcycle',
     'vehicle_bicycle' => 'Bicycle',
     'vehicle_car' => 'Car',
+
+    // Courier Orders
+    'unauthorized_courier' => 'Unauthorized. User is not a courier.',
+    'order_accepted' => 'Order accepted successfully.',
+    'order_no_longer_available' => 'Order is no longer available.',
+    'new_delivery_request_title' => 'New Delivery Request',
+    'new_delivery_request_body' => 'A new delivery is available near you. Fee: :fee SAR',
+
+    // Customer Cart
+    'delivery_fee_calculated' => 'Delivery fee calculated successfully.',
+    'delivery_fee_calculation_failed' => 'Failed to calculate delivery fee.',
 ];
