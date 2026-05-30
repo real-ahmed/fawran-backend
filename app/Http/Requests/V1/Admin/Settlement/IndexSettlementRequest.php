@@ -14,9 +14,9 @@ class IndexSettlementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'settlement_type' => 'sometimes|string|in:courier,store',
-            'status' => 'sometimes|string|in:pending,completed,disputed',
-            'per_page' => 'nullable|integer|min:1|max:100',
+            'settlement_type' => ['sometimes', 'nullable', 'string', \Illuminate\Validation\Rule::enum(\App\Enums\SettlementType::class)],
+            'status' => ['sometimes', 'nullable', 'string', \Illuminate\Validation\Rule::enum(\App\Enums\SettlementStatus::class)],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
     }
 }
