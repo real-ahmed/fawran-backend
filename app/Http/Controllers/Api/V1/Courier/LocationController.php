@@ -23,9 +23,7 @@ class LocationController extends Controller
 
         $courier = $request->user()->courier;
 
-        if (! $courier) {
-            return response()->json(['message' => __('messages.courier_profile_not_found')], 404);
-        }
+        abort_if(! $courier, 404, __('messages.courier_profile_not_found'));
 
         $this->locationService->updateLocation(
             $courier->id,

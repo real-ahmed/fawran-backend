@@ -11,7 +11,7 @@ Ensure your server has the following software installed:
 - **Composer** (v2.x)
 - **MySQL 8.0+** or **PostgreSQL 14+**
 - **Nginx** or **Apache**
-- **Redis** (Highly recommended for caching and queues)
+- **Redis** (Mandatory for real-time Courier Geospatial Location Tracking and WebSockets)
 - **Supervisor** (For managing background queue workers)
 - **Git**
 
@@ -50,7 +50,12 @@ Required PHP Extensions:
    DB_USERNAME=your_db_user
    DB_PASSWORD=your_db_pass
    
-   # If using Redis
+   # Redis Configuration (Required for Courier Location Tracking)
+   REDIS_CLIENT=predis
+   REDIS_HOST=127.0.0.1
+   REDIS_PASSWORD=null
+   REDIS_PORT=6379
+
    CACHE_STORE=redis
    QUEUE_CONNECTION=redis
    SESSION_DRIVER=redis
@@ -92,8 +97,7 @@ Run the database migrations to build the strict Zero-Null schema.
 ```bash
 php artisan migrate --force
 
-# If you have initial seeders (like Admin credentials or System Settings), run:
-# php artisan db:seed --force
+php artisan db:seed --force
 ```
 
 ---
@@ -129,6 +133,8 @@ php artisan view:cache
 Fawran relies on background jobs for notifications, order assignments, push notifications, and geofencing calculations. Install Supervisor to keep the queue worker running permanently.
 
 Notification delivery is queued through Laravel notifications. Current notification classes use `App\Notifications\Concerns\QueuesNotificationDelivery`, which sends `mail`, `database`, `broadcast`, SMS, and FCM notification jobs to the dedicated `notifications` queue. Keep `notifications` before `default` in the worker queue list so user-facing notifications are processed first.
+
+Background jobs (like `SyncCourierLocationToDatabaseJob` which ensures lightning-fast API responses for high-frequency GPS pinging) run on the `default` queue.
 
 1. Create a configuration file: `sudo nano /etc/supervisor/conf.d/fawran-worker.conf`
 2. Add the following configuration:
