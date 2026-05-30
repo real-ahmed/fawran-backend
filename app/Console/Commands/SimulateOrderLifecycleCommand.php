@@ -18,7 +18,7 @@ class SimulateOrderLifecycleCommand extends Command
 
     protected $description = 'Simulate the lifecycle of an order to test real-time map tracking in the admin dashboard';
 
-    private const SLEEP_SECONDS = 10;
+    private const SLEEP_SECONDS = 1;
 
     public function handle(
         CourierOrderService $courierOrderService,
