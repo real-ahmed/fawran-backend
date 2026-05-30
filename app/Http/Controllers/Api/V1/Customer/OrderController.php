@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Api\V1\Customer;
 use App\DTOs\Customer\Order\PlaceOrderDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Customer\Order\PlaceOrderRequest;
-use App\Services\Customer\CustomerOrderService;
+use App\Services\Customer\OrderService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
-    public function __construct(private CustomerOrderService $customerOrderService) {}
+    public function __construct(private OrderService $orderService) {}
 
     /**
      * Place a new order.
@@ -20,7 +20,7 @@ class OrderController extends Controller
     {
         try {
             $dto = PlaceOrderDTO::fromValidated($request->validated(), $request->user()->id);
-            $order = $this->customerOrderService->placeOrder($dto);
+            $order = $this->orderService->placeOrder($dto);
 
             return response()->json([
                 'message' => __('messages.order_placed_successfully'),
