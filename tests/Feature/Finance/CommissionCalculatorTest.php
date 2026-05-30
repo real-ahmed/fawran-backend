@@ -5,10 +5,11 @@ namespace Tests\Feature\Finance;
 use App\Models\Order\Order;
 use App\Models\Order\SubOrder;
 use App\Models\Platform\OrderCommission;
-use App\Models\Platform\SystemSetting;
+use App\Models\Platform\SubscriptionPlan;
 use App\Models\User;
 use App\Models\Vendor\Vendor;
 use App\Models\Vendor\VendorCustomCommission;
+use App\Models\Vendor\VendorSubscription;
 use App\Services\Finance\CommissionCalculator;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Tests\TestCase;
@@ -25,14 +26,9 @@ class CommissionCalculatorTest extends TestCase
         $this->calculator = app(CommissionCalculator::class);
     }
 
-    public function test_calculates_with_default_commission(): void
+    public function test_calculates_with_fallback_commission_if_no_plan(): void
     {
-        // Ensure the setting exists
-        SystemSetting::updateOrCreate(
-            ['key' => 'default_vendorcommission'],
-            ['value' => '10.00', 'group' => 'financial']
-        );
-
+        // No custom commission, no active plan
         [$order, $vendor] = $this->createOrderWithVendor(subTotal: 200.00);
 
         $this->calculator->calculateForOrder($order);
@@ -46,14 +42,54 @@ class CommissionCalculatorTest extends TestCase
         $this->assertEquals('20.00', $commission->vendorcommission_amount); // 200 * 10%
     }
 
+    public function test_calculates_with_active_subscription_plan(): void
+    {
+        [$order, $vendor] = $this->createOrderWithVendor(subTotal: 200.00);
+
+        $plan = SubscriptionPlan::create([
+            'name' => ['en' => 'Pro'],
+            'monthly_price' => 500.00,
+            'commission_percentage' => 5.00,
+        ]);
+
+        VendorSubscription::create([
+            'vendor_id' => $vendor->id,
+            'plan_id' => $plan->id,
+            'status' => 'active',
+            'starts_at' => now(),
+            'expires_at' => now()->addMonth(),
+        ]);
+
+        // Refresh to pick up relation
+        $order->loadMissing(['subOrders.vendor.activeSubscription.plan']);
+
+        $this->calculator->calculateForOrder($order);
+
+        $commission = OrderCommission::where('order_id', $order->id)
+            ->where('vendor_id', $vendor->id)
+            ->first();
+
+        $this->assertNotNull($commission);
+        $this->assertEquals('5.00', $commission->vendorcommission_percentage);
+        $this->assertEquals('10.00', $commission->vendorcommission_amount); // 200 * 5%
+    }
+
     public function test_calculates_with_custom_vendor_commission(): void
     {
-        SystemSetting::updateOrCreate(
-            ['key' => 'default_vendorcommission'],
-            ['value' => '10.00', 'group' => 'financial']
-        );
-
         [$order, $vendor] = $this->createOrderWithVendor(subTotal: 300.00);
+
+        // Active plan that shouldn't be used because custom commission takes precedence
+        $plan = SubscriptionPlan::create([
+            'name' => ['en' => 'Pro'],
+            'monthly_price' => 500.00,
+            'commission_percentage' => 5.00,
+        ]);
+
+        VendorSubscription::create([
+            'vendor_id' => $vendor->id,
+            'plan_id' => $plan->id,
+            'status' => 'active',
+        ]);
 
         // Set custom commission
         VendorCustomCommission::updateOrCreate(
@@ -61,8 +97,7 @@ class CommissionCalculatorTest extends TestCase
             ['commission_percentage' => 15.00]
         );
 
-        // Refresh to pick up commission
-        $order->load('subOrders.vendor.customCommission');
+        $order->load(['subOrders.vendor.customCommission', 'subOrders.vendor.activeSubscription.plan']);
 
         $this->calculator->calculateForOrder($order);
 
@@ -77,34 +112,38 @@ class CommissionCalculatorTest extends TestCase
 
     public function test_freeze_commission_values_on_settings_change(): void
     {
-        SystemSetting::updateOrCreate(
-            ['key' => 'default_vendorcommission'],
-            ['value' => '10.00', 'group' => 'financial']
-        );
-
         [$order, $vendor] = $this->createOrderWithVendor(subTotal: 100.00);
+
+        $plan = SubscriptionPlan::create([
+            'name' => ['en' => 'Pro'],
+            'monthly_price' => 500.00,
+            'commission_percentage' => 5.00,
+        ]);
+
+        $subscription = VendorSubscription::create([
+            'vendor_id' => $vendor->id,
+            'plan_id' => $plan->id,
+            'status' => 'active',
+        ]);
+
+        $order->load(['subOrders.vendor.activeSubscription.plan']);
 
         $this->calculator->calculateForOrder($order);
 
-        // Change the system setting
-        SystemSetting::where('key', 'default_vendorcommission')->update(['value' => '25.00']);
+        // Change the plan setting
+        $plan->update(['commission_percentage' => 25.00]);
 
         // Verify the frozen commission hasn't changed
         $commission = OrderCommission::where('order_id', $order->id)
             ->where('vendor_id', $vendor->id)
             ->first();
 
-        $this->assertEquals('10.00', $commission->vendorcommission_percentage);
-        $this->assertEquals('10.00', $commission->vendorcommission_amount); // 100 * 10%
+        $this->assertEquals('5.00', $commission->vendorcommission_percentage);
+        $this->assertEquals('5.00', $commission->vendorcommission_amount); // 100 * 5%
     }
 
     public function test_idempotent_calculation(): void
     {
-        SystemSetting::updateOrCreate(
-            ['key' => 'default_vendorcommission'],
-            ['value' => '10.00', 'group' => 'financial']
-        );
-
         [$order, $vendor] = $this->createOrderWithVendor(subTotal: 100.00);
 
         // Calculate twice

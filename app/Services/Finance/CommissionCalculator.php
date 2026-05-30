@@ -4,7 +4,6 @@ namespace App\Services\Finance;
 
 use App\Models\Order\Order;
 use App\Models\Platform\OrderCommission;
-use App\Models\Platform\SystemSetting;
 
 class CommissionCalculator
 {
@@ -16,9 +15,10 @@ class CommissionCalculator
      */
     public function calculateForOrder(Order $order): void
     {
-        $order->loadMissing(['subOrders.vendor.customCommission', 'delivery', 'orderDelivery']);
+        $order->loadMissing(['subOrders.vendor.customCommission', 'subOrders.vendor.activeSubscription.plan', 'delivery', 'orderDelivery']);
 
-        $defaultCommission = (float) (SystemSetting::cachedValue('default_vendorcommission', '10.00'));
+        // Default commission setting has been removed in favor of the Hybrid Model
+        // Fallbacks are now handled directly in the vendor iteration loop
         $deliveryFeeShare = (float) ($order->delivery?->fee_share ?? 0);
         $totalDeliveryFee = (float) ($order->orderDelivery?->total_delivery_fee ?? 0);
 
@@ -28,9 +28,13 @@ class CommissionCalculator
                 continue;
             }
 
+            // 1. Custom Commission
+            // 2. Active Subscription Plan Commission
+            // 3. Fallback to 10.00%
             $commissionPercentage = (float) (
                 $subOrder->vendor?->customCommission?->commission_percentage
-                ?? $defaultCommission
+                ?? $subOrder->vendor?->activeSubscription?->plan?->commission_percentage
+                ?? 10.00
             );
 
             $subTotal = (float) $subOrder->sub_total;

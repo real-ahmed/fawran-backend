@@ -13,6 +13,9 @@ use App\Http\Controllers\Api\V1\Admin\FinanceController;
 use App\Http\Controllers\Api\V1\Admin\HotZoneController;
 use App\Http\Controllers\Api\V1\Admin\MasterProductController;
 use App\Http\Controllers\Api\V1\Admin\OrderController;
+use App\Http\Controllers\Api\V1\Admin\ExpiringSubscriptionController;
+use App\Http\Controllers\Api\V1\Admin\SubscriptionPlanController;
+use App\Http\Controllers\Api\V1\Admin\VendorSubscriptionController;
 use App\Http\Controllers\Api\V1\Admin\PayoutRequestController;
 use App\Http\Controllers\Api\V1\Admin\RefundRequestController;
 use App\Http\Controllers\Api\V1\Admin\RoleController;
@@ -80,11 +83,19 @@ Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->g
     Route::controller(VendorController::class)
         ->prefix('vendors')
         ->group(function () {
+            Route::get('expiring-subscriptions', ExpiringSubscriptionController::class)->middleware('can:'.AdminPermission::VIEW_VENDORS->value);
             Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_VENDORS->value);
             Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_VENDORS->value);
             Route::get('/{vendor}', 'show')->middleware('can:'.AdminPermission::VIEW_VENDORS->value);
             Route::put('/{vendor}', 'update')->middleware('can:'.AdminPermission::UPDATE_VENDORS->value);
             Route::delete('/{vendor}', 'destroy')->middleware('can:'.AdminPermission::DELETE_VENDORS->value);
+        });
+
+    Route::controller(VendorSubscriptionController::class)
+        ->prefix('vendors/{vendor}/subscriptions')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_VENDORS->value);
+            Route::post('/', 'store')->middleware('can:'.AdminPermission::UPDATE_VENDORS->value);
         });
 
     // Vendor Owners (Staff) Management
@@ -195,6 +206,17 @@ Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->g
     // Finances
     Route::get('finances/overview', [FinanceController::class, 'overview'])
         ->middleware('can:'.AdminPermission::VIEW_FINANCES->value);
+
+    // Subscription Plans
+    Route::controller(SubscriptionPlanController::class)
+        ->prefix('subscription-plans')
+        ->group(function () {
+            Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_FINANCES->value);
+            Route::post('/', 'store')->middleware('can:'.AdminPermission::VIEW_FINANCES->value);
+            Route::get('/{subscriptionPlan}', 'show')->middleware('can:'.AdminPermission::VIEW_FINANCES->value);
+            Route::put('/{subscriptionPlan}', 'update')->middleware('can:'.AdminPermission::VIEW_FINANCES->value);
+            Route::delete('/{subscriptionPlan}', 'destroy')->middleware('can:'.AdminPermission::VIEW_FINANCES->value);
+        });
 
     // Settlements
     Route::controller(SettlementController::class)

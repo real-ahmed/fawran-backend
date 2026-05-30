@@ -122,6 +122,16 @@ class Vendor extends Model
         return $this->hasMany(VendorBrandSubmission::class);
     }
 
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(VendorSubscription::class);
+    }
+
+    public function activeSubscription(): HasOne
+    {
+        return $this->hasOne(VendorSubscription::class)->where('status', 'active');
+    }
+
     public function newEloquentBuilder($query): VendorBuilder
     {
         return new VendorBuilder($query);
