@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Customer\CartController;
+use App\Http\Controllers\Api\V1\Customer\OrderController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Controllers\Api\V1\UserAuthController;
 use Illuminate\Support\Facades\Route;
@@ -18,4 +19,7 @@ Route::middleware('auth:api')->prefix('customer')->group(function () {
 
     // Cart Endpoints
     Route::post('cart/calculate-delivery-fee', [CartController::class, 'calculateDeliveryFee']);
+
+    // Order Endpoints
+    Route::post('orders', [OrderController::class, 'store']);
 });

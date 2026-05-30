@@ -2,6 +2,7 @@
 
 namespace App\Observers\Order;
 
+use App\Enums\OrderType;
 use App\Jobs\Courier\BroadcastOrderToCouriersJob;
 use App\Models\Order\Order;
 use App\Services\Admin\OrderNotificationService;
@@ -16,8 +17,11 @@ class OrderObserver
     {
         $this->notificationService->notifyNewOrder($order);
 
-        // Dispatch job to broadcast to nearby couriers
-        BroadcastOrderToCouriersJob::dispatch($order);
+        // Only broadcast to couriers for delivery orders
+        if ($order->order_type === OrderType::Delivery) {
+            // Dispatch job to broadcast to nearby couriers
+            BroadcastOrderToCouriersJob::dispatch($order);
+        }
     }
 
     public function updated(Order $order): void
