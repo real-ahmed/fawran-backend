@@ -3,53 +3,61 @@
 namespace App\Console\Commands;
 
 use App\DTOs\Courier\Order\CourierAcceptOrderDTO;
+use App\DTOs\Customer\Order\PlaceOrderDTO;
+use App\DTOs\Vendor\Order\UpdateSubOrderStatusDTO;
 use App\Enums\OrderStatus;
+use App\Enums\OrderType;
+use App\Enums\PaymentMethod;
 use App\Enums\SubOrderStatus;
+use App\Models\Address\UserAddress;
 use App\Models\Courier\Courier;
 use App\Models\Order\Order;
+use App\Models\Product\VendorItem;
 use App\Services\Admin\OrderNotificationService;
 use App\Services\Courier\CourierOrderService;
+use App\Services\Customer\OrderService as CustomerOrderService;
 use App\Services\OrderService;
+use App\Services\Vendor\VendorOrderService;
 use Illuminate\Console\Command;
 
 class SimulateOrderLifecycleCommand extends Command
 {
-    protected $signature = 'app:simulate-order-lifecycle {orderId?} {--steps=5 : Number of interpolation steps between stops}';
+    protected $signature = 'app:simulate-order-lifecycle {--steps=5 : Number of interpolation steps between stops}';
 
-    protected $description = 'Simulate the lifecycle of an order to test real-time map tracking in the admin dashboard';
+    protected $description = 'Simulate the lifecycle of an order from creation to delivery using the actual services';
 
     private const SLEEP_SECONDS = 1;
 
     public function handle(
         CourierOrderService $courierOrderService,
         OrderService $orderService,
-        OrderNotificationService $notificationService
+        OrderNotificationService $notificationService,
+        CustomerOrderService $customerOrderService,
+        VendorOrderService $vendorOrderService
     ) {
-        $orderId = $this->argument('orderId');
         $steps = (int) $this->option('steps');
 
-        if ($orderId) {
-            $order = Order::findOrFail($orderId);
-        } else {
-            $order = Order::where('status', OrderStatus::Pending->value)->latest()->first();
-            if (! $order) {
-                $this->error('No pending orders found.');
-
-                return;
-            }
-        }
-
-        $this->info("🚀 Starting simulation for Order #{$order->id}");
-
-        $courier = Courier::where('is_online', true)->first();
-
-        if (! $courier) {
-            $this->error('No online couriers found to accept the order.');
+        // ── Prerequisites ───────────────────────────────────────────────────
+        $customerAddress = UserAddress::whereNotNull('latitude')->whereNotNull('longitude')->first();
+        if (! $customerAddress) {
+            $this->error('No customer address with coordinates found.');
 
             return;
         }
 
-        $courier->loadMissing('location');
+        $vendorItems = VendorItem::where('is_available', true)->inRandomOrder()->limit(2)->get();
+        if ($vendorItems->isEmpty()) {
+            $this->error('No available vendor items found.');
+
+            return;
+        }
+
+        $courier = Courier::where('is_online', true)->first();
+        if (! $courier) {
+            $this->error('No online couriers found.');
+
+            return;
+        }
 
         if (! $courier->location) {
             $courier->location()->create([
@@ -59,12 +67,48 @@ class SimulateOrderLifecycleCommand extends Command
             $courier->load('location');
         }
 
+        // ── Step 1: Customer Places Order ──────────────────────────────────
+        $this->info('🛒 Step 1: Customer placing order...');
+        $itemsDto = $vendorItems->map(fn ($item) => [
+            'vendor_item_id' => $item->id,
+            'quantity' => 1,
+        ])->toArray();
+
+        $dto = PlaceOrderDTO::fromValidated([
+            'order_type' => OrderType::Delivery->value,
+            'payment_method' => PaymentMethod::Cod->value,
+            'address_id' => $customerAddress->id,
+            'items' => $itemsDto,
+        ], $customerAddress->user_id);
+
+        $order = $customerOrderService->placeOrder($dto);
+        $this->info("✅ Order #{$order->id} created.");
+        $this->wait();
+
+        // ── Step 2: Vendors Accept & Prepare ──────────────────────────────
+        $this->info('');
+        $this->info('🏪 Step 2: Vendors start preparing...');
+
+        foreach ($order->subOrders as $subOrder) {
+            $this->info("  - Vendor #{$subOrder->vendor_id} preparing...");
+            $vendorOrderService->updateSubOrderStatus(
+                UpdateSubOrderStatusDTO::fromValidated(['status' => SubOrderStatus::Preparing->value], $subOrder->id, $subOrder->vendor_id)
+            );
+            $this->wait();
+
+            $this->info("  - Vendor #{$subOrder->vendor_id} ready for pickup.");
+            $vendorOrderService->updateSubOrderStatus(
+                UpdateSubOrderStatusDTO::fromValidated(['status' => SubOrderStatus::ReadyForPickup->value], $subOrder->id, $subOrder->vendor_id)
+            );
+            $this->wait();
+        }
+
         $this->info("Selected Courier: {$courier->name} (#{$courier->id})");
         $this->info("Courier starting at: {$courier->location->latitude}, {$courier->location->longitude}");
 
-        // ── Step 1: Accept the Order ────────────────────────────────────
+        // ── Step 3: Courier Accepts Order ──────────────────────────────────
         $this->info('');
-        $this->info('📋 Step 1: Courier accepts order...');
+        $this->info('📋 Step 3: Courier accepts order...');
         $dto = CourierAcceptOrderDTO::fromRequest($courier->id, $order->id);
         $order = $courierOrderService->acceptOrder($dto);
         $this->info("Status → {$order->status->value}");
@@ -78,25 +122,11 @@ class SimulateOrderLifecycleCommand extends Command
             ->map(fn ($sub) => $sub->vendor)
             ->values();
 
-        if ($vendors->isEmpty()) {
-            $this->error('No vendors with coordinates found for this order.');
-
-            return;
-        }
-
-        $customerAddress = $order->orderDelivery?->address;
-
-        if (! $customerAddress || ! $customerAddress->latitude || ! $customerAddress->longitude) {
-            $this->error('No customer address with coordinates found for this order.');
-
-            return;
-        }
-
-        // ── Step 2+: Move to each vendor ────────────────────────────────
-        $stepNum = 2;
+        // ── Step 4+: Move to each vendor ────────────────────────────────
+        $stepNum = 4;
         foreach ($vendors as $vendor) {
             $this->info('');
-            $this->info("🏪 Step {$stepNum}: Moving to vendor: {$vendor->name}...");
+            $this->info("🚚 Step {$stepNum}: Moving to vendor: {$vendor->name}...");
 
             $this->interpolateMove(
                 $courier,
@@ -109,7 +139,9 @@ class SimulateOrderLifecycleCommand extends Command
                 $notificationService
             );
 
-            // Update sub-orders for this vendor to picked_up
+            // Update sub-orders for this vendor to picked_up using the service?
+            // VendorOrderService handles pending -> preparing -> ready_for_pickup
+            // Courier picking it up might be a different action, but let's just update directly or through OrderService
             $order->subOrders()
                 ->where('vendor_id', $vendor->id)
                 ->update(['status' => SubOrderStatus::PickedUp->value]);
