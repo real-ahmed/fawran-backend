@@ -26,6 +26,7 @@ class SyncCourierLocationToDatabaseJob implements ShouldQueue
             [
                 'latitude' => $this->latitude,
                 'longitude' => $this->longitude,
+                'located_at' => now(),
             ]
         );
     }

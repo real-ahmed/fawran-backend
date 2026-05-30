@@ -62,15 +62,15 @@ class SimulateOrderLifecycleCommand extends Command
 
         if (! $courier->location) {
             $courier->location()->create([
-                'latitude' => 24.7136,
-                'longitude' => 46.6753,
+                'latitude' => $vendorItems->first()->vendor->latitude,
+                'longitude' => $vendorItems->first()->vendor->longitude,
             ]);
             $courier->load('location');
         }
 
         // ── Step 1: Customer Places Order ──────────────────────────────────
         $this->info('🛒 Step 1: Customer placing order...');
-        $itemsDto = $vendorItems->map(fn ($item) => [
+        $itemsDto = $vendorItems->map(fn($item) => [
             'vendor_item_id' => $item->id,
             'quantity' => 1,
         ])->toArray();
@@ -119,8 +119,8 @@ class SimulateOrderLifecycleCommand extends Command
         $order->loadMissing(['subOrders.vendor', 'orderDelivery.address']);
 
         $vendors = $order->subOrders
-            ->filter(fn ($sub) => $sub->vendor && $sub->vendor->latitude && $sub->vendor->longitude)
-            ->map(fn ($sub) => $sub->vendor)
+            ->filter(fn($sub) => $sub->vendor && $sub->vendor->latitude && $sub->vendor->longitude)
+            ->map(fn($sub) => $sub->vendor)
             ->values();
 
         // ── Step 4+: Move to each vendor ────────────────────────────────
@@ -226,7 +226,7 @@ class SimulateOrderLifecycleCommand extends Command
 
     private function wait(): void
     {
-        $this->info('  ⏳ Waiting '.self::SLEEP_SECONDS.'s...');
+        $this->info('  ⏳ Waiting ' . self::SLEEP_SECONDS . 's...');
         sleep(self::SLEEP_SECONDS);
     }
 }

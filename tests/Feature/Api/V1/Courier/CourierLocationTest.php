@@ -19,9 +19,11 @@ class CourierLocationTest extends TestCase
 
     public function test_courier_can_update_location_and_store_in_redis()
     {
-        $user = User::factory()->create();
+        $user = \App\Models\User::factory()->create();
         $courier = Courier::create([
             'user_id' => $user->id,
+            'national_id' => '1234567890',
+            'plate_number' => 'ABC-1234',
             'vehicle_type' => 'car',
             'is_online' => true,
         ]);
