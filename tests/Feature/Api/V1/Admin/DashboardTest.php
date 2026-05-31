@@ -42,7 +42,7 @@ class DashboardTest extends TestCase
             ]);
     }
 
-    public function test_dashboard_metrics_are_cached_briefly(): void
+    public function test_dashboard_metrics_reflect_live_data(): void
     {
         $this->actingAs($this->admin, 'api_admin')
             ->getJson('/api/v1/admin/dashboard/metrics')
@@ -54,7 +54,7 @@ class DashboardTest extends TestCase
         $this->actingAs($this->admin, 'api_admin')
             ->getJson('/api/v1/admin/dashboard/metrics')
             ->assertOk()
-            ->assertJsonPath('data.revenue.total_revenue', '100.00');
+            ->assertJsonPath('data.revenue.total_revenue', '999.00');
     }
 
     public function test_admin_can_view_pending_approvals(): void

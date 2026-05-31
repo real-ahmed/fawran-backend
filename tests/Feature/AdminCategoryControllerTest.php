@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Admin;
 use App\Models\Catalog\Category;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class AdminCategoryControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use LazilyRefreshDatabase, WithFaker;
 
     protected Admin $admin;
 
@@ -57,15 +57,16 @@ class AdminCategoryControllerTest extends TestCase
             ],
             'is_active' => true,
             'parent_category_id' => $parentCategory->id,
-            'icon_class' => 'fas fa-home',
+            'icon' => \Illuminate\Http\UploadedFile::fake()->create('icon.svg', 10, 'image/svg+xml'),
         ];
 
         $response = $this->postJson('/api/v1/admin/categories', $data);
 
         $response->assertStatus(201)
             ->assertJsonPath('data.name.en', 'Child Category')
-            ->assertJsonPath('data.parent_category_id', $parentCategory->id)
-            ->assertJsonPath('data.icon_class', 'fas fa-home');
+            ->assertJsonPath('data.parent_category_id', $parentCategory->id);
+
+        $this->assertNotNull($response->json('data.icon'));
 
         $this->assertDatabaseHas('categories', [
             'name->en' => 'Child Category',
@@ -73,10 +74,6 @@ class AdminCategoryControllerTest extends TestCase
 
         $this->assertDatabaseHas('category_hierarchies', [
             'parent_category_id' => $parentCategory->id,
-        ]);
-
-        $this->assertDatabaseHas('category_icons', [
-            'icon_class' => 'fas fa-home',
         ]);
     }
 
@@ -104,15 +101,16 @@ class AdminCategoryControllerTest extends TestCase
                 'en' => 'Updated Category',
             ],
             'parent_category_id' => $parentCategory->id,
-            'icon_class' => 'fas fa-star',
+            'icon' => \Illuminate\Http\UploadedFile::fake()->create('updated_icon.svg', 10, 'image/svg+xml'),
         ];
 
         $response = $this->putJson("/api/v1/admin/categories/{$category->id}", $data);
 
         $response->assertStatus(200)
             ->assertJsonPath('data.name.en', 'Updated Category')
-            ->assertJsonPath('data.parent_category_id', $parentCategory->id)
-            ->assertJsonPath('data.icon_class', 'fas fa-star');
+            ->assertJsonPath('data.parent_category_id', $parentCategory->id);
+            
+        $this->assertNotNull($response->json('data.icon'));
 
         $this->assertDatabaseHas('categories', [
             'id' => $category->id,
@@ -127,7 +125,7 @@ class AdminCategoryControllerTest extends TestCase
         $parentCategory = Category::create(['name' => ['en' => 'Parent'], 'is_active' => true]);
         $category = Category::create(['name' => ['en' => 'To Delete'], 'is_active' => true]);
         $category->hierarchy()->create(['parent_category_id' => $parentCategory->id]);
-        $category->icon()->create(['icon_class' => 'fas fa-test']);
+        $category->icon()->create(['icon_path' => 'icons/fake.svg']);
 
         $response = $this->deleteJson("/api/v1/admin/categories/{$category->id}");
 

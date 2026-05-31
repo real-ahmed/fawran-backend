@@ -85,6 +85,7 @@ class CourierSearchTest extends TestCase
             'delivery_zone_id' => $this->deliveryZone->id,
             'vehicle_type' => 'motorcycle',
             'plate_number' => $plateNumber,
+            'national_id' => substr(uniqid('', true), 0, 14),
             'is_online' => false,
         ]);
     }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Finance;
 
+use App\Enums\SettlementType;
 use App\Enums\WalletTransactionType;
 use App\Models\Payment\Settlement;
 use App\Models\Payment\Wallet;
@@ -29,7 +30,7 @@ class WalletServiceTest extends TestCase
 
         // Create a reference model for the transaction
         $reference = Settlement::create([
-            'settlement_type' => 'store',
+            'settlement_type' => SettlementType::Vendor->value,
             'target_id' => 1,
             'period_start' => now()->subDays(7),
             'period_end' => now(),
@@ -59,7 +60,7 @@ class WalletServiceTest extends TestCase
         $user = User::factory()->create();
 
         $reference = Settlement::create([
-            'settlement_type' => 'store',
+            'settlement_type' => SettlementType::Vendor->value,
             'target_id' => 1,
             'period_start' => now()->subDays(7),
             'period_end' => now(),
@@ -92,7 +93,7 @@ class WalletServiceTest extends TestCase
         $user = User::factory()->create();
 
         $reference = Settlement::create([
-            'settlement_type' => 'store',
+            'settlement_type' => SettlementType::Vendor->value,
             'target_id' => 1,
             'period_start' => now()->subDays(7),
             'period_end' => now(),
@@ -116,7 +117,7 @@ class WalletServiceTest extends TestCase
         $user = User::factory()->create();
 
         $reference = Settlement::create([
-            'settlement_type' => 'store',
+            'settlement_type' => SettlementType::Vendor->value,
             'target_id' => 1,
             'period_start' => now()->subDays(7),
             'period_end' => now(),
@@ -151,7 +152,7 @@ class WalletServiceTest extends TestCase
         $user = User::factory()->create();
 
         $reference = Settlement::create([
-            'settlement_type' => 'courier',
+            'settlement_type' => SettlementType::Courier->value,
             'target_id' => 1,
             'period_start' => now()->subDays(7),
             'period_end' => now(),
@@ -181,7 +182,7 @@ class WalletServiceTest extends TestCase
         $user = User::factory()->create();
 
         $reference = Settlement::create([
-            'settlement_type' => 'store',
+            'settlement_type' => SettlementType::Vendor->value,
             'target_id' => 1,
             'period_start' => now()->subDays(7),
             'period_end' => now(),

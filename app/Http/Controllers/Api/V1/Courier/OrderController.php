@@ -16,31 +16,17 @@ class OrderController extends Controller
     /**
      * Accept an order delivery request.
      */
-    public function accept(Order $order): JsonResponse
+    public function accept(\Illuminate\Http\Request $request, Order $order): JsonResponse
     {
-        $courier = auth()->user()->courier;
+        $dto = CourierAcceptOrderDTO::fromRequest($request->user()->courier->id, $order->id);
+        $updatedOrder = $this->courierOrderService->acceptOrder($dto);
 
-        if (! $courier) {
-            return response()->json([
-                'message' => __('messages.unauthorized_courier'),
-            ], 403);
-        }
-
-        try {
-            $dto = CourierAcceptOrderDTO::fromRequest($courier->id, $order->id);
-            $updatedOrder = $this->courierOrderService->acceptOrder($dto);
-
-            return response()->json([
-                'message' => __('messages.order_accepted'),
-                'data' => [
-                    'order_id' => $updatedOrder->id,
-                    'status' => $updatedOrder->status->value,
-                ],
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 400);
-        }
+        return response()->json([
+            'message' => __('messages.order_accepted'),
+            'data' => [
+                'order_id' => $updatedOrder->id,
+                'status' => $updatedOrder->status->value,
+            ],
+        ]);
     }
 }

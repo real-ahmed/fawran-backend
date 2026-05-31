@@ -22,6 +22,7 @@ class CourierContractDocumentTest extends TestCase
             'delivery_zone_id' => $this->createDeliveryZone()->id,
             'vehicle_type' => 'motorcycle',
             'plate_number' => 'DOC-100',
+            'national_id' => '1234567890',
             'is_online' => false,
         ]);
 
@@ -65,6 +66,7 @@ class CourierContractDocumentTest extends TestCase
             'delivery_zone_id' => $this->createDeliveryZone()->id,
             'vehicle_type' => 'motorcycle',
             'plate_number' => 'DOC-101',
+            'national_id' => '1234567891',
             'is_online' => false,
         ]);
 

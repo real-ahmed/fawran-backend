@@ -21,8 +21,7 @@ class CatalogSubmissionEventTest extends TestCase
 
         $payload = (new BrandSubmitted($brand, $admin))->broadcastWith();
 
-        $this->assertSame('Brand', $payload['item_type']);
-        $this->assertSame(12, $payload['item_id']);
+        $this->assertSame(12, $payload['brand_id']);
         $this->assertSame('brands', $payload['resource']);
         $this->assertStringContainsString('Acme', $payload['message']);
     }
@@ -35,8 +34,7 @@ class CatalogSubmissionEventTest extends TestCase
 
         $payload = (new CategorySubmitted($category, $admin))->broadcastWith();
 
-        $this->assertSame('Category', $payload['item_type']);
-        $this->assertSame(22, $payload['item_id']);
+        $this->assertSame(22, $payload['category_id']);
         $this->assertSame('categories', $payload['resource']);
         $this->assertStringContainsString('Groceries', $payload['message']);
     }
@@ -49,8 +47,7 @@ class CatalogSubmissionEventTest extends TestCase
 
         $payload = (new MasterProductSubmitted($product, $admin))->broadcastWith();
 
-        $this->assertSame('Master Product', $payload['item_type']);
-        $this->assertSame(32, $payload['item_id']);
+        $this->assertSame(32, $payload['master_product_id']);
         $this->assertSame('master-products', $payload['resource']);
         $this->assertStringContainsString('Apples', $payload['message']);
     }

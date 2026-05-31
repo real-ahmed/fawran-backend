@@ -5,13 +5,13 @@ namespace Tests\Feature\Api\V1\Public;
 use App\Models\Admin;
 use App\Models\Platform\SystemSetting;
 use App\Models\Role;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class AppConfigTest extends TestCase
 {
-    use RefreshDatabase;
+    use LazilyRefreshDatabase;
 
     protected function setUp(): void
     {
@@ -53,6 +53,7 @@ class AppConfigTest extends TestCase
 
         $admin = Admin::factory()->create();
         $role = Role::create(['name' => Role::SUPER_ADMIN_NAME, 'guard_name' => 'api_admin']);
+        setPermissionsTeamId(0);
         $admin->assignRole($role);
 
         $this->actingAs($admin, 'api_admin')

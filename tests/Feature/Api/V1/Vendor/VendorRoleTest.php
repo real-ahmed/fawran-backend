@@ -47,7 +47,7 @@ class VendorRoleTest extends TestCase
         // Give user permission to manage roles in this store
         setPermissionsTeamId($vendorId);
         $role = Role::create(['name' => 'Vendor Owner', 'guard_name' => 'api', 'vendor_id' => $vendorId]);
-        $permission = Permission::firstOrCreate(['name' => 'manage store roles', 'guard_name' => 'api']);
+        $permission = Permission::firstOrCreate(['name' => \App\Enums\VendorPermission::MANAGE_ROLES->value, 'guard_name' => 'api']);
         $role->givePermissionTo($permission);
         $user->assignRole($role);
 

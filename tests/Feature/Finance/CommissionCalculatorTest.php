@@ -172,7 +172,6 @@ class CommissionCalculatorTest extends TestCase
             'longitude' => 31.2357,
             'formatted_address' => 'Cairo',
             'is_active' => true,
-            'status' => 'online',
         ]);
 
         $order = Order::create([

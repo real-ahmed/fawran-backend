@@ -5,14 +5,14 @@ namespace Tests\Feature\Api\V1;
 use App\Http\Middleware\SetLocale;
 use App\Models\Admin;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 
 class UserSettingsTest extends TestCase
 {
-    use RefreshDatabase;
+    use LazilyRefreshDatabase;
 
     public function test_user_can_update_settings()
     {
