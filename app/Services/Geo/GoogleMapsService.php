@@ -71,4 +71,73 @@ class GoogleMapsService
 
         return round($totalDistanceMeters / 1000, 2); // Convert to KM
     }
+
+    /**
+     * Calculate route metrics including distance and duration.
+     *
+     * @param  array  $origin  ['lat' => float, 'lng' => float]
+     * @param  array  $destination  ['lat' => float, 'lng' => float]
+     * @param  array  $waypoints  Array of ['lat' => float, 'lng' => float]
+     * @return array  ['distance_km' => float, 'duration_minutes' => float]
+     */
+    public function calculateRouteMetrics(array $origin, array $destination, array $waypoints = []): array
+    {
+        $apiKey = config('services.google_maps.api_key');
+
+        if (empty($apiKey)) {
+            Log::warning('Google Maps API key is not configured.');
+
+            return ['distance_km' => 0.0, 'duration_minutes' => 0.0];
+        }
+
+        $originStr = "{$origin['lat']},{$origin['lng']}";
+        $destinationStr = "{$destination['lat']},{$destination['lng']}";
+
+        $waypointsParam = '';
+        if (! empty($waypoints)) {
+            $waypointStrs = array_map(fn ($wp) => "{$wp['lat']},{$wp['lng']}", $waypoints);
+            $waypointsParam = 'optimize:true|'.implode('|', $waypointStrs);
+        }
+
+        $response = Http::get('https://maps.googleapis.com/maps/api/directions/json', array_filter([
+            'origin' => $originStr,
+            'destination' => $destinationStr,
+            'waypoints' => $waypointsParam ?: null,
+            'key' => $apiKey,
+            'mode' => 'driving',
+        ]));
+
+        if ($response->failed()) {
+            Log::error('Google Maps Directions API request failed.', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return ['distance_km' => 0.0, 'duration_minutes' => 0.0];
+        }
+
+        $data = $response->json();
+
+        if (($data['status'] ?? '') !== 'OK' || empty($data['routes'])) {
+            Log::warning('Google Maps Directions API returned non-OK status or empty routes.', [
+                'status' => $data['status'] ?? 'UNKNOWN',
+            ]);
+
+            return ['distance_km' => 0.0, 'duration_minutes' => 0.0];
+        }
+
+        $totalDistanceMeters = 0;
+        $totalDurationSeconds = 0;
+        $legs = $data['routes'][0]['legs'] ?? [];
+
+        foreach ($legs as $leg) {
+            $totalDistanceMeters += ($leg['distance']['value'] ?? 0);
+            $totalDurationSeconds += ($leg['duration']['value'] ?? 0);
+        }
+
+        return [
+            'distance_km' => round($totalDistanceMeters / 1000, 2),
+            'duration_minutes' => round($totalDurationSeconds / 60, 2),
+        ];
+    }
 }

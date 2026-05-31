@@ -11,16 +11,17 @@ use App\Models\Order\Delivery;
 use App\Models\Order\Order;
 use App\Models\Order\OrderStatusLog;
 use App\Models\Platform\SystemSetting;
-use App\Services\Geo\DeliveryZoneService;
-use App\Services\Geo\GoogleMapsService;
+use App\DTOs\Courier\DeliveryPreviewDTO;
+use App\Services\Courier\CourierPricingService;
+use App\Services\Courier\DeliveryEstimationService;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class OrderService
 {
     public function __construct(
-        protected GoogleMapsService $googleMapsService,
-        protected DeliveryZoneService $deliveryZoneService
+        protected DeliveryEstimationService $estimationService,
+        protected CourierPricingService $pricingService
     ) {}
 
     public function cancelOrder(Order $order): Order
@@ -67,112 +68,41 @@ class OrderService
         return $order;
     }
 
-    public function calculateCourierFeeAndDistance(Order $order, Courier $courier): array
+    public function previewDelivery(Order $order, Courier $courier): DeliveryPreviewDTO
     {
-        $order->loadMissing(['subOrders.vendor', 'orderDelivery.address']);
+        $routeMetrics = $this->estimationService->estimateRoute($order, $courier);
+        $feeMetrics = $this->pricingService->calculateFee($order, $courier, $routeMetrics);
 
-        $totalDistanceKm = 0;
-
-        if ($courier->location && $order->orderDelivery?->address) {
-            $origin = [
-                'lat' => $courier->location->latitude,
-                'lng' => $courier->location->longitude,
-            ];
-
-            $destination = [
-                'lat' => $order->orderDelivery->address->latitude,
-                'lng' => $order->orderDelivery->address->longitude,
-            ];
-
-            $waypoints = [];
-            foreach ($order->subOrders as $subOrder) {
-                if ($subOrder->vendor && $subOrder->vendor->latitude && $subOrder->vendor->longitude) {
-                    $waypoints[] = [
-                        'lat' => $subOrder->vendor->latitude,
-                        'lng' => $subOrder->vendor->longitude,
-                    ];
-                }
-            }
-
-            $totalDistanceKm = $this->googleMapsService->calculateRouteDistance($origin, $destination, $waypoints);
-        }
-
-        $zone = $order->orderDelivery?->deliveryZone;
-        $vehicleFee = null;
-        $isIntraZone = false;
-
-        if ($zone) {
-            // Check if courier's start, all vendors, and destination are inside the SAME zone
-            $allPointsInZone = true;
-
-            // Check Courier
-            if (!$courier->location || !$this->deliveryZoneService->isCoordinateInZone($zone, $courier->location->latitude, $courier->location->longitude)) {
-                $allPointsInZone = false;
-            }
-
-            // Check Destination
-            if ($allPointsInZone && $order->orderDelivery?->address) {
-                if (!$this->deliveryZoneService->isCoordinateInZone($zone, $order->orderDelivery->address->latitude, $order->orderDelivery->address->longitude)) {
-                    $allPointsInZone = false;
-                }
-            } else {
-                $allPointsInZone = false;
-            }
-
-            // Check Vendors
-            if ($allPointsInZone) {
-                foreach ($order->subOrders as $subOrder) {
-                    if (!$subOrder->vendor || !$subOrder->vendor->latitude || !$subOrder->vendor->longitude || !$this->deliveryZoneService->isCoordinateInZone($zone, $subOrder->vendor->latitude, $subOrder->vendor->longitude)) {
-                        $allPointsInZone = false;
-                        break;
-                    }
-                }
-            }
-
-            $isIntraZone = $allPointsInZone;
-            $vehicleFee = $zone->vehicleFees()->where('vehicle_type', $courier->vehicle_type->value)->first();
-        }
-
-        $baseStart = (float) ($vehicleFee?->base_delivery_fee ?? SystemSetting::cachedValue('courier_base_start', '0.00'));
-        $ratePerKm = (float) ($vehicleFee?->fee_per_km ?? SystemSetting::cachedValue('courier_per_km', '0.00'));
-        $intraZoneFlatFee = $vehicleFee?->intra_zone_flat_fee;
-
-        if ($isIntraZone && $intraZoneFlatFee !== null) {
-            $grossFee = (float) $intraZoneFlatFee;
-        } else {
-            $grossFee = $baseStart + ($totalDistanceKm * $ratePerKm);
-        }
-
-        $platformPercentage = (float) SystemSetting::cachedValue('default_courier_commission', '5.00');
-        $feeShare = round($grossFee * (1 - ($platformPercentage / 100)), 2);
-
-        return [
-            'distance_km' => $totalDistanceKm,
-            'gross_fee' => round($grossFee, 2),
-            'fee_share' => $feeShare,
-        ];
+        return new DeliveryPreviewDTO(
+            route: $routeMetrics,
+            fee: $feeMetrics
+        );
     }
 
     public function assignCourier(Order $order, int $courierId, ?float $preCalculatedFeeShare = null, ?float $preCalculatedGrossFee = null): void
     {
         $courier = Courier::with('location')->find($courierId);
 
+        $preview = $this->previewDelivery($order, $courier);
+
         if ($preCalculatedFeeShare !== null && $preCalculatedGrossFee !== null) {
             $feeShare = $preCalculatedFeeShare;
             $grossFee = $preCalculatedGrossFee;
         } else {
-            $calculation = $this->calculateCourierFeeAndDistance($order, $courier);
-            $feeShare = $calculation['fee_share'];
-            $grossFee = $calculation['gross_fee'];
+            $feeShare = $preview->fee->feeShare;
+            $grossFee = $preview->fee->grossFee;
         }
 
-        DB::transaction(function () use ($order, $courierId, $feeShare) {
+        $estimatedMinutes = $preview->route->estimatedMinutes;
+
+        DB::transaction(function () use ($order, $courierId, $feeShare, $estimatedMinutes) {
             Delivery::updateOrCreate(
                 ['order_id' => $order->id],
                 [
                     'courier_id' => $courierId,
                     'status' => 'heading_to_vendors',
                     'fee_share' => $feeShare,
+                    'estimated_minutes' => $estimatedMinutes,
                 ]
             );
 

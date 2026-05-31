@@ -19,6 +19,31 @@ class CourierLocationService
 
         // Dispatch a background job to sync the location to the persistent DB
         SyncCourierLocationToDatabaseJob::dispatch($courierId, $lat, $lng);
+
+        // Fetch active delivery
+        $activeDelivery = \App\Models\Order\Delivery::with('order')->where('courier_id', $courierId)
+            ->whereIn('status', ['heading_to_vendors', 'out_for_delivery'])
+            ->first();
+
+        if ($activeDelivery) {
+            $elapsedMinutes = (int) now()->diffInMinutes($activeDelivery->created_at);
+            $initialEta = $activeDelivery->estimated_minutes ?? 0;
+            $remainingEta = max(0, $initialEta - $elapsedMinutes);
+
+            // Temporarily load location relation on a dummy courier to pass to notification service
+            $courier = new \App\Models\Courier\Courier(['id' => $courierId]);
+            $courier->setRelation('location', new \App\Models\Courier\CourierLocation([
+                'latitude' => $lat,
+                'longitude' => $lng,
+            ]));
+
+            app(\App\Services\Admin\OrderNotificationService::class)->notifyCourierLocationChange(
+                $activeDelivery->order,
+                $courier,
+                null,
+                $remainingEta
+            );
+        }
     }
 
     /**

@@ -60,13 +60,13 @@ class BroadcastOrderToCouriersJob implements ShouldQueue
         foreach ($nearbyCouriers as $courier) {
             try {
                 // Calculate fee for this specific courier
-                $calculation = $orderService->calculateCourierFeeAndDistance($this->order, $courier);
+                $preview = $orderService->previewDelivery($this->order, $courier);
 
                 // Notify courier
                 $courier->user->notify(new NewDeliveryRequestNotification(
                     $this->order,
-                    $calculation['distance_km'],
-                    $calculation['fee_share']
+                    $preview->route->distanceKm,
+                    $preview->fee->feeShare
                 ));
 
                 $notifiedCourierIds[] = $courier->id;

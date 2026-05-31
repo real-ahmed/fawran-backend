@@ -52,7 +52,7 @@ class OrderNotificationService
     /**
      * Notify relevant admins about courier location changes.
      */
-    public function notifyCourierLocationChange(Order $order, Courier $courier, ?int $visitedVendorId = null): void
+    public function notifyCourierLocationChange(Order $order, Courier $courier, ?int $visitedVendorId = null, ?int $estimatedMinutesRemaining = null): void
     {
         $admins = $this->getTargetAdmins($order);
 
@@ -63,7 +63,8 @@ class OrderNotificationService
                 (float) ($courier->location?->latitude ?? 0),
                 (float) ($courier->location?->longitude ?? 0),
                 $admin,
-                $visitedVendorId
+                $visitedVendorId,
+                $estimatedMinutesRemaining
             ));
         }
     }

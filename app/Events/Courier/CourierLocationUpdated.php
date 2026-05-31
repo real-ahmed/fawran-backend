@@ -19,7 +19,8 @@ class CourierLocationUpdated implements ShouldBroadcast
         public float $latitude,
         public float $longitude,
         public Admin $admin,
-        public ?int $visitedVendorId = null
+        public ?int $visitedVendorId = null,
+        public ?int $estimatedMinutesRemaining = null
     ) {}
 
     public function broadcastOn(): array
@@ -45,6 +46,10 @@ class CourierLocationUpdated implements ShouldBroadcast
 
         if ($this->visitedVendorId !== null) {
             $data['visited_vendor_id'] = $this->visitedVendorId;
+        }
+
+        if ($this->estimatedMinutesRemaining !== null) {
+            $data['estimated_minutes_remaining'] = $this->estimatedMinutesRemaining;
         }
 
         return $data;
