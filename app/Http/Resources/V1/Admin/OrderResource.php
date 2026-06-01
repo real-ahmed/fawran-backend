@@ -42,9 +42,9 @@ class OrderResource extends JsonResource
                 'status' => $sub->status,
                 'items' => $sub->items?->map(fn ($item) => [
                     'id' => $item->id,
-                    'name' => is_array($item->storeItem?->masterProduct?->name)
-                        ? ($item->storeItem->masterProduct->name[app()->getLocale()] ?? $item->storeItem->masterProduct->name['en'] ?? '')
-                        : $item->storeItem?->masterProduct?->name,
+                    'name' => is_array($item->vendorItem?->masterProduct?->name)
+                        ? ($item->vendorItem->masterProduct->name[app()->getLocale()] ?? $item->vendorItem->masterProduct->name['en'] ?? '')
+                        : $item->vendorItem?->masterProduct?->name,
                     'quantity' => $item->quantity,
                     'unit_price' => $item->unit_price,
                     'options_price' => $item->options_price,

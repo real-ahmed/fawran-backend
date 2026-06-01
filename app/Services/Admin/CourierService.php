@@ -33,7 +33,7 @@ class CourierService
 
     public function getCourier(Courier $courier): Courier
     {
-        return $courier->load(['user', 'document', 'approval', 'location']);
+        return $courier->load(['user.wallet', 'document', 'approval', 'location']);
     }
 
     public function updateCourier(Courier $courier, CourierDataDTO $dto): Courier
@@ -200,5 +200,17 @@ class CourierService
         }
 
         return $decoded[app()->getLocale()] ?? $decoded['ar'] ?? null;
+    }
+
+    public function getWalletTransactions(Courier $courier)
+    {
+        $wallet = $courier->userWallet;
+        if (! $wallet) {
+            return \Illuminate\Pagination\CursorPaginator::empty();
+        }
+
+        return $wallet->transactions()
+            ->latest()
+            ->cursorPaginate($this->getPerPageLimit());
     }
 }

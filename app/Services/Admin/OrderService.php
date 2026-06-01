@@ -23,6 +23,7 @@ class OrderService
             ->dateTo($filters->date_to)
             ->forCustomer($filters->customer_id)
             ->forVendor($filters->vendor_id)
+            ->forCourier($filters->courier_id)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());
     }
@@ -34,7 +35,7 @@ class OrderService
             'orderDelivery.address',
             'orderDelivery.deliveryZone',
             'subOrders.vendor',
-            'subOrders.items.storeItem.masterProduct',
+            'subOrders.items.vendorItem.masterProduct',
             'subOrders.items.options.productOption',
             'subOrders.items.options.productOptionValue',
             'subOrders.items.note',

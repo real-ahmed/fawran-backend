@@ -90,4 +90,18 @@ class VendorController extends Controller
 
         return $this->successResponse(null, __('messages.deleted_successfully'));
     }
+
+    public function walletTransactions(Vendor $vendor)
+    {
+        return \App\Http\Resources\V1\Admin\Finance\WalletTransactionResource::collection(
+            $this->vendorService->getWalletTransactions($vendor)
+        );
+    }
+
+    public function items(Vendor $vendor)
+    {
+        return \App\Http\Resources\V1\Admin\Vendor\VendorItemResource::collection(
+            $this->vendorService->getItems($vendor)
+        );
+    }
 }

@@ -13,6 +13,7 @@ readonly class OrderFilterDTO
         public ?string $date_to = null,
         public ?int $customer_id = null,
         public ?int $vendor_id = null,
+        public ?int $courier_id = null,
     ) {}
 
     public static function fromRequest(Request $request): self
@@ -24,6 +25,7 @@ readonly class OrderFilterDTO
             date_to: $request->query('date_to') ?? null,
             customer_id: $request->query('customer_id') !== null ? (int) $request->query('customer_id') : null,
             vendor_id: $request->query('vendor_id') !== null ? (int) $request->query('vendor_id') : null,
+            courier_id: $request->query('courier_id') !== null ? (int) $request->query('courier_id') : null,
         );
     }
 }

@@ -33,6 +33,7 @@ class CourierResource extends JsonResource
                 'longitude' => $this->location?->longitude,
                 'located_at' => $this->location?->located_at,
             ]),
+            'wallet_balance' => $this->relationLoaded('user') && $this->user && $this->user->relationLoaded('wallet') ? (float) ($this->user->wallet?->balance ?? 0) : 0,
             'created_at' => $this->created_at,
         ];
     }

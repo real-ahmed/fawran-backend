@@ -20,6 +20,7 @@ class IndexOrderRequest extends FormRequest
             'date_to' => 'sometimes|date|after_or_equal:date_from',
             'customer_id' => 'sometimes|integer|exists:users,id',
             'vendor_id' => 'sometimes|integer|exists:vendors,id',
+            'courier_id' => 'sometimes|integer|exists:couriers,id',
             'per_page' => 'nullable|integer|min:1|max:100',
         ];
     }

@@ -83,7 +83,7 @@ class VendorService
 
     public function getVendor(Vendor $vendor): Vendor
     {
-        return $vendor->load(['media', 'workingHours', 'deliveryZones', 'owner']);
+        return $vendor->load(['media', 'workingHours', 'deliveryZones', 'owner.wallet']);
     }
 
     public function updateVendor(Vendor $vendor, VendorDataDTO $dto): Vendor
@@ -166,5 +166,24 @@ class VendorService
             $item->delete();
         }
         $vendor->delete();
+    }
+
+    public function getWalletTransactions(Vendor $vendor)
+    {
+        $wallet = $vendor->owner?->wallet;
+        if (! $wallet) {
+            return new \Illuminate\Pagination\CursorPaginator([], $this->getPerPageLimit());
+        }
+
+        return $wallet->transactions()
+            ->latest()
+            ->cursorPaginate($this->getPerPageLimit());
+    }
+
+    public function getItems(Vendor $vendor)
+    {
+        return $vendor->storeItems()
+            ->with(['masterProduct.media', 'masterProduct.category', 'masterProduct.retailDetail'])
+            ->cursorPaginate($this->getPerPageLimit());
     }
 }

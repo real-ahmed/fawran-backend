@@ -39,7 +39,7 @@ class OrderItem extends Model
         return $this->belongsTo(SubOrder::class);
     }
 
-    public function storeItem(): BelongsTo
+    public function vendorItem(): BelongsTo
     {
         return $this->belongsTo(VendorItem::class);
     }

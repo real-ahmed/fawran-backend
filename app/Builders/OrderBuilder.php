@@ -11,7 +11,7 @@ class OrderBuilder extends Builder
         return $this->with([
             'customer.customer',
             'subOrders.vendor',
-            'subOrders.items.storeItem.masterProduct',
+            'subOrders.items.vendorItem.masterProduct',
             'subOrders.items.options.productOption',
             'subOrders.items.options.productOptionValue',
             'subOrders.items.note',
@@ -49,6 +49,13 @@ class OrderBuilder extends Builder
     {
         return $this->when($vendorId, function (self $query, int|string $vendorId): void {
             $query->whereHas('subOrders', fn (Builder $query): Builder => $query->where('vendor_id', $vendorId));
+        });
+    }
+
+    public function forCourier(null|int|string $courierId): self
+    {
+        return $this->when($courierId, function (self $query, int|string $courierId): void {
+            $query->whereHas('delivery', fn (Builder $query): Builder => $query->where('courier_id', $courierId));
         });
     }
 

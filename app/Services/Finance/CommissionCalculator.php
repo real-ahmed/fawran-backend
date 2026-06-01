@@ -34,7 +34,7 @@ class CommissionCalculator
             $commissionPercentage = (float) (
                 $subOrder->vendor?->customCommission?->commission_percentage
                 ?? $subOrder->vendor?->activeSubscription?->plan?->commission_percentage
-                ?? 10.00
+                ?? \App\Models\Platform\SystemSetting::cachedValue('default_store_commission', '10.00')
             );
 
             $subTotal = (float) $subOrder->sub_total;

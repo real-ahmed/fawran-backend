@@ -123,4 +123,14 @@ class CourierController extends Controller
     {
         return view('admin.couriers.contract', $this->courierService->getRequiredContractViewData($courier));
     }
+
+    /**
+     * Get Courier Wallet Transactions
+     */
+    public function walletTransactions(Courier $courier)
+    {
+        return \App\Http\Resources\V1\Admin\Finance\WalletTransactionResource::collection(
+            $this->courierService->getWalletTransactions($courier)
+        );
+    }
 }

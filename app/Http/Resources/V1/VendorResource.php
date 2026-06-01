@@ -32,6 +32,7 @@ class VendorResource extends JsonResource
             }),
             'working_hours' => $this->whenLoaded('workingHours'),
             'delivery_zones' => $this->whenLoaded('deliveryZones'),
+            'wallet_balance' => $this->relationLoaded('owner') && $this->owner && $this->owner->relationLoaded('wallet') ? (float) ($this->owner->wallet?->balance ?? 0) : 0,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

@@ -15,7 +15,7 @@ class DeliveryEstimationService
 
     public function estimateRoute(Order $order, Courier $courier): RouteMetricsDTO
     {
-        $order->loadMissing(['subOrders.vendor', 'subOrders.orderItems.vendorItem.restaurantDishDetail', 'orderDelivery.address']);
+        $order->loadMissing(['subOrders.vendor', 'subOrders.items.vendorItem.restaurantDishDetail', 'orderDelivery.address']);
 
         $totalDistanceKm = 0;
         $totalDurationMinutes = 0;
@@ -49,7 +49,7 @@ class DeliveryEstimationService
         // Calculate max preparation time
         $maxPrepTime = 0;
         foreach ($order->subOrders as $subOrder) {
-            foreach ($subOrder->orderItems as $item) {
+            foreach ($subOrder->items as $item) {
                 $prepTime = $item->vendorItem?->restaurantDishDetail?->preparation_time ?? 0;
                 if ($prepTime > $maxPrepTime) {
                     $maxPrepTime = $prepTime;

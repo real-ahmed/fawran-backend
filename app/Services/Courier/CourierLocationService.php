@@ -31,7 +31,8 @@ class CourierLocationService
             $remainingEta = max(0, $initialEta - $elapsedMinutes);
 
             // Temporarily load location relation on a dummy courier to pass to notification service
-            $courier = new \App\Models\Courier\Courier(['id' => $courierId]);
+            $courier = new \App\Models\Courier\Courier();
+            $courier->id = $courierId;
             $courier->setRelation('location', new \App\Models\Courier\CourierLocation([
                 'latitude' => $lat,
                 'longitude' => $lng,
