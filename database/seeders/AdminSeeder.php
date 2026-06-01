@@ -24,6 +24,7 @@ class AdminSeeder extends Seeder
 
         // Create Super Admin Role
         $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'api_admin', 'vendor_id' => 0]);
+        $role->update(['display_name' => ['en' => 'Super Admin', 'ar' => 'مشرف عام']]);
         $role->syncPermissions(Permission::where('guard_name', 'api_admin')->get());
 
         // Create Default Admin and Assign Role

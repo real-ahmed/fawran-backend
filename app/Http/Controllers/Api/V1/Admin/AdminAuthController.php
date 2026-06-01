@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\DTOs\Admin\Profile\UpdateAdminProfileDTO;
 use App\DTOs\Auth\Login\AdminLoginDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Admin\Auth\ForgotPasswordRequest;
 use App\Http\Requests\V1\Admin\Auth\LoginRequest;
 use App\Http\Requests\V1\Admin\Auth\ResetPasswordRequest;
 use App\Http\Requests\V1\Admin\Auth\VerifyResetOtpRequest;
+use App\Http\Requests\V1\Admin\Profile\UpdateProfileRequest;
 use App\Services\Auth\AdminAuthService;
 
 /**
@@ -34,6 +36,13 @@ class AdminAuthController extends Controller
     public function logout()
     {
         return $this->adminAuthService->logout();
+    }
+
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+        $dto = UpdateAdminProfileDTO::fromRequest($request);
+
+        return $this->adminAuthService->updateProfile($dto);
     }
 
     public function refresh()

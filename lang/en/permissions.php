@@ -47,6 +47,8 @@ return [
 
     'view orders' => 'View Orders',
     'cancel orders' => 'Cancel Orders',
+    'assign courier to order' => 'Assign Courier to Order',
+    'update order status' => 'Update Order Status',
 
     'view hot zones' => 'View Hot Zones',
     'create hot zones' => 'Create Hot Zones',
@@ -57,5 +59,7 @@ return [
     'manage settlements' => 'Manage Settlements',
     'manage payouts' => 'Manage Payouts',
     'manage refunds' => 'Manage Refunds',
+    'view courier cash' => 'View Courier Cash',
+    'manage wallets' => 'Manage Wallets',
     'manage system settings' => 'Manage System Settings',
 ];

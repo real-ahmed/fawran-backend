@@ -17,6 +17,7 @@ class OrderService
         return Order::query()
             ->withListRelations()
             ->forAdminZones()
+            ->search($filters->search)
             ->status($filters->status)
             ->type($filters->order_type)
             ->dateFrom($filters->date_from)

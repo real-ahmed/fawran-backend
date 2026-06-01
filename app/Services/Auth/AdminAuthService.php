@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\DTOs\Admin\Profile\UpdateAdminProfileDTO;
 use App\DTOs\Auth\Login\AdminLoginDTO;
 use App\Http\Resources\V1\AdminResource;
 use App\Models\Admin;
@@ -41,6 +42,25 @@ class AdminAuthService
         Auth::guard('api_admin')->logout();
 
         return $this->successResponse(null, 'Successfully logged out');
+    }
+
+    public function updateProfile(UpdateAdminProfileDTO $dto): JsonResponse
+    {
+        /** @var Admin $admin */
+        $admin = Auth::guard('api_admin')->user();
+
+        $data = [
+            'name' => $dto->name,
+            'email' => $dto->email,
+        ];
+
+        if ($dto->password) {
+            $data['password'] = Hash::make($dto->password);
+        }
+
+        $admin->update($data);
+
+        return $this->successResponse(new AdminResource($admin->fresh()), 'Profile updated successfully');
     }
 
     public function refresh(): JsonResponse

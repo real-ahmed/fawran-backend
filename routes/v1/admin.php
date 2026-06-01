@@ -9,20 +9,20 @@ use App\Http\Controllers\Api\V1\Admin\CourierController;
 use App\Http\Controllers\Api\V1\Admin\CustomerController;
 use App\Http\Controllers\Api\V1\Admin\DashboardController;
 use App\Http\Controllers\Api\V1\Admin\DeliveryZoneController;
+use App\Http\Controllers\Api\V1\Admin\ExpiringSubscriptionController;
 use App\Http\Controllers\Api\V1\Admin\FinanceController;
 use App\Http\Controllers\Api\V1\Admin\HotZoneController;
 use App\Http\Controllers\Api\V1\Admin\MasterProductController;
 use App\Http\Controllers\Api\V1\Admin\OrderController;
-use App\Http\Controllers\Api\V1\Admin\ExpiringSubscriptionController;
-use App\Http\Controllers\Api\V1\Admin\SubscriptionPlanController;
-use App\Http\Controllers\Api\V1\Admin\VendorSubscriptionController;
 use App\Http\Controllers\Api\V1\Admin\PayoutRequestController;
 use App\Http\Controllers\Api\V1\Admin\RefundRequestController;
 use App\Http\Controllers\Api\V1\Admin\RoleController;
 use App\Http\Controllers\Api\V1\Admin\SettlementController;
+use App\Http\Controllers\Api\V1\Admin\SubscriptionPlanController;
 use App\Http\Controllers\Api\V1\Admin\SystemSettingController;
 use App\Http\Controllers\Api\V1\Admin\VendorController;
 use App\Http\Controllers\Api\V1\Admin\VendorOwnerController;
+use App\Http\Controllers\Api\V1\Admin\VendorSubscriptionController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Middleware\SetAdminTeamId;
@@ -37,6 +37,7 @@ Route::post('admin/refresh', [AdminAuthController::class, 'refresh']);
 Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->group(function () {
     Route::post('logout', [AdminAuthController::class, 'logout']);
     Route::get('me', [AdminAuthController::class, 'me']);
+    Route::put('profile', [AdminAuthController::class, 'updateProfile']);
     Route::put('profile/settings', [SettingsController::class, 'update']);
 
     // Dashboard

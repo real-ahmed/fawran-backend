@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 readonly class OrderFilterDTO
 {
     public function __construct(
+        public ?string $search = null,
         public ?string $status = null,
         public ?string $order_type = null,
         public ?string $date_from = null,
@@ -19,6 +20,7 @@ readonly class OrderFilterDTO
     public static function fromRequest(Request $request): self
     {
         return new self(
+            search: $request->query('search') ?? null,
             status: $request->query('status') ?? null,
             order_type: $request->query('order_type') ?? null,
             date_from: $request->query('date_from') ?? null,

@@ -18,6 +18,16 @@ class OrderBuilder extends Builder
         ]);
     }
 
+    public function search(?string $term): self
+    {
+        return $this->when($term, function (self $query, string $term): void {
+            $query->where(function ($q) use ($term) {
+                $q->where('id', 'like', "%{$term}%")
+                  ->orWhereHas('customer.customer', fn ($q) => $q->where('name', 'like', "%{$term}%"));
+            });
+        });
+    }
+
     public function status(?string $status): self
     {
         return $this->when($status, fn (self $query, string $status): self => $query->where('status', $status));

@@ -206,7 +206,7 @@ class CourierService
     {
         $wallet = $courier->userWallet;
         if (! $wallet) {
-            return \Illuminate\Pagination\CursorPaginator::empty();
+            return new \Illuminate\Pagination\CursorPaginator([], $this->getPerPageLimit());
         }
 
         return $wallet->transactions()

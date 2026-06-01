@@ -47,6 +47,8 @@ return [
 
     'view orders' => 'عرض الطلبات',
     'cancel orders' => 'إلغاء الطلبات',
+    'assign courier to order' => 'تعيين مندوب للطلب',
+    'update order status' => 'تحديث حالة الطلب',
 
     'view hot zones' => 'عرض مناطق الذروة',
     'create hot zones' => 'إنشاء مناطق ذروة',
@@ -57,6 +59,8 @@ return [
     'manage settlements' => 'إدارة التسويات',
     'manage payouts' => 'إدارة المدفوعات',
     'manage refunds' => 'إدارة المسترجعات',
+    'view courier cash' => 'عرض نقدية المندوب',
+    'manage wallets' => 'إدارة المحافظ',
     'manage system settings' => 'إدارة إعدادات النظام',
     'update couriers' => 'تحديث المندوبين',
     'delete couriers' => 'حذف المندوبين',
