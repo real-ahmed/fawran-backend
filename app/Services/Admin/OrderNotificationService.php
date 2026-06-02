@@ -80,10 +80,7 @@ class OrderNotificationService
         $admins = collect();
 
         // Super Admins
-        $superAdmins = Admin::query()
-            ->where('id', 1)
-            ->orWhereHas('roles', fn ($q) => $q->where('name', 'Super Admin'))
-            ->get();
+        $superAdmins = Admin::query()->superAdmins()->get();
 
         $admins = $admins->merge($superAdmins);
 

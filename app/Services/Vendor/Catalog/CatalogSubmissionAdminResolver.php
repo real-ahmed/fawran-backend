@@ -13,10 +13,7 @@ class CatalogSubmissionAdminResolver
      */
     public function forVendor(Vendor $vendor): Collection
     {
-        $admins = Admin::query()
-            ->where('id', 1)
-            ->orWhereHas('roles', fn ($query) => $query->where('name', 'Super Admin'))
-            ->get();
+        $admins = Admin::query()->superAdmins()->get();
 
         $zoneIds = $vendor->deliveryZones()->pluck('delivery_zone_id')->all();
 

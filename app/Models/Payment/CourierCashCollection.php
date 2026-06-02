@@ -3,12 +3,21 @@
 namespace App\Models\Payment;
 
 use App\Models\Courier\Courier;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class CourierCashCollection extends Model
 {
+    use AdminZoneScope;
+
+    protected function applyZoneFilter(Builder $query, array $zoneIds): void
+    {
+        $this->whereCourierLocationInAdminZones($query, $zoneIds, 'courier_cash_collections.courier_id');
+    }
+
     public $timestamps = false;
 
     protected $fillable = [

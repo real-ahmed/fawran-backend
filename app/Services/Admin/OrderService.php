@@ -31,6 +31,8 @@ class OrderService
 
     public function getOrder(Order $order): Order
     {
+        $order->ensureVisibleToAdminZones();
+
         return $order->load([
             'customer.customer',
             'orderDelivery.address',

@@ -19,6 +19,10 @@ class BrandService
     {
         return Brand::query()
             ->withListRelations()
+            ->where(function ($query): void {
+                $query->whereDoesntHave('vendorSubmission')
+                    ->orWhereHas('vendorSubmission', fn ($query) => $query->forAdminZones());
+            })
             ->searchName($filters->search)
             ->approvalStatus($filters->approval_status)
             ->active($filters->is_active)
@@ -47,8 +51,17 @@ class BrandService
         return $brand->load('media');
     }
 
+    public function getBrand(Brand $brand): Brand
+    {
+        $this->ensureSubmissionVisible($brand);
+
+        return $brand->load('media');
+    }
+
     public function updateBrand(Brand $brand, BrandDataDTO $dto): Brand
     {
+        $this->ensureSubmissionVisible($brand);
+
         $data = $dto->toArray();
         $image = $dto->image;
         unset($data['image']);
@@ -76,6 +89,8 @@ class BrandService
 
     public function deleteBrand(Brand $brand): void
     {
+        $this->ensureSubmissionVisible($brand);
+
         $media = $brand->media()->get();
         foreach ($media as $item) {
             Storage::disk('public')->delete($item->file_path);
@@ -86,6 +101,8 @@ class BrandService
 
     public function approveBrand(Brand $brand): void
     {
+        $this->ensureSubmissionVisible($brand);
+
         $brand->update(['is_active' => true]);
         $brand->loadMissing('vendorSubmission.vendor.owner');
 
@@ -104,6 +121,14 @@ class BrandService
 
     public function rejectBrand(Brand $brand): void
     {
+        $this->ensureSubmissionVisible($brand);
+
         $brand->vendorSubmission()->update(['status' => 'rejected']);
+    }
+
+    private function ensureSubmissionVisible(Brand $brand): void
+    {
+        $brand->loadMissing('vendorSubmission');
+        $brand->vendorSubmission?->ensureVisibleToAdminZones();
     }
 }

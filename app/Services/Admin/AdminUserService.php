@@ -17,9 +17,12 @@ class AdminUserService
 {
     use Paginatable;
 
+    public function __construct(private AdminZoneService $adminZoneService) {}
+
     public function listAdmins(AdminUserFilterDTO $filters)
     {
         return Admin::query()
+            ->forAdminZones()
             ->withRoles()
             ->searchIdentity($filters->search)
             ->newest()
@@ -28,6 +31,8 @@ class AdminUserService
 
     public function createAdmin(AdminUserDataDTO $dto): Admin
     {
+        $this->adminZoneService->ensureZoneIdsAssignable($dto->delivery_zones);
+
         if (! is_null($dto->roles) && $this->containsSuperAdminRole($dto->roles)) {
             throw ValidationException::withMessages([
                 'roles' => __('messages.cannot_assign_super_admin_role'),
@@ -58,12 +63,17 @@ class AdminUserService
 
     public function getAdmin(Admin $admin): Admin
     {
+        $admin->ensureVisibleToAdminZones();
+
         return $admin->load('roles');
     }
 
     public function updateAdmin(Admin $admin, AdminUserDataDTO $dto): Admin
     {
+        $admin->ensureVisibleToAdminZones();
+
         $this->ensureSuperAdminRolesCanBeSynced($admin, $dto->roles);
+        $this->adminZoneService->ensureZoneIdsAssignable($dto->delivery_zones);
 
         $data = $dto->toArray();
         if (isset($data['password'])) {
@@ -87,6 +97,8 @@ class AdminUserService
 
     public function deleteAdmin(Admin $admin): void
     {
+        $admin->ensureVisibleToAdminZones();
+
         if ($admin->isSuperAdmin()) {
             throw new HttpException(403, __('messages.cannot_delete_super_admin'));
         }

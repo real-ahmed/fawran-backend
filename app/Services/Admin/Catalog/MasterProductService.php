@@ -20,6 +20,10 @@ class MasterProductService
     {
         return MasterProduct::query()
             ->withListRelations()
+            ->where(function ($query): void {
+                $query->whereDoesntHave('vendorSubmission')
+                    ->orWhereHas('vendorSubmission', fn ($query) => $query->forAdminZones());
+            })
             ->approvalStatus($filters->approval_status)
             ->inCategory($filters->category_id)
             ->active($filters->is_active)
@@ -77,11 +81,15 @@ class MasterProductService
 
     public function getProduct(MasterProduct $product): MasterProduct
     {
+        $this->ensureSubmissionVisible($product);
+
         return $product->load(['category', 'description', 'retailDetail']);
     }
 
     public function updateProduct(MasterProduct $product, MasterProductDataDTO $dto): MasterProduct
     {
+        $this->ensureSubmissionVisible($product);
+
         return DB::transaction(function () use ($product, $dto) {
             $updateData = [];
             if ($dto->category_id !== null) {
@@ -163,6 +171,8 @@ class MasterProductService
 
     public function deleteProduct(MasterProduct $product): void
     {
+        $this->ensureSubmissionVisible($product);
+
         DB::transaction(function () use ($product) {
             $media = $product->media()->get();
             foreach ($media as $item) {
@@ -178,6 +188,8 @@ class MasterProductService
 
     public function approveProduct(MasterProduct $product): void
     {
+        $this->ensureSubmissionVisible($product);
+
         $product->update(['is_active' => true]);
         $product->loadMissing('vendorSubmission.vendor.owner');
 
@@ -196,9 +208,17 @@ class MasterProductService
 
     public function rejectProduct(MasterProduct $product, ?string $reason = null): void
     {
+        $this->ensureSubmissionVisible($product);
+
         $product->vendorSubmission()->update([
             'status' => 'rejected',
             'reason' => $reason,
         ]);
+    }
+
+    private function ensureSubmissionVisible(MasterProduct $product): void
+    {
+        $product->loadMissing('vendorSubmission');
+        $product->vendorSubmission?->ensureVisibleToAdminZones();
     }
 }

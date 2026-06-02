@@ -21,6 +21,10 @@ class CategoryService
     {
         return Category::query()
             ->withListRelations()
+            ->where(function ($query): void {
+                $query->whereDoesntHave('vendorSubmission')
+                    ->orWhereHas('vendorSubmission', fn ($query) => $query->forAdminZones());
+            })
             ->searchName($filters->search)
             ->approvalStatus($filters->approval_status)
             ->active($filters->is_active)
@@ -66,11 +70,15 @@ class CategoryService
 
     public function getCategory(Category $category): Category
     {
+        $this->ensureSubmissionVisible($category);
+
         return $category->load(['hierarchy', 'icon']);
     }
 
     public function updateCategory(Category $category, CategoryDataDTO $dto): Category
     {
+        $this->ensureSubmissionVisible($category);
+
         return DB::transaction(function () use ($dto, $category) {
             $updateData = [];
             if ($dto->name !== null) {
@@ -135,6 +143,8 @@ class CategoryService
 
     public function deleteCategory(Category $category): void
     {
+        $this->ensureSubmissionVisible($category);
+
         DB::transaction(function () use ($category) {
             $media = $category->media()->get();
             foreach ($media as $item) {
@@ -149,6 +159,8 @@ class CategoryService
 
     public function approveCategory(Category $category): void
     {
+        $this->ensureSubmissionVisible($category);
+
         $category->update(['is_active' => true]);
         $category->loadMissing('vendorSubmission.vendor.owner');
 
@@ -167,6 +179,14 @@ class CategoryService
 
     public function rejectCategory(Category $category): void
     {
+        $this->ensureSubmissionVisible($category);
+
         $category->vendorSubmission()->update(['status' => 'rejected']);
+    }
+
+    private function ensureSubmissionVisible(Category $category): void
+    {
+        $category->loadMissing('vendorSubmission');
+        $category->vendorSubmission?->ensureVisibleToAdminZones();
     }
 }

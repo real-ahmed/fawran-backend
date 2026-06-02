@@ -100,6 +100,7 @@ return [
     'cannot_delete_super_admin_role' => 'The Super Admin role cannot be deleted.',
     'cannot_assign_super_admin_role' => 'The Super Admin role cannot be assigned to admin accounts.',
     'cannot_change_super_admin_account_role' => 'The Super Admin account must keep only the Super Admin role.',
+    'unauthorized_delivery_zones' => 'You may only assign delivery zones available to your admin account.',
 
     // Contract
     'courier_contract' => 'Courier Contract',

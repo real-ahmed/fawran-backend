@@ -23,11 +23,15 @@ class RefundService
 
     public function getRefundRequest(RefundRequest $refundRequest): RefundRequest
     {
+        $refundRequest->ensureVisibleToAdminZones();
+
         return $refundRequest->load(['customer', 'order', 'items']);
     }
 
     public function resolveRefundRequest(RefundRequest $refundRequest, RefundRequestDataDTO $dto): RefundRequest
     {
+        $refundRequest->ensureVisibleToAdminZones();
+
         $refundRequest->update([
             'status' => $dto->status,
             'resolution' => $dto->resolution ?? $refundRequest->resolution,

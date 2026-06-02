@@ -21,6 +21,7 @@ class VendorOwnerService
     public function listOwners(VendorOwnerFilterDTO $filters): CursorPaginator
     {
         return User::query()
+            ->forAdminZones()
             ->searchIdentity($filters->search)
             ->newest()
             ->cursorPaginate($this->getPerPageLimit());

@@ -5,9 +5,11 @@ namespace Tests\Feature\Api\V1\Admin;
 use App\Enums\AdminPermission;
 use App\Enums\VendorType;
 use App\Models\Admin;
+use App\Models\Geo\DeliveryZone;
 use App\Models\User;
 use App\Models\Vendor\Vendor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -108,6 +110,8 @@ class VendorTest extends TestCase
     {
         setPermissionsTeamId(0);
         $this->admin->givePermissionTo(AdminPermission::UPDATE_VENDORS->value);
+        $deliveryZone = $this->createDeliveryZone();
+        $this->admin->deliveryZones()->attach($deliveryZone);
 
         $user = User::factory()->create();
 
@@ -121,6 +125,11 @@ class VendorTest extends TestCase
             'latitude' => 24.7136,
             'longitude' => 46.6753,
             'is_active' => true,
+        ]);
+        $vendor->deliveryZones()->create([
+            'delivery_zone_id' => $deliveryZone->id,
+            'min_order_amount' => 0,
+            'estimated_delivery_time' => 30,
         ]);
 
         $payload = [
@@ -138,6 +147,8 @@ class VendorTest extends TestCase
     {
         setPermissionsTeamId(0);
         $this->admin->givePermissionTo(AdminPermission::DELETE_VENDORS->value);
+        $deliveryZone = $this->createDeliveryZone();
+        $this->admin->deliveryZones()->attach($deliveryZone);
 
         $user = User::factory()->create();
 
@@ -152,11 +163,27 @@ class VendorTest extends TestCase
             'longitude' => 46.6753,
             'is_active' => true,
         ]);
+        $vendor->deliveryZones()->create([
+            'delivery_zone_id' => $deliveryZone->id,
+            'min_order_amount' => 0,
+            'estimated_delivery_time' => 30,
+        ]);
 
         $response = $this->actingAs($this->admin, 'api_admin')->deleteJson("/api/v1/admin/vendors/{$vendor->id}");
 
         $response->assertStatus(200);
 
         $this->assertDatabaseMissing('vendors', ['id' => $vendor->id]);
+    }
+
+    private function createDeliveryZone(): DeliveryZone
+    {
+        $deliveryZone = new DeliveryZone;
+        $deliveryZone->name = ['en' => 'Test Zone', 'ar' => 'منطقة اختبار'];
+        $deliveryZone->polygon = DB::raw("ST_GeomFromText('POLYGON((46.671 24.711,46.678 24.715,46.685 24.708,46.671 24.711))')");
+        $deliveryZone->is_active = true;
+        $deliveryZone->save();
+
+        return $deliveryZone;
     }
 }

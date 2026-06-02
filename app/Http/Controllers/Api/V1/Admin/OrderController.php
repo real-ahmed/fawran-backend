@@ -63,6 +63,8 @@ class OrderController extends Controller
      */
     public function cancel(Order $order)
     {
+        $order->ensureVisibleToAdminZones();
+
         $this->systemOrderService->cancelOrder($order);
 
         return $this->successResponse(null, __('messages.order_cancelled_successfully'));
@@ -77,6 +79,8 @@ class OrderController extends Controller
 
     public function updateStatus(UpdateOrderStatusRequest $request, Order $order)
     {
+        $order->ensureVisibleToAdminZones();
+
         try {
             $this->systemOrderService->updateStatus($order, $request->validated('status'));
 
@@ -88,6 +92,8 @@ class OrderController extends Controller
 
     public function assignCourier(AssignCourierRequest $request, Order $order)
     {
+        $order->ensureVisibleToAdminZones();
+
         $this->systemOrderService->assignCourier($order, $request->validated('courier_id'));
 
         return $this->successResponse(null, __('messages.courier_assigned_successfully'));
@@ -95,6 +101,8 @@ class OrderController extends Controller
 
     public function deliveryPath(Order $order)
     {
+        $order->ensureVisibleToAdminZones();
+
         return $this->successResponse([]); // Mocked until Redis integration is ready
     }
 }

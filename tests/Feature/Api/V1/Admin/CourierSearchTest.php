@@ -61,7 +61,7 @@ class CourierSearchTest extends TestCase
         $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.id', $matchingCourier->id)
-            ->assertJsonMissing(['id' => $otherCourier->id]);
+            ->assertJsonMissing(['plate_number' => $otherCourier->plate_number]);
     }
 
     public function test_admin_can_search_couriers_by_plate_number(): void
@@ -75,14 +75,13 @@ class CourierSearchTest extends TestCase
         $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.id', $matchingCourier->id)
-            ->assertJsonMissing(['id' => $otherCourier->id]);
+            ->assertJsonMissing(['plate_number' => $otherCourier->plate_number]);
     }
 
     private function createCourier(User $user, string $plateNumber): Courier
     {
         return Courier::create([
             'user_id' => $user->id,
-            'delivery_zone_id' => $this->deliveryZone->id,
             'vehicle_type' => 'motorcycle',
             'plate_number' => $plateNumber,
             'national_id' => substr(uniqid('', true), 0, 14),

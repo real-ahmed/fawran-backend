@@ -32,6 +32,9 @@ class AdminUserTest extends TestCase
         foreach (AdminPermission::values() as $permission) {
             Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'api_admin']);
         }
+
+        $superAdminRole = Role::firstOrCreate(['name' => Role::SUPER_ADMIN_NAME, 'guard_name' => 'api_admin']);
+        $this->superAdmin->assignRole($superAdminRole);
     }
 
     public function test_can_list_admins_with_permission()

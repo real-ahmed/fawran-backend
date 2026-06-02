@@ -11,6 +11,7 @@ use App\Models\Courier\CourierDocument;
 use App\Models\Platform\SystemSetting;
 use App\Notifications\CourierApprovedNotification;
 use App\Traits\Paginatable;
+use Illuminate\Pagination\CursorPaginator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CourierService
@@ -33,11 +34,15 @@ class CourierService
 
     public function getCourier(Courier $courier): Courier
     {
+        $courier->ensureVisibleToAdminZones();
+
         return $courier->load(['user.wallet', 'document', 'approval', 'location']);
     }
 
     public function updateCourier(Courier $courier, CourierDataDTO $dto): Courier
     {
+        $courier->ensureVisibleToAdminZones();
+
         // Update User
         $userData = [];
         if ($dto->name !== null) {
@@ -72,11 +77,15 @@ class CourierService
 
     public function deleteCourier(Courier $courier): void
     {
+        $courier->ensureVisibleToAdminZones();
+
         $courier->delete();
     }
 
     public function approveCourier(Courier $courier, ?Admin $admin = null): void
     {
+        $courier->ensureVisibleToAdminZones();
+
         $admin ??= auth('api_admin')->user();
         $document = $courier->document;
 
@@ -100,6 +109,8 @@ class CourierService
 
     public function rejectCourier(Courier $courier): void
     {
+        $courier->ensureVisibleToAdminZones();
+
         $courier->update([
             'is_online' => false,
             'rejected_at' => now(),
@@ -108,6 +119,8 @@ class CourierService
 
     public function ensureContractDocument(Courier $courier): CourierDocument
     {
+        $courier->ensureVisibleToAdminZones();
+
         $document = $courier->document()->firstOrNew([
             'courier_id' => $courier->id,
         ]);
@@ -127,6 +140,8 @@ class CourierService
      */
     public function getContractViewData(Courier $courier): ?array
     {
+        $courier->ensureVisibleToAdminZones();
+
         $template = SystemSetting::cachedValue('courier_contract_template');
 
         if (! $template) {
@@ -177,6 +192,8 @@ class CourierService
 
     public function getLiveLocation(Courier $courier): ?object
     {
+        $courier->ensureVisibleToAdminZones();
+
         return $courier->location;
     }
 
@@ -204,9 +221,11 @@ class CourierService
 
     public function getWalletTransactions(Courier $courier)
     {
+        $courier->ensureVisibleToAdminZones();
+
         $wallet = $courier->userWallet;
         if (! $wallet) {
-            return new \Illuminate\Pagination\CursorPaginator([], $this->getPerPageLimit());
+            return new CursorPaginator([], $this->getPerPageLimit());
         }
 
         return $wallet->transactions()

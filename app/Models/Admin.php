@@ -8,7 +8,9 @@ use App\Models\Geo\DeliveryZone;
 use App\Models\Payment\PayoutExecution;
 use App\Models\Payment\SettlementExecution;
 use App\Traits\HasSettings;
+use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,7 +21,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable implements HasLocalePreference, JWTSubject
 {
-    use HasFactory, HasRoles, HasSettings, Notifiable;
+    use AdminZoneScope, HasFactory, HasRoles, HasSettings, Notifiable;
 
     public $timestamps = false;
 
@@ -41,6 +43,11 @@ class Admin extends Authenticatable implements HasLocalePreference, JWTSubject
     protected $attributes = [
         'is_active' => true,
     ];
+
+    protected function applyZoneFilter(Builder $query, array $zoneIds): void
+    {
+        $query->whereHas('deliveryZones', fn (Builder $query): Builder => $query->whereIn('delivery_zones.id', $zoneIds));
+    }
 
     protected function casts(): array
     {

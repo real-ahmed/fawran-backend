@@ -3,11 +3,20 @@
 namespace App\Models\Platform;
 
 use App\Models\Order\Order;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderCommission extends Model
 {
+    use AdminZoneScope;
+
+    protected function applyZoneFilter(Builder $query, array $zoneIds): void
+    {
+        $query->whereHas('order.orderDelivery', fn ($q) => $q->whereIn('delivery_zone_id', $zoneIds));
+    }
+
     public $timestamps = false;
 
     protected $fillable = [

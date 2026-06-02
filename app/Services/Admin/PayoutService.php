@@ -35,6 +35,8 @@ class PayoutService
 
     public function approvePayoutRequest(PayoutRequest $payoutRequest, ?Admin $admin = null): PayoutRequest
     {
+        $payoutRequest->ensureVisibleToAdminZones();
+
         if ($payoutRequest->status !== PayoutRequestStatus::Pending) {
             throw new RuntimeException('Only pending payout requests can be approved.');
         }
@@ -84,6 +86,8 @@ class PayoutService
 
     public function rejectPayoutRequest(PayoutRequest $payoutRequest): PayoutRequest
     {
+        $payoutRequest->ensureVisibleToAdminZones();
+
         if ($payoutRequest->status !== PayoutRequestStatus::Pending) {
             throw new RuntimeException('Only pending payout requests can be rejected.');
         }

@@ -14,6 +14,8 @@ class VendorSubscriptionService
      */
     public function getVendorSubscriptions(Vendor $vendor): Collection
     {
+        $vendor->ensureVisibleToAdminZones();
+
         return $vendor->subscriptions()->with('plan')->latest()->get();
     }
 
@@ -22,6 +24,8 @@ class VendorSubscriptionService
      */
     public function assignSubscription(Vendor $vendor, array $data): VendorSubscription
     {
+        $vendor->ensureVisibleToAdminZones();
+
         // Cancel any currently active subscription
         $vendor->subscriptions()->where('status', 'active')->update(['status' => 'expired']);
 
@@ -54,13 +58,14 @@ class VendorSubscriptionService
         $thresholdDate = now()->addDays(14);
 
         return VendorSubscription::with(['vendor.owner', 'plan'])
+            ->whereHas('vendor', fn ($query) => $query->forAdminZones())
             ->where(function ($query) use ($thresholdDate) {
                 $query->where('status', 'expired')
-                      ->orWhere(function ($q) use ($thresholdDate) {
-                          $q->where('status', 'active')
+                    ->orWhere(function ($q) use ($thresholdDate) {
+                        $q->where('status', 'active')
                             ->whereNotNull('expires_at')
                             ->where('expires_at', '<=', $thresholdDate);
-                      });
+                    });
             })
             ->latest('expires_at')
             ->paginate($perPage);

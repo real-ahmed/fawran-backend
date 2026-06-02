@@ -6,7 +6,6 @@ use App\Models\Catalog\VendorBrandSubmission;
 use App\Models\Catalog\VendorCategorySubmission;
 use App\Models\Courier\Courier;
 use App\Models\Order\Order;
-use App\Models\Platform\PlatformWallet;
 use App\Models\Vendor\Vendor;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -15,7 +14,7 @@ class DashboardService
     /**
      * Get key platform metrics for the admin dashboard.
      *
-     * @return array{orders: array, vendors: array, couriers: array, revenue: array}
+     * @return array{orders: array, vendors: array, couriers: array}
      */
     public function getMetrics(): array
     {
@@ -25,15 +24,14 @@ class DashboardService
     /**
      * Build key platform metrics for the admin dashboard.
      *
-     * @return array{orders: array, vendors: array, couriers: array, revenue: array}
+     * @return array{orders: array, vendors: array, couriers: array}
      */
     private function buildMetrics(): array
     {
-        $platformWallet = PlatformWallet::first();
-
         return [
             'orders' => [
                 'total' => Order::forAdminZones()->count(),
+                'total_products' => Order::forAdminZones()->sum('total_products'),
                 'pending' => Order::forAdminZones()->status('pending')->count(),
                 'processing' => Order::forAdminZones()->status('processing')->count(),
                 'delivered' => Order::forAdminZones()->status('delivered')->count(),
@@ -47,10 +45,6 @@ class DashboardService
                 'total' => Courier::forAdminZones()->count(),
                 'online' => Courier::forAdminZones()->online(true)->count(),
                 'pending_approval' => Courier::forAdminZones()->approvalStatus('pending')->count(),
-            ],
-            'revenue' => [
-                'total_revenue' => $platformWallet?->total_revenue ?? '0.00',
-                'current_balance' => $platformWallet?->current_balance ?? '0.00',
             ],
         ];
     }

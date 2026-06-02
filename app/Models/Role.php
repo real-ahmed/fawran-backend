@@ -30,7 +30,7 @@ class Role extends SpatieRole
 
     public function isSuperAdmin(): bool
     {
-        return self::isSuperAdminName($this->name);
+        return $this->id === 1 || self::isSuperAdminName($this->name);
     }
 
     public function newEloquentBuilder($query): RoleBuilder

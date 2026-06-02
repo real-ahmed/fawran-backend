@@ -22,8 +22,7 @@ class AdminNotificationService
             $admins = $adminsSubset->filter(fn ($admin) => $admin->isSuperAdmin() || $admin->hasPermissionTo($permission));
         } else {
             $admins = Admin::query()
-                ->where('id', 1)
-                ->orWhereHas('roles', fn ($q) => $q->where('name', 'Super Admin'))
+                ->superAdmins()
                 ->orWhereHas('permissions', fn ($q) => $q->where('name', $permission))
                 ->get();
         }

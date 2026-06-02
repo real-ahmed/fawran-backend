@@ -14,7 +14,9 @@ use App\Models\Payment\PayoutRequest;
 use App\Models\Payment\Wallet;
 use App\Models\Vendor\VendorStaff;
 use App\Traits\HasSettings;
+use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -25,7 +27,38 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasLocalePreference, JWTSubject
 {
-    use HasFactory, HasRoles, HasSettings, Notifiable;
+    use AdminZoneScope, HasFactory, HasRoles, HasSettings, Notifiable;
+
+    protected function applyZoneFilter(Builder $query, array $zoneIds): void
+    {
+        $query->where(function (Builder $query) use ($zoneIds): void {
+            $query->whereExists(function ($sub) use ($zoneIds): void {
+                $sub->selectRaw('1')
+                    ->from('order_customers')
+                    ->join('order_deliveries', 'order_deliveries.order_id', '=', 'order_customers.order_id')
+                    ->whereColumn('order_customers.customer_id', 'users.id')
+                    ->whereIn('order_deliveries.delivery_zone_id', $zoneIds)
+                    ->limit(1);
+            })->orWhereExists(function ($sub) use ($zoneIds): void {
+                $sub->selectRaw('1')
+                    ->from('user_addresses')
+                    ->join('delivery_zones', function ($join) use ($zoneIds): void {
+                        $this->joinDeliveryZonesContainingPoint($join, $zoneIds, 'user_addresses.longitude', 'user_addresses.latitude');
+                    })
+                    ->whereColumn('user_addresses.user_id', 'users.id')
+                    ->limit(1);
+            })->orWhereExists(function ($sub) use ($zoneIds): void {
+                $sub->selectRaw('1')
+                    ->from('vendors')
+                    ->join('vendor_delivery_zones', 'vendor_delivery_zones.vendor_id', '=', 'vendors.id')
+                    ->whereColumn('vendors.owner_id', 'users.id')
+                    ->whereIn('vendor_delivery_zones.delivery_zone_id', $zoneIds)
+                    ->limit(1);
+            });
+
+            $this->whereCourierLocationInAdminZones($query, $zoneIds, 'users.id', 'couriers.user_id', 'or');
+        });
+    }
 
     protected $fillable = [
         'name',

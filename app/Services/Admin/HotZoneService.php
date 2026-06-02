@@ -47,11 +47,15 @@ class HotZoneService
 
     public function getHotZone(HotZone $hotZone): HotZone
     {
+        $hotZone->ensureVisibleToAdminZones();
+
         return $hotZone->load(['manualHotZone', 'autoHotZone']);
     }
 
     public function updateHotZone(HotZone $hotZone, HotZoneDataDTO $dto): HotZone
     {
+        $hotZone->ensureVisibleToAdminZones();
+
         return DB::transaction(function () use ($hotZone, $dto) {
             $updateData = [];
             if ($dto->center_latitude !== null) {
@@ -91,6 +95,8 @@ class HotZoneService
 
     public function deleteHotZone(HotZone $hotZone): void
     {
+        $hotZone->ensureVisibleToAdminZones();
+
         DB::transaction(function () use ($hotZone) {
             $hotZone->manualHotZone()->delete();
             $hotZone->autoHotZone()->delete();

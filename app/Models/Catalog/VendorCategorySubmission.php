@@ -15,7 +15,7 @@ class VendorCategorySubmission extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->whereHas('vendor.deliveryZones', fn ($q) => $q->whereIn('delivery_zones.id', $zoneIds));
+        $query->whereHas('vendor.deliveryZones', fn ($query) => $query->whereIn('delivery_zone_id', $zoneIds));
     }
 
     protected $primaryKey = 'category_id';

@@ -20,9 +20,7 @@ class CourierObserver
     {
         $adminsToNotify = collect();
 
-        $superAdmins = Admin::where('id', 1)
-            ->orWhereHas('roles', fn ($q) => $q->where('name', 'Super Admin'))
-            ->get();
+        $superAdmins = Admin::query()->superAdmins()->get();
 
         $adminsToNotify = $adminsToNotify->merge($superAdmins);
 

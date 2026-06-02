@@ -57,7 +57,7 @@ class BrandController extends Controller
      */
     public function show(Brand $brand)
     {
-        return $this->successResponse(new BrandResource($brand));
+        return $this->successResponse(new BrandResource($this->brandService->getBrand($brand)));
     }
 
     /**

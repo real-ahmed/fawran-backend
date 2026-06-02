@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\DB;
 
 class Settlement extends Model
 {
@@ -20,22 +19,20 @@ class Settlement extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->where(function ($q) use ($zoneIds) {
-            $q->where('settlement_type', SettlementType::COURIER->value)
-                ->whereExists(function ($sub) use ($zoneIds) {
-                    $sub->select(DB::raw(1))
-                        ->from('couriers')
-                        ->whereColumn('couriers.id', 'settlements.target_id')
-                        ->whereIn('couriers.delivery_zone_id', $zoneIds);
-                })
-                ->orWhere('settlement_type', SettlementType::VENDOR->value)
-                ->whereExists(function ($sub) use ($zoneIds) {
-                    $sub->select(DB::raw(1))
-                        ->from('vendors')
-                        ->join('vendor_delivery_zones', 'vendors.id', '=', 'vendor_delivery_zones.vendor_id')
-                        ->whereColumn('vendors.id', 'settlements.target_id')
-                        ->whereIn('vendor_delivery_zones.delivery_zone_id', $zoneIds);
-                });
+        $query->where(function (Builder $query) use ($zoneIds): void {
+            $query->where(function (Builder $query) use ($zoneIds): void {
+                $query->where('settlement_type', SettlementType::Courier->value);
+                $this->whereCourierLocationInAdminZones($query, $zoneIds, 'settlements.target_id');
+            })->orWhere(function (Builder $query) use ($zoneIds): void {
+                $query->where('settlement_type', SettlementType::Vendor->value)
+                    ->whereExists(function ($sub) use ($zoneIds): void {
+                        $sub->selectRaw('1')
+                            ->from('vendors')
+                            ->join('vendor_delivery_zones', 'vendors.id', '=', 'vendor_delivery_zones.vendor_id')
+                            ->whereColumn('vendors.id', 'settlements.target_id')
+                            ->whereIn('vendor_delivery_zones.delivery_zone_id', $zoneIds);
+                    });
+            });
         });
     }
 
@@ -87,8 +84,8 @@ class Settlement extends Model
     public function getTargetEntityAttribute(): Courier|Vendor|null
     {
         return match ($this->settlement_type) {
-            SettlementType::COURIER => Courier::find($this->target_id),
-            SettlementType::VENDOR => Vendor::find($this->target_id),
+            SettlementType::Courier => Courier::find($this->target_id),
+            SettlementType::Vendor => Vendor::find($this->target_id),
             default => null,
         };
     }

@@ -255,7 +255,7 @@ class CustomBuilderTest extends TestCase
         $this->assertInstanceOf(Vendor::class, $relation->getRelated());
         $this->assertSame('vendor_id', $relation->getForeignKeyName());
         $this->assertContains('subOrders.vendor', $eagerLoads);
-        $this->assertContains('subOrders.items.storeItem.masterProduct', $eagerLoads);
+        $this->assertContains('subOrders.items.vendorItem.masterProduct', $eagerLoads);
         $this->assertContains('subOrders.items.options.productOption', $eagerLoads);
         $this->assertContains('subOrders.items.options.productOptionValue', $eagerLoads);
         $this->assertContains('subOrders.items.note', $eagerLoads);

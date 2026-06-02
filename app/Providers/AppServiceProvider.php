@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Admin;
 use App\Models\Courier\Courier;
 use App\Models\Order\Order;
 use App\Observers\Courier\CourierObserver;
@@ -49,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
         // Implicitly grant "Super Admin" role all permissions
         // This avoids having to sync hundreds of permissions in the database
         Gate::before(function ($user, $ability) {
-            return $user->hasRole('Super Admin') ? true : null;
+            return $user instanceof Admin && $user->isSuperAdmin() ? true : null;
         });
 
         // Global API rate limiting

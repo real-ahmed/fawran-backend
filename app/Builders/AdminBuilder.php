@@ -2,10 +2,19 @@
 
 namespace App\Builders;
 
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Builder;
 
 class AdminBuilder extends Builder
 {
+    public function superAdmins(): self
+    {
+        return $this->where(function (Builder $query): void {
+            $query->whereKey(1)
+                ->orWhereHas('roles', fn (Builder $query): Builder => $query->whereKey(1)->orWhere('name', Role::SUPER_ADMIN_NAME));
+        });
+    }
+
     public function withRoles(): self
     {
         return $this->with('roles');

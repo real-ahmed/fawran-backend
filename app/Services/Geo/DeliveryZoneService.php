@@ -18,6 +18,7 @@ class DeliveryZoneService
     public function getZones(DeliveryZoneFilterDTO $filters)
     {
         return DeliveryZone::query()
+            ->forAdminZones()
             ->when($filters->search, fn ($q) => $q->searchIdentity($filters->search))
             ->when($filters->is_active !== null, fn ($q) => $q->where('is_active', $filters->is_active))
             ->with(['vehicleFees'])
@@ -32,6 +33,7 @@ class DeliveryZoneService
     public function getZoneById(int $id): DeliveryZone
     {
         return DeliveryZone::query()
+            ->forAdminZones()
             ->with(['vehicleFees'])
             ->withPolygonGeoJson()
             ->findOrFail($id);
@@ -84,6 +86,8 @@ class DeliveryZoneService
      */
     public function updateZone(DeliveryZone $zone, DeliveryZoneDataDTO $dto): DeliveryZone
     {
+        $zone->ensureVisibleToAdminZones();
+
         if ($dto->name !== null) {
             $zone->name = $dto->name;
         }
@@ -108,6 +112,8 @@ class DeliveryZoneService
 
     public function deleteZone(DeliveryZone $zone): void
     {
+        $zone->ensureVisibleToAdminZones();
+
         $zone->delete();
     }
 

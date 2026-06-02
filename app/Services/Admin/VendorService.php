@@ -7,6 +7,7 @@ use App\DTOs\Admin\Vendor\VendorFilterDTO;
 use App\Enums\FileType;
 use App\Models\Vendor\Vendor;
 use App\Traits\Paginatable;
+use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Support\Facades\Storage;
 
 class VendorService
@@ -83,11 +84,15 @@ class VendorService
 
     public function getVendor(Vendor $vendor): Vendor
     {
+        $vendor->ensureVisibleToAdminZones();
+
         return $vendor->load(['media', 'workingHours', 'deliveryZones', 'owner.wallet']);
     }
 
     public function updateVendor(Vendor $vendor, VendorDataDTO $dto): Vendor
     {
+        $vendor->ensureVisibleToAdminZones();
+
         $data = [];
         if ($dto->owner_id !== null) {
             $data['owner_id'] = $dto->owner_id;
@@ -160,6 +165,8 @@ class VendorService
 
     public function deleteVendor(Vendor $vendor): void
     {
+        $vendor->ensureVisibleToAdminZones();
+
         $media = $vendor->media()->get();
         foreach ($media as $item) {
             Storage::disk('public')->delete($item->file_path);
@@ -170,9 +177,11 @@ class VendorService
 
     public function getWalletTransactions(Vendor $vendor)
     {
+        $vendor->ensureVisibleToAdminZones();
+
         $wallet = $vendor->owner?->wallet;
         if (! $wallet) {
-            return new \Illuminate\Pagination\CursorPaginator([], $this->getPerPageLimit());
+            return new CursorPaginator([], $this->getPerPageLimit());
         }
 
         return $wallet->transactions()
@@ -182,6 +191,8 @@ class VendorService
 
     public function getItems(Vendor $vendor)
     {
+        $vendor->ensureVisibleToAdminZones();
+
         return $vendor->storeItems()
             ->with(['masterProduct.media', 'masterProduct.category', 'masterProduct.retailDetail'])
             ->cursorPaginate($this->getPerPageLimit());

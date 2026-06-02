@@ -28,7 +28,7 @@ class Vendor extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->whereHas('deliveryZones', fn ($q) => $q->whereIn('delivery_zones.id', $zoneIds));
+        $query->whereHas('deliveryZones', fn ($query) => $query->whereIn('delivery_zone_id', $zoneIds));
     }
 
     protected $fillable = [

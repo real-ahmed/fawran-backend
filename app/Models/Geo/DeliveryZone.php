@@ -6,14 +6,22 @@ use App\Builders\DeliveryZoneBuilder;
 use App\Models\Admin;
 use App\Models\Courier\Courier;
 use App\Models\Vendor\VendorDeliveryZone;
+use App\Traits\Scopes\AdminZoneScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\Builder;
 
 class DeliveryZone extends Model
 {
+    use AdminZoneScope;
+
     public $timestamps = false;
+
+    protected function applyZoneFilter(Builder $query, array $zoneIds): void
+    {
+        $query->whereIn('delivery_zones.id', $zoneIds);
+    }
 
     protected $fillable = [
         'name',

@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\DB;
 
 class PayoutRequest extends Model
 {
@@ -18,14 +17,11 @@ class PayoutRequest extends Model
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {
-        $query->where(function ($q) use ($zoneIds) {
-            $q->whereExists(function ($sub) use ($zoneIds) {
-                $sub->select(DB::raw(1))
-                    ->from('couriers')
-                    ->whereColumn('couriers.user_id', 'payout_requests.user_id')
-                    ->whereIn('couriers.delivery_zone_id', $zoneIds);
-            })->orWhereExists(function ($sub) use ($zoneIds) {
-                $sub->select(DB::raw(1))
+        $query->where(function (Builder $query) use ($zoneIds): void {
+            $this->whereCourierLocationInAdminZones($query, $zoneIds, 'payout_requests.user_id', 'couriers.user_id');
+
+            $query->orWhereExists(function ($sub) use ($zoneIds): void {
+                $sub->selectRaw('1')
                     ->from('vendors')
                     ->join('vendor_delivery_zones', 'vendors.id', '=', 'vendor_delivery_zones.vendor_id')
                     ->whereColumn('vendors.owner_id', 'payout_requests.user_id')

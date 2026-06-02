@@ -41,11 +41,15 @@ class SettlementService
 
     public function getSettlement(Settlement $settlement): Settlement
     {
+        $settlement->ensureVisibleToAdminZones();
+
         return $settlement->load(['items', 'execution', 'note']);
     }
 
     public function executeSettlement(Settlement $settlement, SettlementDataDTO $dto, ?Admin $admin = null): Settlement
     {
+        $settlement->ensureVisibleToAdminZones();
+
         if ($settlement->status === SettlementStatus::Completed) {
             throw new RuntimeException('Settlement is already completed.');
         }
