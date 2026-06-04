@@ -5,10 +5,10 @@ namespace App\Models\Geo;
 use App\Builders\DeliveryZoneBuilder;
 use App\Models\Admin;
 use App\Models\Courier\Courier;
+use App\Models\Model;
 use App\Models\Vendor\VendorDeliveryZone;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

@@ -5,11 +5,11 @@ namespace App\Models\Payment;
 use App\Builders\RefundRequestBuilder;
 use App\Enums\RefundRequestStatus;
 use App\Enums\RefundResolution;
+use App\Models\Model;
 use App\Models\Order\Order;
 use App\Models\User;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

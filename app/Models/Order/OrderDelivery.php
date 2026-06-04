@@ -4,7 +4,7 @@ namespace App\Models\Order;
 
 use App\Models\Address\UserAddress;
 use App\Models\Geo\DeliveryZone;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderDelivery extends Model

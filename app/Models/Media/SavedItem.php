@@ -2,9 +2,9 @@
 
 namespace App\Models\Media;
 
+use App\Models\Model;
 use App\Models\Product\VendorItem;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SavedItem extends Model

@@ -3,7 +3,7 @@
 namespace App\Models\Payment;
 
 use App\Models\Admin;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PayoutExecution extends Model

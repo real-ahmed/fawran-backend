@@ -4,7 +4,7 @@ namespace App\Models\Payment;
 
 use App\Enums\ExecutionMethod;
 use App\Models\Admin;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SettlementExecution extends Model

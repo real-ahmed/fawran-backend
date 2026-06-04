@@ -2,8 +2,8 @@
 
 namespace App\Models\Inventory;
 
+use App\Models\Model;
 use App\Models\Product\VendorItem;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PurchaseItem extends Model

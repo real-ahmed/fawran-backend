@@ -10,9 +10,11 @@ use App\Observers\Order\OrderObserver;
 use App\Services\Sms\LogSmsGateway;
 use App\Services\Sms\SmsGatewayContract;
 use App\Services\Sms\SmsMisrGateway;
+use App\Support\SystemTimezone;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -42,6 +44,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Carbon::serializeUsing(fn ($date): string => SystemTimezone::serialize($date));
+
         Model::preventLazyLoading(! $this->app->isProduction());
 
         Courier::observe(CourierObserver::class);

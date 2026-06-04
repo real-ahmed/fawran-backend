@@ -2,8 +2,8 @@
 
 namespace App\Models\Vendor;
 
+use App\Models\Model;
 use App\Models\Platform\SubscriptionPlan;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VendorSubscription extends Model

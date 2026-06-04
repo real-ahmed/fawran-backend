@@ -14,6 +14,7 @@ use App\Models\Payment\PayoutRequest;
 use App\Models\Payment\Wallet;
 use App\Models\Vendor\VendorStaff;
 use App\Traits\HasSettings;
+use App\Traits\HasSystemTimezoneDates;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,7 +28,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasLocalePreference, JWTSubject
 {
-    use AdminZoneScope, HasFactory, HasRoles, HasSettings, Notifiable;
+    use AdminZoneScope, HasFactory, HasRoles, HasSettings, HasSystemTimezoneDates, Notifiable;
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {

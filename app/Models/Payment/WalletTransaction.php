@@ -3,7 +3,7 @@
 namespace App\Models\Payment;
 
 use App\Enums\WalletTransactionType;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 

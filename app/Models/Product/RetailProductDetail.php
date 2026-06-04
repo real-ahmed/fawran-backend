@@ -3,7 +3,7 @@
 namespace App\Models\Product;
 
 use App\Models\Catalog\Brand;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RetailProductDetail extends Model

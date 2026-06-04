@@ -2,8 +2,8 @@
 
 namespace App\Models\Media;
 
+use App\Models\Model;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 

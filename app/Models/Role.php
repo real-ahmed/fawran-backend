@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use App\Builders\RoleBuilder;
+use App\Traits\HasSystemTimezoneDates;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role as SpatieRole;
 
 class Role extends SpatieRole
 {
+    use HasSystemTimezoneDates;
+
     public const SUPER_ADMIN_NAME = 'Super Admin';
 
     /**

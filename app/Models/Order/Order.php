@@ -6,12 +6,12 @@ use App\Builders\OrderBuilder;
 use App\Enums\OrderStatus;
 use App\Enums\OrderType;
 use App\Models\Media\Rating;
+use App\Models\Model;
 use App\Models\Payment\Payment;
 use App\Models\Payment\RefundRequest;
 use App\Models\Platform\OrderCommission;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\NormalizeDateInputsToUtc;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\SetVendorTeamId;
 use Illuminate\Foundation\Application;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(prepend: [
             SetLocale::class,
+            NormalizeDateInputsToUtc::class,
         ]);
 
         $middleware->alias([

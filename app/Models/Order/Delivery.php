@@ -4,7 +4,7 @@ namespace App\Models\Order;
 
 use App\Enums\DeliveryStatus;
 use App\Models\Courier\Courier;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 

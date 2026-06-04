@@ -2,7 +2,7 @@
 
 namespace App\Models\Vendor;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VendorDescription extends Model

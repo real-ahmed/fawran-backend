@@ -4,10 +4,10 @@ namespace App\Models\Payment;
 
 use App\Builders\PayoutRequestBuilder;
 use App\Enums\PayoutRequestStatus;
+use App\Models\Model;
 use App\Models\User;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 

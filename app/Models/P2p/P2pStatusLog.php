@@ -3,7 +3,7 @@
 namespace App\Models\P2p;
 
 use App\Enums\P2pDeliveryStatus;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 

@@ -4,6 +4,7 @@ namespace App\Models\Courier;
 
 use App\Builders\CourierBuilder;
 use App\Enums\VehicleType;
+use App\Models\Model;
 use App\Models\Order\Delivery;
 use App\Models\P2p\P2pAssignment;
 use App\Models\Payment\CourierCashCollection;
@@ -11,7 +12,6 @@ use App\Models\Payment\Wallet;
 use App\Models\User;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;

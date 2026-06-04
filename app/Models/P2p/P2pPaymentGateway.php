@@ -2,7 +2,7 @@
 
 namespace App\Models\P2p;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class P2pPaymentGateway extends Model

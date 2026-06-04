@@ -3,7 +3,7 @@
 namespace App\Models\Geo;
 
 use App\Enums\VehicleType;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DeliveryZoneVehicleFee extends Model

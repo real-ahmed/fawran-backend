@@ -8,6 +8,7 @@ use App\Models\Geo\DeliveryZone;
 use App\Models\Payment\PayoutExecution;
 use App\Models\Payment\SettlementExecution;
 use App\Traits\HasSettings;
+use App\Traits\HasSystemTimezoneDates;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,7 +22,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable implements HasLocalePreference, JWTSubject
 {
-    use AdminZoneScope, HasFactory, HasRoles, HasSettings, Notifiable;
+    use AdminZoneScope, HasFactory, HasRoles, HasSettings, HasSystemTimezoneDates, Notifiable;
 
     public $timestamps = false;
 

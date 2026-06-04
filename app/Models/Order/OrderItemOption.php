@@ -2,9 +2,9 @@
 
 namespace App\Models\Order;
 
+use App\Models\Model;
 use App\Models\Product\ProductOption;
 use App\Models\Product\ProductOptionValue;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItemOption extends Model

@@ -4,7 +4,7 @@ namespace App\Models\P2p;
 
 use App\Enums\P2pPaymentMethod;
 use App\Enums\PaymentStatus;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 

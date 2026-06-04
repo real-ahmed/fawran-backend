@@ -3,7 +3,7 @@
 namespace App\Models\Media;
 
 use App\Enums\FileType;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Media extends Model

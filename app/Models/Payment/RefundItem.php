@@ -2,8 +2,8 @@
 
 namespace App\Models\Payment;
 
+use App\Models\Model;
 use App\Models\Order\OrderItem;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RefundItem extends Model

@@ -3,7 +3,7 @@
 namespace App\Models\P2p;
 
 use App\Models\Courier\Courier;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class P2pAssignment extends Model

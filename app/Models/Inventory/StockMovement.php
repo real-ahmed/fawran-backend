@@ -3,8 +3,8 @@
 namespace App\Models\Inventory;
 
 use App\Enums\StockMovementType;
+use App\Models\Model;
 use App\Models\Product\VendorItem;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;

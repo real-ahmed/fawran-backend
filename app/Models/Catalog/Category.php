@@ -3,9 +3,9 @@
 namespace App\Models\Catalog;
 
 use App\Builders\CategoryBuilder;
+use App\Models\Model;
 use App\Models\Product\MasterProduct;
 use App\Traits\HasImages;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;

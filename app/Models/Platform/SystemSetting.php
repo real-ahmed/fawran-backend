@@ -3,8 +3,8 @@
 namespace App\Models\Platform;
 
 use App\Builders\SystemSettingBuilder;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 

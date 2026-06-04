@@ -2,10 +2,10 @@
 
 namespace App\Models\Platform;
 
+use App\Models\Model;
 use App\Models\Order\Order;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderCommission extends Model

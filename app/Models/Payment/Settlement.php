@@ -6,10 +6,10 @@ use App\Builders\SettlementBuilder;
 use App\Enums\SettlementStatus;
 use App\Enums\SettlementType;
 use App\Models\Courier\Courier;
+use App\Models\Model;
 use App\Models\Vendor\Vendor;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 

@@ -3,10 +3,10 @@
 namespace App\Models\Product;
 
 use App\Builders\VendorMasterProductSubmissionBuilder;
+use App\Models\Model;
 use App\Models\Vendor\Vendor;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VendorMasterProductSubmission extends Model

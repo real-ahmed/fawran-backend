@@ -2,7 +2,7 @@
 
 namespace App\Models\Address;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AddressNote extends Model

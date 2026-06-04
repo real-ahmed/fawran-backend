@@ -4,9 +4,9 @@ namespace App\Models\Geo;
 
 use App\Builders\HotZoneBuilder;
 use App\Enums\HotZoneIntensity;
+use App\Models\Model;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 

@@ -4,8 +4,8 @@ namespace App\Models\P2p;
 
 use App\Enums\P2pDeliveryStatus;
 use App\Models\Geo\DeliveryZone;
+use App\Models\Model;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;

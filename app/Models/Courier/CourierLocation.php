@@ -2,7 +2,7 @@
 
 namespace App\Models\Courier;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CourierLocation extends Model
