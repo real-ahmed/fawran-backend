@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\DTOs\Admin\Courier\CourierDataDTO;
 use App\DTOs\Admin\Courier\CourierFilterDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\Admin\Courier\BlockCourierRequest;
 use App\Http\Requests\V1\Admin\Courier\IndexCourierRequest;
 use App\Http\Requests\V1\Admin\Courier\UpdateCourierRequest;
 use App\Http\Resources\V1\Admin\CourierResource;
+use App\Http\Resources\V1\Admin\Finance\WalletTransactionResource;
 use App\Models\Courier\Courier;
 use App\Services\Admin\CourierService;
 
@@ -59,6 +61,16 @@ class CourierController extends Controller
     {
         $dto = CourierDataDTO::fromRequest($request);
         $courier = $this->courierService->updateCourier($courier, $dto);
+
+        return $this->successResponse(
+            new CourierResource($courier),
+            __('messages.updated_successfully')
+        );
+    }
+
+    public function block(BlockCourierRequest $request, Courier $courier)
+    {
+        $courier = $this->courierService->blockCourier($courier, $request->boolean('is_blocked'));
 
         return $this->successResponse(
             new CourierResource($courier),
@@ -129,7 +141,7 @@ class CourierController extends Controller
      */
     public function walletTransactions(Courier $courier)
     {
-        return \App\Http\Resources\V1\Admin\Finance\WalletTransactionResource::collection(
+        return WalletTransactionResource::collection(
             $this->courierService->getWalletTransactions($courier)
         );
     }

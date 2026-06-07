@@ -89,6 +89,7 @@ Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->g
             Route::post('/', 'store')->middleware('can:'.AdminPermission::CREATE_VENDORS->value);
             Route::get('/{vendor}', 'show')->middleware('can:'.AdminPermission::VIEW_VENDORS->value);
             Route::put('/{vendor}', 'update')->middleware('can:'.AdminPermission::UPDATE_VENDORS->value);
+            Route::put('/{vendor}/block', 'block')->middleware('can:'.AdminPermission::UPDATE_VENDORS->value);
             Route::delete('/{vendor}', 'destroy')->middleware('can:'.AdminPermission::DELETE_VENDORS->value);
             Route::get('/{vendor}/wallet-transactions', 'walletTransactions')->middleware('can:'.AdminPermission::VIEW_VENDORS->value);
             Route::get('/{vendor}/items', 'items')->middleware('can:'.AdminPermission::VIEW_VENDORS->value);
@@ -162,6 +163,7 @@ Route::middleware(['auth:api_admin', SetAdminTeamId::class])->prefix('admin')->g
             Route::get('/', 'index')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);
             Route::get('/{courier}', 'show')->middleware('can:'.AdminPermission::VIEW_COURIERS->value);
             Route::put('/{courier}', 'update')->middleware('can:'.AdminPermission::UPDATE_COURIERS->value);
+            Route::put('/{courier}/block', 'block')->middleware('can:'.AdminPermission::UPDATE_COURIERS->value);
             Route::delete('/{courier}', 'destroy')->middleware('can:'.AdminPermission::DELETE_COURIERS->value);
             Route::put('/{courier}/approve', 'approve')->middleware('can:'.AdminPermission::APPROVE_COURIERS->value);
             Route::put('/{courier}/reject', 'reject')->middleware('can:'.AdminPermission::APPROVE_COURIERS->value);

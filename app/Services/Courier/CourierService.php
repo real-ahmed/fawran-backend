@@ -27,6 +27,7 @@ class CourierService
         return Courier::query()
             ->whereIn('id', $courierIds)
             ->where('is_online', true)
+            ->where('is_blocked', false)
             ->where('cod_blocked', false) // Exclude blocked couriers
             ->with('location') // Eager load historical DB location if needed elsewhere
             ->get();

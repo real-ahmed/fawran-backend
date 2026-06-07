@@ -21,6 +21,7 @@ class CourierResource extends JsonResource
             'national_id' => $this->national_id,
             'plate_number' => $this->plate_number,
             'is_online' => $this->is_online,
+            'is_blocked' => $this->is_blocked,
             'document' => $this->whenLoaded('document', fn () => $this->document ? [
                 'criminal_record_file' => $this->document->criminal_record_file,
                 'contract_number' => $this->document->contract_number,

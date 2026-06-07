@@ -84,6 +84,26 @@ This document outlines the complete database architecture. **Architectural Rule:
 | `provider_id` | VARCHAR(255) | | |
 | `created_at` | TIMESTAMP | | |
 
+**`user_settings` Table**
+| Column | Type | Properties | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | BIGINT | PK, Auto Inc | |
+| `settingable_type` | VARCHAR(255) | Polymorphic | |
+| `settingable_id` | BIGINT | Polymorphic | |
+| `key` | VARCHAR(255) | | |
+| `value` | TEXT | Nullable | |
+| `created_at` | TIMESTAMP | | |
+| `updated_at` | TIMESTAMP | | |
+| UNIQUE | | `(settingable_type, settingable_id, key)`| |
+
+**`password_reset_tokens` Table**
+| Column | Type | Properties | Description |
+| :--- | :--- | :--- | :--- |
+| `email` | VARCHAR(255) | PK | |
+| `token` | VARCHAR(255) | | |
+| `created_at` | TIMESTAMP | | |
+| `updated_at` | TIMESTAMP | | |
+
 **`user_addresses` Table**
 | Column | Type | Properties | Description |
 | :--- | :--- | :--- | :--- |
@@ -114,10 +134,12 @@ This document outlines the complete database architecture. **Architectural Rule:
 | :--- | :--- | :--- | :--- |
 | `id` | BIGINT | PK, Auto Inc | |
 | `user_id` | BIGINT | FK → users.id | |
-| `delivery_zone_id` | BIGINT | FK → delivery_zones.id | Zone applied for |
+| `national_id` | VARCHAR(255) | UNIQUE | |
 | `vehicle_type` | ENUM | `'motorcycle'`, `'bicycle'`, `'car'`| |
 | `plate_number` | VARCHAR(50) | | |
 | `is_online` | BOOLEAN | Default: false | |
+| `rejected_at` | TIMESTAMP | Nullable | |
+| `cod_blocked` | BOOLEAN | Default: false | |
 | `created_at` | TIMESTAMP | | |
 
 **`courier_locations` Table (Zero-Null Extension)**
@@ -228,8 +250,33 @@ Manages vendor proposals for new global master products.
 | `average_rating` | DECIMAL(3,2) | Default: 0.00 |
 | `total_reviews` | INT | Default: 0 |
 | `is_active` | BOOLEAN | Default: true |
+| `status` | VARCHAR(255) | Default: `'offline'` |
 | `is_open` | BOOLEAN | Default: false |
 | `created_at` | TIMESTAMP | |
+
+**`subscription_plans` Table**
+| Column | Type | Properties |
+| :--- | :--- | :--- |
+| `id` | BIGINT | PK, Auto Inc |
+| `name` | JSON | |
+| `monthly_price` | DECIMAL(10,2) | Default: 0.00 |
+| `commission_percentage` | DECIMAL(5,2) | Default: 10.00 |
+| `features` | JSON | Nullable |
+| `is_active` | BOOLEAN | Default: true |
+| `created_at` | TIMESTAMP | |
+| `updated_at` | TIMESTAMP | |
+
+**`vendor_subscriptions` Table**
+| Column | Type | Properties |
+| :--- | :--- | :--- |
+| `id` | BIGINT | PK, Auto Inc |
+| `vendor_id` | BIGINT | FK → vendors.id |
+| `plan_id` | BIGINT | FK → subscription_plans.id |
+| `starts_at` | TIMESTAMP | Nullable |
+| `expires_at` | TIMESTAMP | Nullable |
+| `status` | ENUM | Default: `'active'` |
+| `created_at` | TIMESTAMP | |
+| `updated_at` | TIMESTAMP | |
 
 **`vendordescriptions` Table (Zero-Null Extension)**
 | Column | Type | Properties |
@@ -350,6 +397,7 @@ Manages vendor proposals for new global master products.
 | `id` | BIGINT | PK, Auto Inc |
 | `delivery_zone_id` | BIGINT | FK → delivery_zones.id |
 | `vehicle_type` | VARCHAR | ENUM: VehicleType |
+| `intra_zone_flat_fee`| DECIMAL(8,2) | Nullable |
 | `base_delivery_fee`| DECIMAL(8,2) | |
 | `fee_per_km` | DECIMAL(6,2) | |
 | `max_delivery_fee` | DECIMAL(8,2) | |
@@ -476,6 +524,19 @@ Manages vendor proposals for new global master products.
 | `created_at` | TIMESTAMP | |
 | `updated_at` | TIMESTAMP | |
 
+**`order_status_logs` Table**
+| Column | Type | Properties |
+| :--- | :--- | :--- |
+| `id` | BIGINT | PK, Auto Inc |
+| `order_id` | BIGINT | FK → orders.id |
+| `from_status` | VARCHAR(255) | Nullable |
+| `to_status` | VARCHAR(255) | |
+| `changed_by_type` | VARCHAR(255) | Nullable |
+| `changed_by_id` | BIGINT | Nullable |
+| `note` | TEXT | Nullable |
+| `created_at` | TIMESTAMP | |
+| `updated_at` | TIMESTAMP | |
+
 **`order_customers` Table (Zero-Null Extension)**
 | Column | Type | Properties |
 | :--- | :--- | :--- |
@@ -525,6 +586,7 @@ Manages vendor proposals for new global master products.
 | `courier_id` | BIGINT | FK → couriers.id |
 | `fee_share` | DECIMAL(10,2) | |
 | `status` | ENUM | `'heading_to_vendors'`, `'picking_up'`, `'heading_to_customer'`, `'completed'` |
+| `estimated_minutes`| INT | Nullable |
 | `created_at` | TIMESTAMP | |
 
 **`delivery_pickups` Table (Zero-Null Extension)**
@@ -749,6 +811,18 @@ Manages vendor proposals for new global master products.
 | `key` | VARCHAR(100) | UNIQUE |
 | `value` | TEXT | |
 | `group` | VARCHAR(50) | |
+| `updated_at` | TIMESTAMP | |
+
+**`notifications` Table**
+| Column | Type | Properties |
+| :--- | :--- | :--- |
+| `id` | UUID | PK |
+| `type` | VARCHAR(255) | |
+| `notifiable_type` | VARCHAR(255) | Polymorphic |
+| `notifiable_id` | BIGINT | Polymorphic |
+| `data` | TEXT | |
+| `read_at` | TIMESTAMP | Nullable |
+| `created_at` | TIMESTAMP | |
 | `updated_at` | TIMESTAMP | |
 
 **`roles` Table (Spatie)**

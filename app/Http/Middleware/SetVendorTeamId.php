@@ -51,6 +51,12 @@ class SetVendorTeamId
             }
         }
 
+        $selectedVendor = Vendor::query()->find((int) getPermissionsTeamId());
+
+        if (! $selectedVendor?->is_active) {
+            abort(403, __('messages.vendor_blocked'));
+        }
+
         return $next($request);
     }
 }

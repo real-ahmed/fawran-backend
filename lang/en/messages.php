@@ -35,6 +35,8 @@ return [
     'created_successfully' => 'Created successfully',
     'updated_successfully' => 'Updated successfully',
     'deleted_successfully' => 'Deleted successfully',
+    'vendor_blocked' => 'This vendor is blocked.',
+    'courier_blocked' => 'This courier is blocked.',
 
     // Dashboard
     'dashboard_metrics_retrieved_successfully' => 'Dashboard metrics retrieved successfully',

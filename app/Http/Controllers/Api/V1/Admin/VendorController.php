@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\DTOs\Admin\Vendor\VendorDataDTO;
 use App\DTOs\Admin\Vendor\VendorFilterDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\Admin\Vendor\BlockVendorRequest;
 use App\Http\Requests\V1\Admin\Vendor\IndexVendorRequest;
 use App\Http\Requests\V1\Admin\Vendor\StoreVendorRequest;
 use App\Http\Requests\V1\Admin\Vendor\UpdateVendorRequest;
+use App\Http\Resources\V1\Admin\Finance\WalletTransactionResource;
+use App\Http\Resources\V1\Admin\Vendor\VendorItemResource;
 use App\Http\Resources\V1\VendorResource;
 use App\Models\Vendor\Vendor;
 use App\Services\Admin\VendorService;
@@ -79,6 +82,16 @@ class VendorController extends Controller
         );
     }
 
+    public function block(BlockVendorRequest $request, Vendor $vendor)
+    {
+        $vendor = $this->vendorService->blockVendor($vendor, $request->boolean('is_blocked'));
+
+        return $this->successResponse(
+            new VendorResource($vendor),
+            __('messages.updated_successfully')
+        );
+    }
+
     /**
      * Delete Vendor
      *
@@ -93,14 +106,14 @@ class VendorController extends Controller
 
     public function walletTransactions(Vendor $vendor)
     {
-        return \App\Http\Resources\V1\Admin\Finance\WalletTransactionResource::collection(
+        return WalletTransactionResource::collection(
             $this->vendorService->getWalletTransactions($vendor)
         );
     }
 
     public function items(Vendor $vendor)
     {
-        return \App\Http\Resources\V1\Admin\Vendor\VendorItemResource::collection(
+        return VendorItemResource::collection(
             $this->vendorService->getItems($vendor)
         );
     }

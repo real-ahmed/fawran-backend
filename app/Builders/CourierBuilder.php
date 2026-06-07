@@ -31,6 +31,11 @@ class CourierBuilder extends Builder
         return $this->when($isOnline !== null, fn (self $query): self => $query->where('is_online', $isOnline));
     }
 
+    public function blocked(?bool $isBlocked): self
+    {
+        return $this->when($isBlocked !== null, fn (self $query): self => $query->where('is_blocked', $isBlocked));
+    }
+
     public function vehicleType(?string $vehicleType): self
     {
         return $this->when($vehicleType, fn (self $query, string $vehicleType): self => $query->where('vehicle_type', $vehicleType));

@@ -163,6 +163,17 @@ class VendorService
         return $vendor->load(['media', 'workingHours', 'deliveryZones']);
     }
 
+    public function blockVendor(Vendor $vendor, bool $isBlocked): Vendor
+    {
+        $vendor->ensureVisibleToAdminZones();
+
+        $vendor->update([
+            'is_active' => ! $isBlocked,
+        ]);
+
+        return $this->getVendor($vendor);
+    }
+
     public function deleteVendor(Vendor $vendor): void
     {
         $vendor->ensureVisibleToAdminZones();

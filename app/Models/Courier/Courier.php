@@ -42,12 +42,14 @@ class Courier extends Model
         'plate_number',
         'is_online',
         'cod_blocked',
+        'is_blocked',
         'rejected_at',
     ];
 
     protected $attributes = [
         'is_online' => false,
         'cod_blocked' => false,
+        'is_blocked' => false,
     ];
 
     protected function casts(): array
@@ -56,6 +58,7 @@ class Courier extends Model
             'vehicle_type' => VehicleType::class,
             'is_online' => 'boolean',
             'cod_blocked' => 'boolean',
+            'is_blocked' => 'boolean',
             'rejected_at' => 'datetime',
             'created_at' => 'datetime',
         ];

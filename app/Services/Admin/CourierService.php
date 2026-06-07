@@ -25,6 +25,7 @@ class CourierService
             ->forAdminZones()
             ->search($filters->search)
             ->online($filters->is_online)
+            ->blocked($filters->is_blocked)
             ->vehicleType($filters->vehicle_type)
             ->inDeliveryZone($filters->delivery_zone_id)
             ->approvalStatus($filters->approval_status)
@@ -71,6 +72,18 @@ class CourierService
         if (! empty($courierData)) {
             $courier->update($courierData);
         }
+
+        return $this->getCourier($courier);
+    }
+
+    public function blockCourier(Courier $courier, bool $isBlocked): Courier
+    {
+        $courier->ensureVisibleToAdminZones();
+
+        $courier->update([
+            'is_blocked' => $isBlocked,
+            'is_online' => $isBlocked ? false : $courier->is_online,
+        ]);
 
         return $this->getCourier($courier);
     }

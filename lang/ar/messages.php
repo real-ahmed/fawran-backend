@@ -35,6 +35,8 @@ return [
     'created_successfully' => 'تم الإنشاء بنجاح',
     'updated_successfully' => 'تم التحديث بنجاح',
     'deleted_successfully' => 'تم الحذف بنجاح',
+    'vendor_blocked' => 'هذا المتجر محظور.',
+    'courier_blocked' => 'هذا المندوب محظور.',
 
     // Dashboard
     'dashboard_metrics_retrieved_successfully' => 'تم استرجاع مؤشرات لوحة التحكم بنجاح',
