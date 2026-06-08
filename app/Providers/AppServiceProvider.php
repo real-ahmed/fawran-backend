@@ -3,10 +3,18 @@
 namespace App\Providers;
 
 use App\Models\Admin;
+use App\Models\Catalog\VendorBrandSubmission;
+use App\Models\Catalog\VendorCategorySubmission;
 use App\Models\Courier\Courier;
 use App\Models\Order\Order;
+use App\Models\Order\SubOrder;
+use App\Models\Product\VendorMasterProductSubmission;
 use App\Observers\Courier\CourierObserver;
 use App\Observers\Order\OrderObserver;
+use App\Observers\SubOrderObserver;
+use App\Observers\VendorBrandSubmissionObserver;
+use App\Observers\VendorCategorySubmissionObserver;
+use App\Observers\VendorMasterProductSubmissionObserver;
 use App\Services\Sms\LogSmsGateway;
 use App\Services\Sms\SmsGatewayContract;
 use App\Services\Sms\SmsMisrGateway;
@@ -50,6 +58,10 @@ class AppServiceProvider extends ServiceProvider
 
         Courier::observe(CourierObserver::class);
         Order::observe(OrderObserver::class);
+        SubOrder::observe(SubOrderObserver::class);
+        VendorBrandSubmission::observe(VendorBrandSubmissionObserver::class);
+        VendorCategorySubmission::observe(VendorCategorySubmissionObserver::class);
+        VendorMasterProductSubmission::observe(VendorMasterProductSubmissionObserver::class);
 
         // Implicitly grant "Super Admin" role all permissions
         // This avoids having to sync hundreds of permissions in the database

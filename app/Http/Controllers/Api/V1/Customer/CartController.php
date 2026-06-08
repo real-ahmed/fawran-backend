@@ -23,15 +23,9 @@ class CartController extends Controller
 
             $result = $this->cartService->calculateDeliveryFee($dto);
 
-            return response()->json([
-                'message' => __('messages.delivery_fee_calculated'),
-                'data' => $result,
-            ]);
+            return $this->successResponse($result, __('messages.delivery_fee_calculated'));
         } catch (Exception $e) {
-            return response()->json([
-                'message' => __('messages.delivery_fee_calculation_failed'),
-                'error' => $e->getMessage(),
-            ], 400);
+            return $this->errorResponse(__('messages.delivery_fee_calculation_failed'), $e->getMessage());
         }
     }
 }

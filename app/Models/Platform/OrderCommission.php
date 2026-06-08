@@ -4,6 +4,7 @@ namespace App\Models\Platform;
 
 use App\Models\Model;
 use App\Models\Order\Order;
+use App\Models\Vendor\Vendor;
 use App\Traits\Scopes\AdminZoneScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

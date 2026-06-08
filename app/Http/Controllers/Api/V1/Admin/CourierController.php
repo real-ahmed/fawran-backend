@@ -36,8 +36,9 @@ class CourierController extends Controller
     public function index(IndexCourierRequest $request)
     {
         $dto = CourierFilterDTO::fromRequest($request);
+        $couriers = $this->courierService->listCouriers($dto);
 
-        return CourierResource::collection($this->courierService->listCouriers($dto));
+        return $this->paginatedResponse($couriers, CourierResource::collection($couriers->items()));
     }
 
     /**
@@ -141,8 +142,8 @@ class CourierController extends Controller
      */
     public function walletTransactions(Courier $courier)
     {
-        return WalletTransactionResource::collection(
-            $this->courierService->getWalletTransactions($courier)
-        );
+        $transactions = $this->courierService->getWalletTransactions($courier);
+
+        return $this->paginatedResponse($transactions, WalletTransactionResource::collection($transactions->items()));
     }
 }

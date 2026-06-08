@@ -31,10 +31,11 @@ class DeliveryZoneController extends Controller
         $dto = DeliveryZoneFilterDTO::fromRequest($request);
         $zones = $this->deliveryZoneService->getZones($dto);
 
-        return DeliveryZoneResource::collection($zones)->additional([
-            'success' => true,
-            'message' => __('messages.delivery_zones_retrieved_successfully'),
-        ]);
+        return $this->paginatedResponse(
+            $zones,
+            DeliveryZoneResource::collection($zones->items()),
+            __('messages.delivery_zones_retrieved_successfully')
+        );
     }
 
     public function store(VendorDeliveryZoneRequest $request)

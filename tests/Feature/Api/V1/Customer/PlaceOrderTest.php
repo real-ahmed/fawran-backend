@@ -7,8 +7,11 @@ use App\Enums\PaymentMethod;
 use App\Enums\VendorType;
 use App\Jobs\Courier\BroadcastOrderToCouriersJob;
 use App\Models\Address\UserAddress;
+use App\Models\Catalog\Brand;
+use App\Models\Catalog\Category;
 use App\Models\Order\Order;
 use App\Models\Payment\Wallet;
+use App\Models\Product\MasterProduct;
 use App\Models\Product\VendorItem;
 use App\Models\Product\VendorItemInventory;
 use App\Models\User;
@@ -55,10 +58,10 @@ class PlaceOrderTest extends TestCase
             'formatted_address' => 'Vendor Address',
         ]);
 
-        $category = \App\Models\Catalog\Category::create(['name' => ['en' => 'Test'], 'type' => 'restaurant']);
-        $brand = \App\Models\Catalog\Brand::create(['name' => ['en' => 'Test']]);
+        $category = Category::create(['name' => ['en' => 'Test'], 'type' => 'restaurant']);
+        $brand = Brand::create(['name' => ['en' => 'Test']]);
 
-        $masterProduct = \App\Models\Product\MasterProduct::create([
+        $masterProduct = MasterProduct::create([
             'category_id' => $category->id,
             'brand_id' => $brand->id,
             'name' => ['en' => 'Test Product'],
@@ -180,7 +183,7 @@ class PlaceOrderTest extends TestCase
             ]);
 
         $response->assertStatus(422)
-            ->assertJsonFragment(['message' => __('messages.insufficient_stock', ['item' => "#{$this->vendorItem->id}"])]);
+            ->assertJsonFragment(['message' => __('messages.insufficient_stock', ['item' => 'Test Product'])]);
     }
 
     public function test_fails_if_address_missing_for_delivery()

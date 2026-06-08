@@ -20,7 +20,8 @@ class ExpiringSubscriptionController extends Controller
         );
 
         return $this->paginatedResponse(
-            ExpiringSubscriptionResource::collection($subscriptions),
+            $subscriptions,
+            ExpiringSubscriptionResource::collection($subscriptions->items()),
             __('messages.retrieved_successfully')
         );
     }

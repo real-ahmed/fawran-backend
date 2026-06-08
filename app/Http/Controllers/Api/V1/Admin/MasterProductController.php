@@ -35,8 +35,9 @@ class MasterProductController extends Controller
     public function index(IndexMasterProductRequest $request)
     {
         $dto = MasterProductFilterDTO::fromRequest($request);
+        $products = $this->masterProductService->listProducts($dto);
 
-        return MasterProductResource::collection($this->masterProductService->listProducts($dto));
+        return $this->paginatedResponse($products, MasterProductResource::collection($products->items()));
     }
 
     /**

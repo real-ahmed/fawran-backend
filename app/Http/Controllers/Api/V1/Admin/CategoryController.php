@@ -29,8 +29,9 @@ class CategoryController extends Controller
     public function index(IndexCategoryRequest $request)
     {
         $dto = CategoryFilterDTO::fromRequest($request);
+        $categories = $this->categoryService->listCategories($dto);
 
-        return CategoryResource::collection($this->categoryService->listCategories($dto));
+        return $this->paginatedResponse($categories, CategoryResource::collection($categories->items()));
     }
 
     /**

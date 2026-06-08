@@ -31,6 +31,6 @@ class VendorItemInventory extends Model
 
     public function storeItem(): BelongsTo
     {
-        return $this->belongsTo(VendorItem::class);
+        return $this->belongsTo(VendorItem::class, 'vendor_item_id');
     }
 }

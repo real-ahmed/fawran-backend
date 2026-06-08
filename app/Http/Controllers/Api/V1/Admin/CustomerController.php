@@ -30,8 +30,9 @@ class CustomerController extends Controller
     public function index(IndexCustomerRequest $request)
     {
         $dto = CustomerFilterDTO::fromRequest($request);
+        $customers = $this->customerService->listCustomers($dto);
 
-        return CustomerResource::collection($this->customerService->listCustomers($dto));
+        return $this->paginatedResponse($customers, CustomerResource::collection($customers->items()));
     }
 
     /**

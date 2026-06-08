@@ -37,9 +37,15 @@ class MasterProductTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
+                'success',
+                'message',
                 'data',
-                'links',
-                'meta',
+                'errors',
+                'meta' => [
+                    'per_page',
+                    'next_cursor',
+                    'previous_cursor',
+                ],
             ]);
     }
 }

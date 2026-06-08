@@ -20,11 +20,15 @@ return [
     'vendor_role_updated_successfully' => 'Vendor role updated successfully',
     'vendor_role_deleted_successfully' => 'Vendor role deleted successfully',
     'vendor_permissions_retrieved_successfully' => 'Vendor permissions retrieved successfully',
+    'vendor_staff_created' => 'Vendor staff created successfully',
+    'vendor_staff_updated' => 'Vendor staff updated successfully',
+    'vendor_staff_deleted' => 'Vendor staff deleted successfully',
 
     // Catalog Approvals
     'Brand' => 'Brand',
     'Category' => 'Category',
     'Master Product' => 'Master Product',
+    'MasterProduct' => 'Master Product',
     'catalog_item_approved_title' => ':type Approved',
     'catalog_item_approved_body' => 'Your proposed :type \':name\' has been approved.',
     'new_catalog_submission' => 'New :type submitted: :name',
@@ -32,9 +36,12 @@ return [
     'catalog_submission_received_body' => 'A new :type submission for \':name\' has been received and requires your approval.',
 
     // Generic CRUD
+    'retrieved_successfully' => 'Retrieved successfully',
     'created_successfully' => 'Created successfully',
     'updated_successfully' => 'Updated successfully',
     'deleted_successfully' => 'Deleted successfully',
+    'assigned_successfully' => 'Assigned successfully',
+    'unauthorized' => 'Unauthorized.',
     'vendor_blocked' => 'This vendor is blocked.',
     'courier_blocked' => 'This courier is blocked.',
 
@@ -47,6 +54,7 @@ return [
     'courier_approved_body' => 'Congratulations :name, your courier application has been approved!',
     'courier_application_submitted' => 'New Courier Application',
     'courier_application_submitted_body' => 'A new courier application has been submitted by :name and is pending approval.',
+    'courier_profile_not_found' => 'Courier profile not found.',
     'courier_approved_successfully' => 'Courier approved successfully',
     'courier_rejected_successfully' => 'Courier rejected successfully',
     'edit_courier' => 'Edit Courier',
@@ -70,16 +78,29 @@ return [
 
     // Orders
     'order_cancelled_successfully' => 'Order cancelled successfully',
+    'order_placed_successfully' => 'Order placed successfully',
+    'order_status_updated_successfully' => 'Order status updated successfully',
+    'courier_assigned_successfully' => 'Courier assigned successfully',
+    'invalid_sub_order_transition' => 'Cannot change sub-order status from :from to :to.',
+    'item_not_available' => 'Item #:id is not available.',
+    'insufficient_stock' => 'Insufficient stock for :item.',
     'new_order_title' => 'New Order Created',
     'new_order_created' => 'A new order #:id has been created by :name',
+    'new_sub_order_assigned' => 'New sub-order #:id assigned to your store.',
     'order_status_updated_title' => 'Order Status Updated',
     'order_status_updated' => 'Order #:id status has been updated to :status',
+    'sub_order_status_updated' => 'Sub-order #:id status has been updated to :status.',
 
     // Finances
     'finances_retrieved_successfully' => 'Financial overview retrieved successfully',
     'settlement_executed_successfully' => 'Settlement executed successfully',
     'payout_approved_successfully' => 'Payout request approved successfully',
     'payout_rejected_successfully' => 'Payout request rejected successfully',
+    'payout_request_created' => 'Payout request created successfully',
+    'insufficient_funds' => 'Insufficient funds.',
+    'customer_not_found' => 'Customer not found.',
+    'insufficient_wallet_balance' => 'Insufficient wallet balance.',
+    'refund_resolved_successfully' => 'Refund resolved successfully.',
     // Notifications
     'password_reset_request_subject' => 'Password Reset Request',
     'hello' => 'Hello!',

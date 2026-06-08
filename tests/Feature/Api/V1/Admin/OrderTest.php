@@ -71,9 +71,15 @@ class OrderTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
+                'success',
+                'message',
                 'data',
-                'links',
-                'meta',
+                'errors',
+                'meta' => [
+                    'per_page',
+                    'next_cursor',
+                    'previous_cursor',
+                ],
             ])
             ->assertJsonPath('data.0.sub_orders.0.vendor_id', $vendor->id)
             ->assertJsonPath('data.0.sub_orders.0.vendor_name', 'Fresh Market');

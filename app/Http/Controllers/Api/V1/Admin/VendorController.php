@@ -35,8 +35,9 @@ class VendorController extends Controller
     public function index(IndexVendorRequest $request)
     {
         $dto = VendorFilterDTO::fromRequest($request);
+        $vendors = $this->vendorService->listVendors($dto);
 
-        return VendorResource::collection($this->vendorService->listVendors($dto));
+        return $this->paginatedResponse($vendors, VendorResource::collection($vendors->items()));
     }
 
     /**
@@ -106,15 +107,15 @@ class VendorController extends Controller
 
     public function walletTransactions(Vendor $vendor)
     {
-        return WalletTransactionResource::collection(
-            $this->vendorService->getWalletTransactions($vendor)
-        );
+        $transactions = $this->vendorService->getWalletTransactions($vendor);
+
+        return $this->paginatedResponse($transactions, WalletTransactionResource::collection($transactions->items()));
     }
 
     public function items(Vendor $vendor)
     {
-        return VendorItemResource::collection(
-            $this->vendorService->getItems($vendor)
-        );
+        $items = $this->vendorService->getItems($vendor);
+
+        return $this->paginatedResponse($items, VendorItemResource::collection($items->items()));
     }
 }

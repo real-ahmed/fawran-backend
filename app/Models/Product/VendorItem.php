@@ -5,6 +5,7 @@ namespace App\Models\Product;
 use App\Models\Media\SavedItem;
 use App\Models\Model;
 use App\Models\Order\OrderItem;
+use App\Models\Vendor\Vendor;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -34,7 +35,7 @@ class VendorItem extends Model
 
     public function store(): BelongsTo
     {
-        return $this->belongsTo(Vendor::class);
+        return $this->belongsTo(Vendor::class, 'vendor_id');
     }
 
     public function masterProduct(): BelongsTo

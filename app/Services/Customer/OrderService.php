@@ -36,7 +36,9 @@ class OrderService
             $totalAmount = $this->calculateTotalPayableAmount($order);
             $this->paymentRecordService->recordPayment($order, $dto->paymentMethod, $totalAmount);
 
-            return $order->load(['customer', 'subOrders.items', 'orderDelivery', 'payments']);
+            $order->load(['customer', 'subOrders.items', 'orderDelivery', 'payments']);
+
+            return $order;
         });
     }
 

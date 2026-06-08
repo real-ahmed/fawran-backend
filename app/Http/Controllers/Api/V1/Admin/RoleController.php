@@ -31,10 +31,11 @@ class RoleController extends Controller
         $dto = RoleFilterDTO::fromRequest($request);
         $roles = $this->roleService->getRoles($dto);
 
-        return RoleResource::collection($roles)->additional([
-            'success' => true,
-            'message' => __('messages.roles_retrieved_successfully'),
-        ]);
+        return $this->paginatedResponse(
+            $roles,
+            RoleResource::collection($roles->items()),
+            __('messages.roles_retrieved_successfully')
+        );
     }
 
     public function store(StoreRoleRequest $request)

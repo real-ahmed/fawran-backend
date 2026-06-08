@@ -29,7 +29,7 @@ class SystemSettingController extends Controller
     {
         $settings = $this->systemSettingService->getSettings($request->validated('group'));
 
-        return SystemSettingResource::collection($settings);
+        return $this->successResponse(SystemSettingResource::collection($settings));
     }
 
     /**

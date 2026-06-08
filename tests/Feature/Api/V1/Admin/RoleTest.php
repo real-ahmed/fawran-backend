@@ -43,6 +43,12 @@ class RoleTest extends TestCase
                         'permissions',
                     ],
                 ],
+                'errors',
+                'meta' => [
+                    'per_page',
+                    'next_cursor',
+                    'previous_cursor',
+                ],
             ]);
     }
 

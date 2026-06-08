@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\Notification\IndexNotificationRequest;
+use App\Http\Requests\V1\Notification\MarkNotificationReadRequest;
 use App\Services\NotificationService;
-use Illuminate\Http\Request;
 
 /**
  * @group Shared - Notifications
@@ -18,20 +19,20 @@ class NotificationController extends Controller
     /**
      * List all notifications
      */
-    public function index(Request $request)
+    public function index(IndexNotificationRequest $request)
     {
         return $this->successResponse(
-            $this->notificationService->list($request->user(), $request->query('per_page', 15))
+            $this->notificationService->list($request->user(), $request->validated('per_page', 15))
         );
     }
 
     /**
      * List unread notifications
      */
-    public function unread(Request $request)
+    public function unread(IndexNotificationRequest $request)
     {
         return $this->successResponse(
-            $this->notificationService->listUnread($request->user(), $request->query('per_page', 15))
+            $this->notificationService->listUnread($request->user(), $request->validated('per_page', 15))
         );
     }
 
@@ -42,9 +43,9 @@ class NotificationController extends Controller
      *
      * @bodyParam id string optional The ID of the notification. If omitted, marks all as read.
      */
-    public function markAsRead(Request $request)
+    public function markAsRead(MarkNotificationReadRequest $request)
     {
-        $this->notificationService->markAsRead($request->user(), $request->input('id'));
+        $this->notificationService->markAsRead($request->user(), $request->validated('id'));
 
         return $this->successResponse(null, 'Notifications marked as read');
     }

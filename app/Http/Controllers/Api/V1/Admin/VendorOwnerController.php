@@ -30,7 +30,7 @@ class VendorOwnerController extends Controller
         $dto = VendorOwnerFilterDTO::fromRequest($request);
         $owners = $this->vendorOwnerService->listOwners($dto);
 
-        return CustomerResource::collection($owners);
+        return $this->paginatedResponse($owners, CustomerResource::collection($owners->items()));
     }
 
     /**

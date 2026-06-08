@@ -43,10 +43,12 @@ class FinanceTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'success',
+                'message',
                 'data' => [
                     'platform',
                     'commissions',
                 ],
+                'errors',
             ]);
     }
 

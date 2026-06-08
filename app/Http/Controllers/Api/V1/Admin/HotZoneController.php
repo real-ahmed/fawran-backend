@@ -32,8 +32,9 @@ class HotZoneController extends Controller
     public function index(IndexHotZoneRequest $request)
     {
         $dto = HotZoneFilterDTO::fromRequest($request);
+        $hotZones = $this->hotZoneService->listHotZones($dto);
 
-        return HotZoneResource::collection($this->hotZoneService->listHotZones($dto));
+        return $this->paginatedResponse($hotZones, HotZoneResource::collection($hotZones->items()));
     }
 
     /**

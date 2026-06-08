@@ -31,8 +31,9 @@ class SettlementController extends Controller
     public function index(IndexSettlementRequest $request)
     {
         $dto = SettlementFilterDTO::fromRequest($request);
+        $settlements = $this->settlementService->listSettlements($dto);
 
-        return SettlementResource::collection($this->settlementService->listSettlements($dto));
+        return $this->paginatedResponse($settlements, SettlementResource::collection($settlements->items()));
     }
 
     /**

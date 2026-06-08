@@ -28,8 +28,9 @@ class PayoutRequestController extends Controller
     public function index(IndexPayoutRequest $request)
     {
         $dto = PayoutRequestFilterDTO::fromRequest($request);
+        $payoutRequests = $this->payoutService->listPayoutRequests($dto);
 
-        return PayoutRequestResource::collection($this->payoutService->listPayoutRequests($dto));
+        return $this->paginatedResponse($payoutRequests, PayoutRequestResource::collection($payoutRequests->items()));
     }
 
     /**

@@ -63,7 +63,17 @@ class VendorTest extends TestCase
         $response = $this->actingAs($this->admin, 'api_admin')->getJson('/api/v1/admin/vendors');
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['data' => [['id', 'name', 'type']]]);
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'data' => [['id', 'name', 'type']],
+                'errors',
+                'meta' => [
+                    'per_page',
+                    'next_cursor',
+                    'previous_cursor',
+                ],
+            ]);
     }
 
     public function test_cannot_list_vendors_without_permission()

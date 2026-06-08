@@ -20,11 +20,15 @@ return [
     'vendor_role_updated_successfully' => 'تم تحديث دور المتجر بنجاح',
     'vendor_role_deleted_successfully' => 'تم حذف دور المتجر بنجاح',
     'vendor_permissions_retrieved_successfully' => 'تم استرجاع صلاحيات المتجر بنجاح',
+    'vendor_staff_created' => 'تم إنشاء موظف المتجر بنجاح',
+    'vendor_staff_updated' => 'تم تحديث موظف المتجر بنجاح',
+    'vendor_staff_deleted' => 'تم حذف موظف المتجر بنجاح',
 
     // Catalog Approvals
     'Brand' => 'العلامة التجارية',
     'Category' => 'الفئة',
     'Master Product' => 'المنتج الرئيسي',
+    'MasterProduct' => 'المنتج الرئيسي',
     'catalog_item_approved_title' => 'تمت الموافقة على :type',
     'catalog_item_approved_body' => 'تمت الموافقة على :type \':name\' المقترحة.',
     'new_catalog_submission' => 'تم تقديم :type جديد: :name',
@@ -32,9 +36,12 @@ return [
     'catalog_submission_received_body' => 'تم استلام مقترح جديد لـ :type باسم \':name\' ويتطلب موافقتك.',
 
     // Generic CRUD
+    'retrieved_successfully' => 'تم الاسترجاع بنجاح',
     'created_successfully' => 'تم الإنشاء بنجاح',
     'updated_successfully' => 'تم التحديث بنجاح',
     'deleted_successfully' => 'تم الحذف بنجاح',
+    'assigned_successfully' => 'تم التعيين بنجاح',
+    'unauthorized' => 'غير مصرح.',
     'vendor_blocked' => 'هذا المتجر محظور.',
     'courier_blocked' => 'هذا المندوب محظور.',
 
@@ -47,6 +54,7 @@ return [
     'courier_approved_body' => 'مبارك :name، تمت الموافقة على طلب التسجيل كمندوب توصيل!',
     'courier_application_submitted' => 'طلب مندوب جديد',
     'courier_application_submitted_body' => 'تم تقديم طلب مندوب جديد بواسطة :name وبانتظار الموافقة.',
+    'courier_profile_not_found' => 'لم يتم العثور على ملف المندوب.',
     'courier_approved_successfully' => 'تمت الموافقة على المندوب بنجاح',
     'courier_rejected_successfully' => 'تم رفض المندوب بنجاح',
     'edit_courier' => 'تعديل بيانات المندوب',
@@ -70,16 +78,29 @@ return [
 
     // Orders
     'order_cancelled_successfully' => 'تم إلغاء الطلب بنجاح',
+    'order_placed_successfully' => 'تم إنشاء الطلب بنجاح',
+    'order_status_updated_successfully' => 'تم تحديث حالة الطلب بنجاح',
+    'courier_assigned_successfully' => 'تم تعيين المندوب بنجاح',
+    'invalid_sub_order_transition' => 'لا يمكن تغيير حالة الطلب الفرعي من :from إلى :to.',
+    'item_not_available' => 'العنصر #:id غير متاح.',
+    'insufficient_stock' => 'المخزون غير كافٍ لـ :item.',
     'new_order_title' => 'تم إنشاء طلب جديد',
     'new_order_created' => 'تم إنشاء طلب جديد برقم #:id بواسطة :name',
+    'new_sub_order_assigned' => 'تم إسناد طلب فرعي جديد رقم #:id إلى متجرك.',
     'order_status_updated_title' => 'تم تحديث حالة الطلب',
     'order_status_updated' => 'تم تحديث حالة الطلب #:id إلى :status',
+    'sub_order_status_updated' => 'تم تحديث حالة الطلب الفرعي #:id إلى :status.',
 
     // Finances
     'finances_retrieved_successfully' => 'تم استرجاع النظرة المالية بنجاح',
     'settlement_executed_successfully' => 'تم تنفيذ التسوية بنجاح',
     'payout_approved_successfully' => 'تمت الموافقة على طلب السحب بنجاح',
     'payout_rejected_successfully' => 'تم رفض طلب السحب بنجاح',
+    'payout_request_created' => 'تم إنشاء طلب السحب بنجاح',
+    'insufficient_funds' => 'الرصيد غير كاف.',
+    'customer_not_found' => 'لم يتم العثور على العميل.',
+    'insufficient_wallet_balance' => 'رصيد المحفظة غير كاف.',
+    'refund_resolved_successfully' => 'تمت معالجة طلب الاسترداد بنجاح.',
     // Notifications
     'password_reset_request_subject' => 'طلب إعادة تعيين كلمة المرور',
     'hello' => 'مرحباً!',

@@ -4,6 +4,7 @@ namespace App\Models\Inventory;
 
 use App\Enums\PurchaseOrderStatus;
 use App\Models\Model;
+use App\Models\Vendor\Vendor;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

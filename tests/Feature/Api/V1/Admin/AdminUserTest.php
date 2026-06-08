@@ -47,7 +47,17 @@ class AdminUserTest extends TestCase
         $response = $this->actingAs($this->superAdmin, 'api_admin')->getJson('/api/v1/admin/admins');
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['data' => [['id', 'name', 'email', 'is_active', 'roles']]]);
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'data' => [['id', 'name', 'email', 'is_active', 'roles']],
+                'errors',
+                'meta' => [
+                    'per_page',
+                    'next_cursor',
+                    'previous_cursor',
+                ],
+            ]);
     }
 
     public function test_can_create_admin()

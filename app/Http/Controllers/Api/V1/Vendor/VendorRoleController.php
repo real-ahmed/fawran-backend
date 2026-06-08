@@ -10,6 +10,7 @@ use App\Http\Requests\V1\Vendor\Role\StoreVendorRoleRequest;
 use App\Http\Requests\V1\Vendor\Role\UpdateVendorRoleRequest;
 use App\Http\Resources\V1\VendorRoleResource;
 use App\Services\Auth\VendorRoleService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
@@ -20,31 +21,29 @@ use Spatie\Permission\Models\Role;
  */
 class VendorRoleController extends Controller
 {
-    protected VendorRoleService $vendorRoleService;
-
-    public function __construct(VendorRoleService $vendorRoleService)
-    {
-        $this->vendorRoleService = $vendorRoleService;
-    }
+    public function __construct(
+        protected readonly VendorRoleService $vendorRoleService
+    ) {}
 
     protected function getVendorId(Request $request): int
     {
         return $this->vendorRoleService->resolveVendorId($request);
     }
 
-    public function index(IndexVendorRoleRequest $request)
+    public function index(IndexVendorRoleRequest $request): JsonResponse
     {
         $vendorId = $this->getVendorId($request);
         $dto = VendorRoleFilterDTO::fromRequest($request);
         $roles = $this->vendorRoleService->getRoles($vendorId, $dto);
 
-        return VendorRoleResource::collection($roles)->additional([
-            'success' => true,
-            'message' => __('messages.vendor_roles_retrieved_successfully'),
-        ]);
+        return $this->paginatedResponse(
+            $roles,
+            VendorRoleResource::collection($roles->items()),
+            __('messages.vendor_roles_retrieved_successfully')
+        );
     }
 
-    public function store(StoreVendorRoleRequest $request)
+    public function store(StoreVendorRoleRequest $request): JsonResponse
     {
         $vendorId = $this->getVendorId($request);
         $dto = VendorRoleDataDTO::fromRequest($request);
@@ -53,7 +52,7 @@ class VendorRoleController extends Controller
         return $this->successResponse(new VendorRoleResource($role), __('messages.vendor_role_created_successfully'), 201);
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, int|string $id): JsonResponse
     {
         $vendorId = $this->getVendorId($request);
         $role = $this->vendorRoleService->getRoleById($vendorId, $id);
@@ -61,7 +60,7 @@ class VendorRoleController extends Controller
         return $this->successResponse(new VendorRoleResource($role), __('messages.vendor_role_retrieved_successfully'));
     }
 
-    public function update(UpdateVendorRoleRequest $request, Role $role)
+    public function update(UpdateVendorRoleRequest $request, Role $role): JsonResponse
     {
         $vendorId = $this->getVendorId($request);
         $dto = VendorRoleDataDTO::fromRequest($request);
@@ -70,7 +69,7 @@ class VendorRoleController extends Controller
         return $this->successResponse(new VendorRoleResource($updatedRole), __('messages.vendor_role_updated_successfully'));
     }
 
-    public function destroy(Request $request, Role $role)
+    public function destroy(Request $request, Role $role): JsonResponse
     {
         $vendorId = $this->getVendorId($request);
         $this->vendorRoleService->deleteRole($vendorId, $role);
@@ -78,7 +77,7 @@ class VendorRoleController extends Controller
         return $this->successResponse(null, __('messages.vendor_role_deleted_successfully'));
     }
 
-    public function permissions()
+    public function permissions(): JsonResponse
     {
         $permissions = $this->vendorRoleService->getAllPermissions();
 

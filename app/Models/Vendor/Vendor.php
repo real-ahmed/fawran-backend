@@ -15,16 +15,23 @@ use App\Models\Platform\OrderCommission;
 use App\Models\Product\VendorItem;
 use App\Models\User;
 use App\Traits\Scopes\AdminZoneScope;
+use Database\Factories\VendorFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Vendor extends Model
 {
-    use AdminZoneScope, \App\Traits\HasImages;
+    use AdminZoneScope, \App\Traits\HasImages, HasFactory;
 
     public $timestamps = true;
+
+    protected static function newFactory(): VendorFactory
+    {
+        return VendorFactory::new();
+    }
 
     protected function applyZoneFilter(Builder $query, array $zoneIds): void
     {

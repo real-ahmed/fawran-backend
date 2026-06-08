@@ -5,12 +5,15 @@ namespace App\Services\Admin;
 use App\DTOs\Admin\Order\OrderFilterDTO;
 use App\Enums\OrderStatus;
 use App\Models\Order\Order;
+use App\Services\OrderService as SystemOrderService;
 use App\Traits\Paginatable;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
     use Paginatable;
+
+    public function __construct(private SystemOrderService $systemOrderService) {}
 
     public function listOrders(OrderFilterDTO $filters)
     {
@@ -74,5 +77,36 @@ class OrderService
             'delivered' => $counts[OrderStatus::Delivered->value] ?? 0,
             'cancelled' => $counts[OrderStatus::Cancelled->value] ?? 0,
         ];
+    }
+
+    public function cancelOrder(Order $order): Order
+    {
+        $order->ensureVisibleToAdminZones();
+
+        return $this->systemOrderService->cancelOrder($order);
+    }
+
+    public function updateStatus(Order $order, string $status): Order
+    {
+        $order->ensureVisibleToAdminZones();
+
+        return $this->systemOrderService->updateStatus($order, $status);
+    }
+
+    public function assignCourier(Order $order, int $courierId): void
+    {
+        $order->ensureVisibleToAdminZones();
+
+        $this->systemOrderService->assignCourier($order, $courierId);
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    public function deliveryPath(Order $order): array
+    {
+        $order->ensureVisibleToAdminZones();
+
+        return [];
     }
 }

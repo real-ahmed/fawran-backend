@@ -22,19 +22,18 @@ class OrderController extends Controller
             $dto = PlaceOrderDTO::fromValidated($request->validated(), $request->user()->id);
             $order = $this->orderService->placeOrder($dto);
 
-            return response()->json([
-                'message' => __('messages.order_placed_successfully'),
-                'data' => [
+            return $this->successResponse(
+                [
                     'order_id' => $order->id,
                     'status' => $order->status->value,
                     'total_products' => $order->total_products,
                     'total_delivery_fee' => $order->orderDelivery?->total_delivery_fee ?? '0.00',
                 ],
-            ], 201);
+                __('messages.order_placed_successfully'),
+                201
+            );
         } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 422);
+            return $this->errorResponse($e->getMessage(), null, 422);
         }
     }
 }

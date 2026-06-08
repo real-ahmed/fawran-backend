@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Courier;
 
-use App\DTOs\Courier\Order\CourierAcceptOrderDTO;
 use App\Http\Controllers\Controller;
 use App\Models\Order\Order;
 use App\Services\Courier\CourierOrderService;
-use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
@@ -16,17 +15,16 @@ class OrderController extends Controller
     /**
      * Accept an order delivery request.
      */
-    public function accept(\Illuminate\Http\Request $request, Order $order): JsonResponse
+    public function accept(Request $request, Order $order): JsonResponse
     {
-        $dto = CourierAcceptOrderDTO::fromRequest($request->user()->courier->id, $order->id);
-        $updatedOrder = $this->courierOrderService->acceptOrder($dto);
+        $updatedOrder = $this->courierOrderService->acceptOrderForUser($request->user(), $order);
 
-        return response()->json([
-            'message' => __('messages.order_accepted'),
-            'data' => [
+        return $this->successResponse(
+            [
                 'order_id' => $updatedOrder->id,
                 'status' => $updatedOrder->status->value,
             ],
-        ]);
+            __('messages.order_accepted')
+        );
     }
 }

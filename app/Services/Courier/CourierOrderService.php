@@ -6,6 +6,7 @@ use App\DTOs\Courier\Order\CourierAcceptOrderDTO;
 use App\Enums\OrderStatus;
 use App\Models\Courier\Courier;
 use App\Models\Order\Order;
+use App\Models\User;
 use App\Notifications\Courier\OrderNoLongerAvailableNotification;
 use App\Services\OrderService;
 use Exception;
@@ -19,6 +20,18 @@ class CourierOrderService
     /**
      * Accept a delivery request.
      *
+     * @throws Exception
+     */
+    public function acceptOrderForUser(User $user, Order $order): Order
+    {
+        $courier = $user->courier;
+
+        abort_if(! $courier, 404, __('messages.courier_profile_not_found'));
+
+        return $this->acceptOrder(CourierAcceptOrderDTO::fromRequest($courier->id, $order->id));
+    }
+
+    /**
      * @throws Exception
      */
     public function acceptOrder(CourierAcceptOrderDTO $dto): Order

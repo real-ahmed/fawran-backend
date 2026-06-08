@@ -4,6 +4,7 @@ namespace App\Services\Vendor;
 
 use App\DTOs\Vendor\Order\UpdateSubOrderStatusDTO;
 use App\Models\Order\SubOrder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use InvalidArgumentException;
 
 class VendorOrderService
@@ -20,6 +21,42 @@ class VendorOrderService
         'ready_for_pickup' => [],
         'picked_up' => [],
     ];
+
+    public function listOrders(int $vendorId, array $filters = []): LengthAwarePaginator
+    {
+        $query = SubOrder::where('vendor_id', $vendorId)
+            ->with($this->orderRelations());
+
+        if (! empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (! empty($filters['date_from'])) {
+            $query->whereDate('created_at', '>=', $filters['date_from']);
+        }
+
+        if (! empty($filters['date_to'])) {
+            $query->whereDate('created_at', '<=', $filters['date_to']);
+        }
+
+        return $query->orderBy('created_at', 'desc')->paginate(20);
+    }
+
+    public function getOrderCounts(int $vendorId): array
+    {
+        return SubOrder::where('vendor_id', $vendorId)
+            ->selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+    }
+
+    public function getOrder(SubOrder $subOrder, int $vendorId): SubOrder
+    {
+        $this->ensureBelongsToVendor($subOrder, $vendorId);
+
+        return $subOrder->load($this->orderRelations());
+    }
 
     /**
      * Update the status of a sub-order belonging to a specific vendor.
@@ -53,5 +90,24 @@ class VendorOrderService
     {
         return isset(self::ALLOWED_TRANSITIONS[$from])
             && in_array($to, self::ALLOWED_TRANSITIONS[$from]);
+    }
+
+    private function ensureBelongsToVendor(SubOrder $subOrder, int $vendorId): void
+    {
+        abort_unless((int) $subOrder->vendor_id === $vendorId, 403, 'Unauthorized action.');
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function orderRelations(): array
+    {
+        return [
+            'order.customer.customer',
+            'items.vendorItem.masterProduct',
+            'items.note',
+            'items.options.productOption',
+            'items.options.productOptionValue',
+        ];
     }
 }

@@ -10,7 +10,6 @@ use App\Http\Requests\V1\Admin\Order\UpdateOrderStatusRequest;
 use App\Http\Resources\V1\Admin\OrderResource;
 use App\Models\Order\Order;
 use App\Services\Admin\OrderService as AdminOrderService;
-use App\Services\OrderService as SystemOrderService;
 use Illuminate\Http\Request;
 
 /**
@@ -20,10 +19,7 @@ use Illuminate\Http\Request;
  */
 class OrderController extends Controller
 {
-    public function __construct(
-        protected AdminOrderService $adminOrderService,
-        protected SystemOrderService $systemOrderService
-    ) {}
+    public function __construct(protected AdminOrderService $adminOrderService) {}
 
     /**
      * List Orders
@@ -40,8 +36,9 @@ class OrderController extends Controller
     public function index(IndexOrderRequest $request)
     {
         $dto = OrderFilterDTO::fromRequest($request);
+        $orders = $this->adminOrderService->listOrders($dto);
 
-        return OrderResource::collection($this->adminOrderService->listOrders($dto));
+        return $this->paginatedResponse($orders, OrderResource::collection($orders->items()));
     }
 
     /**
@@ -63,9 +60,7 @@ class OrderController extends Controller
      */
     public function cancel(Order $order)
     {
-        $order->ensureVisibleToAdminZones();
-
-        $this->systemOrderService->cancelOrder($order);
+        $this->adminOrderService->cancelOrder($order);
 
         return $this->successResponse(null, __('messages.order_cancelled_successfully'));
     }
@@ -79,30 +74,24 @@ class OrderController extends Controller
 
     public function updateStatus(UpdateOrderStatusRequest $request, Order $order)
     {
-        $order->ensureVisibleToAdminZones();
-
         try {
-            $this->systemOrderService->updateStatus($order, $request->validated('status'));
+            $this->adminOrderService->updateStatus($order, $request->validated('status'));
 
             return $this->successResponse(null, __('messages.order_status_updated_successfully'));
         } catch (\InvalidArgumentException $e) {
-            return $this->errorResponse($e->getMessage(), 422);
+            return $this->errorResponse($e->getMessage(), null, 422);
         }
     }
 
     public function assignCourier(AssignCourierRequest $request, Order $order)
     {
-        $order->ensureVisibleToAdminZones();
-
-        $this->systemOrderService->assignCourier($order, $request->validated('courier_id'));
+        $this->adminOrderService->assignCourier($order, $request->validated('courier_id'));
 
         return $this->successResponse(null, __('messages.courier_assigned_successfully'));
     }
 
     public function deliveryPath(Order $order)
     {
-        $order->ensureVisibleToAdminZones();
-
-        return $this->successResponse([]); // Mocked until Redis integration is ready
+        return $this->successResponse($this->adminOrderService->deliveryPath($order));
     }
 }

@@ -9,6 +9,8 @@ class VendorDescription extends Model
 {
     public $timestamps = false;
 
+    protected $table = 'vendordescriptions';
+
     protected $primaryKey = 'vendor_id';
 
     public $incrementing = false;
@@ -17,6 +19,13 @@ class VendorDescription extends Model
         'vendor_id',
         'description',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'description' => 'array',
+        ];
+    }
 
     public function store(): BelongsTo
     {

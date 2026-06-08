@@ -29,8 +29,9 @@ class AdminUserController extends Controller
     public function index(IndexAdminUserRequest $request)
     {
         $dto = AdminUserFilterDTO::fromRequest($request);
+        $admins = $this->adminUserService->listAdmins($dto);
 
-        return AdminResource::collection($this->adminUserService->listAdmins($dto));
+        return $this->paginatedResponse($admins, AdminResource::collection($admins->items()));
     }
 
     /**

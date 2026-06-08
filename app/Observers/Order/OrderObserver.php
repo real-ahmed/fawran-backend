@@ -3,14 +3,16 @@
 namespace App\Observers\Order;
 
 use App\Enums\OrderType;
+use App\Events\OrderConfirmed;
+use App\Events\OrderDelivered;
 use App\Jobs\Courier\BroadcastOrderToCouriersJob;
 use App\Models\Order\Order;
 use App\Services\Admin\OrderNotificationService;
+use BackedEnum;
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 
-class OrderObserver
+class OrderObserver implements ShouldHandleEventsAfterCommit
 {
-    public $afterCommit = true;
-
     public function __construct(private OrderNotificationService $notificationService) {}
 
     public function created(Order $order): void
@@ -26,11 +28,34 @@ class OrderObserver
 
     public function updated(Order $order): void
     {
-        if ($order->wasChanged('status')) {
-            $oldStatus = $order->getOriginal('status')->value ?? $order->getOriginal('status');
-            $newStatus = $order->status->value ?? $order->status;
-
-            $this->notificationService->notifyStatusChange($order, $oldStatus, $newStatus);
+        if (! $order->wasChanged('status')) {
+            return;
         }
+
+        $oldStatus = $this->statusValue($order->getOriginal('status'));
+        $newStatus = $this->statusValue($order->status);
+
+        $this->notificationService->notifyStatusChange($order, $oldStatus, $newStatus);
+
+        if ($newStatus === 'processing') {
+            OrderConfirmed::dispatch($order);
+        }
+
+        if ($newStatus === 'delivered') {
+            $order->loadMissing('delivery');
+
+            if ($order->delivery) {
+                OrderDelivered::dispatch($order, $order->delivery);
+            }
+        }
+    }
+
+    private function statusValue(mixed $status): string
+    {
+        if ($status instanceof BackedEnum) {
+            return (string) $status->value;
+        }
+
+        return (string) $status;
     }
 }

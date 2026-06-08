@@ -8,11 +8,10 @@ use App\Models\Admin;
 use App\Models\Courier\Courier;
 use App\Notifications\Admin\CourierApplicationSubmittedNotification;
 use App\Services\AdminNotificationService;
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 
-class CourierObserver
+class CourierObserver implements ShouldHandleEventsAfterCommit
 {
-    public $afterCommit = true;
-
     /**
      * Handle the Courier "created" event.
      */

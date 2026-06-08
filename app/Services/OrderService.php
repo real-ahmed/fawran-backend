@@ -2,16 +2,13 @@
 
 namespace App\Services;
 
+use App\DTOs\Courier\DeliveryPreviewDTO;
 use App\Enums\OrderStatus;
 use App\Enums\OrderStatusTransition;
-use App\Events\OrderConfirmed;
-use App\Events\OrderDelivered;
 use App\Models\Courier\Courier;
 use App\Models\Order\Delivery;
 use App\Models\Order\Order;
 use App\Models\Order\OrderStatusLog;
-use App\Models\Platform\SystemSetting;
-use App\DTOs\Courier\DeliveryPreviewDTO;
 use App\Services\Courier\CourierPricingService;
 use App\Services\Courier\DeliveryEstimationService;
 use Illuminate\Support\Facades\DB;
@@ -52,18 +49,6 @@ class OrderService
                 'changed_by_id' => auth()->id(),
             ]);
         });
-
-        // Dispatch financial events after the DB transaction commits
-        if ($newStatus === OrderStatus::Processing->value) {
-            OrderConfirmed::dispatch($order);
-        }
-
-        if ($newStatus === OrderStatus::Delivered->value) {
-            $order->loadMissing('delivery');
-            if ($order->delivery) {
-                OrderDelivered::dispatch($order, $order->delivery);
-            }
-        }
 
         return $order;
     }

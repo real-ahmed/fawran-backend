@@ -8,6 +8,8 @@ use App\Enums\VendorPermission;
 use App\Models\Role;
 use App\Traits\Paginatable;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\CursorPaginator;
+use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
 
 class VendorRoleService
@@ -16,13 +18,19 @@ class VendorRoleService
 
     public function resolveVendorId(Request $request): int
     {
+        $vendorId = (int) getPermissionsTeamId();
+
+        if ($vendorId > 0) {
+            return $vendorId;
+        }
+
         $vendorId = $request->header('X-VENDOR-ID') ?? $request->query('vendor_id');
         abort_if(! $vendorId, 400, 'Vendor ID is required in header or query parameter.');
 
         return (int) $vendorId;
     }
 
-    public function getRoles(int $vendorId, VendorRoleFilterDTO $filters)
+    public function getRoles(int $vendorId, VendorRoleFilterDTO $filters): CursorPaginator
     {
         return Role::query()
             ->vendor($vendorId)
@@ -32,7 +40,7 @@ class VendorRoleService
             ->cursorPaginate($this->getPerPageLimit());
     }
 
-    public function getRoleById(int $vendorId, $id): Role
+    public function getRoleById(int $vendorId, int|string $id): Role
     {
         return Role::query()
             ->vendor($vendorId)
@@ -100,7 +108,7 @@ class VendorRoleService
         $role->delete();
     }
 
-    public function getAllPermissions()
+    public function getAllPermissions(): Collection
     {
         // Group store permissions logically for frontend
         $permissions = collect(VendorPermission::values());

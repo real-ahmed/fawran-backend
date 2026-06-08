@@ -29,8 +29,9 @@ class BrandController extends Controller
     public function index(IndexBrandRequest $request)
     {
         $dto = BrandFilterDTO::fromRequest($request);
+        $brands = $this->brandService->listBrands($dto);
 
-        return BrandResource::collection($this->brandService->listBrands($dto));
+        return $this->paginatedResponse($brands, BrandResource::collection($brands->items()));
     }
 
     /**

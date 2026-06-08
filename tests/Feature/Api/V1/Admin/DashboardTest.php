@@ -37,6 +37,7 @@ class DashboardTest extends TestCase
                     'vendors',
                     'couriers',
                 ],
+                'errors',
             ]);
 
         $response->assertJsonMissingPath('data.revenue');
@@ -75,11 +76,13 @@ class DashboardTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'success',
+                'message',
                 'data' => [
                     'brands',
                     'categories',
                     'couriers',
                 ],
+                'errors',
             ]);
     }
 }

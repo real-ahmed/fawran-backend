@@ -2,12 +2,15 @@
 
 namespace App\Http\Requests\V1\Vendor\Role;
 
+use App\Http\Requests\V1\Vendor\Concerns\ResolvesVendorContext;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class StoreVendorRoleRequest extends FormRequest
 {
+    use ResolvesVendorContext;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -23,7 +26,7 @@ class StoreVendorRoleRequest extends FormRequest
      */
     public function rules(): array
     {
-        $vendorId = $this->header('X-VENDOR-ID') ?? $this->query('vendor_id');
+        $vendorId = $this->vendorId();
 
         return [
             'name' => [

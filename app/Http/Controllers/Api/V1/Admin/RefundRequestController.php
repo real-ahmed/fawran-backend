@@ -30,8 +30,9 @@ class RefundRequestController extends Controller
     public function index(IndexRefundRequest $request)
     {
         $dto = RefundRequestFilterDTO::fromRequest($request);
+        $refundRequests = $this->refundService->listRefundRequests($dto);
 
-        return RefundRequestResource::collection($this->refundService->listRefundRequests($dto));
+        return $this->paginatedResponse($refundRequests, RefundRequestResource::collection($refundRequests->items()));
     }
 
     /**

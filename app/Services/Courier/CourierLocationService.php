@@ -3,11 +3,25 @@
 namespace App\Services\Courier;
 
 use App\Jobs\Courier\SyncCourierLocationToDatabaseJob;
+use App\Models\Courier\Courier;
+use App\Models\Courier\CourierLocation;
+use App\Models\Order\Delivery;
+use App\Models\User;
+use App\Services\Admin\OrderNotificationService;
 use Illuminate\Support\Facades\Redis;
 
 class CourierLocationService
 {
     private const REDIS_KEY = 'courier_locations';
+
+    public function updateUserLocation(User $user, float $lat, float $lng): void
+    {
+        $courier = $user->courier;
+
+        abort_if(! $courier, 404, __('messages.courier_profile_not_found'));
+
+        $this->updateLocation($courier->id, $lat, $lng);
+    }
 
     /**
      * Update courier location in Redis and dispatch async DB sync.
@@ -21,7 +35,7 @@ class CourierLocationService
         SyncCourierLocationToDatabaseJob::dispatch($courierId, $lat, $lng);
 
         // Fetch active delivery
-        $activeDelivery = \App\Models\Order\Delivery::with('order')->where('courier_id', $courierId)
+        $activeDelivery = Delivery::with('order')->where('courier_id', $courierId)
             ->whereIn('status', ['heading_to_vendors', 'out_for_delivery'])
             ->first();
 
@@ -31,14 +45,14 @@ class CourierLocationService
             $remainingEta = max(0, $initialEta - $elapsedMinutes);
 
             // Temporarily load location relation on a dummy courier to pass to notification service
-            $courier = new \App\Models\Courier\Courier();
+            $courier = new Courier;
             $courier->id = $courierId;
-            $courier->setRelation('location', new \App\Models\Courier\CourierLocation([
+            $courier->setRelation('location', new CourierLocation([
                 'latitude' => $lat,
                 'longitude' => $lng,
             ]));
 
-            app(\App\Services\Admin\OrderNotificationService::class)->notifyCourierLocationChange(
+            app(OrderNotificationService::class)->notifyCourierLocationChange(
                 $activeDelivery->order,
                 $courier,
                 null,

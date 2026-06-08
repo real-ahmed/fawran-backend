@@ -26,6 +26,8 @@ class AppConfigTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
+                'success',
+                'message',
                 'data' => [
                     'app_name',
                     'app_icon',
@@ -34,6 +36,7 @@ class AppConfigTest extends TestCase
                     'app_logo_white',
                     'currency',
                 ],
+                'errors',
             ]);
     }
 
